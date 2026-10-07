@@ -1,0 +1,60 @@
+{
+ "key": "animal_sheep",
+ "clips": {
+  "idle": {
+   "start": 0,
+   "end": 4,
+   "frames": 4,
+   "fps": 4,
+   "loop": true
+  },
+  "walk": {
+   "start": 6,
+   "end": 14,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "eat": {
+   "start": 16,
+   "end": 22,
+   "frames": 6,
+   "fps": 6,
+   "loop": true
+  },
+  "sit": {
+   "start": 24,
+   "end": 28,
+   "frames": 4,
+   "fps": 3,
+   "loop": true
+  },
+  "happy": {
+   "start": 30,
+   "end": 36,
+   "frames": 6,
+   "fps": 9,
+   "loop": true
+  }
+ },
+ "joints": [
+  "body",
+  "ear_L",
+  "ear_R",
+  "head",
+  "knee_BL",
+  "knee_BR",
+  "knee_FL",
+  "knee_FR",
+  "leg_BL",
+  "leg_BR",
+  "leg_FL",
+  "leg_FR",
+  "neck",
+  "root",
+  "tail"
+ ],
+ "height": 0.802,
+ "tris": 4768,
+ "kind": "animal"
+}

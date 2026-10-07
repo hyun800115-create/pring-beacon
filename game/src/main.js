@@ -11,6 +11,9 @@ import { Hud, costText } from './ui/hud.js';
 import { Bubbles } from './ui/bubbles.js';
 import { Audio } from './core/audio.js';
 import { makeWindmillModel, makeWell } from './game/buildings.js';
+import { Economy } from './game/economy.js';
+import { Territory, Rival } from './game/rival.js';
+import { Herds, decorate, updateOrchards, Lake } from './game/ranch.js';
 
 const loadTxt = (t) => { const e = document.getElementById('sm-loading-txt'); if (e) e.textContent = t; };
 
@@ -38,6 +41,7 @@ class Game {
     tick();
 
     this.world = new World(this.stage, this.lib);
+    this.world.game = this;
     this.world.initFx();
     this.audio = new Audio(this.stage);
     this.world.audio = this.audio;
@@ -45,6 +49,13 @@ class Game {
     this.clock = new Clock();
     this.bub = new Bubbles(this.stage);
     this.people = new People(this.world, this.clock, this.bub);
+    this.econ = new Economy(this);
+    this.people.econ = this.econ;
+    this.territory = new Territory(this);
+    this.rival = new Rival(this);
+    this.herds = new Herds(this);
+    this.clock.on((ev) => { if (ev === 'morning') this.econ.morning(); });
+    for (const ev of ['bld', 'built', 'removed']) this.world.on(ev, () => { this.territory.dirty = true; });
     this.speed = 1;
     this.mode = 'view';
     this.placeRot = 0;
@@ -69,6 +80,7 @@ class Game {
   async setupStart() {
     const S = NUM.mapSize;
     const start = { x: S * 0.45, z: S * 0.5 };
+    this.world.lake = new Lake(this.world, start.x - 30, start.z + 30, 13, 8.5);
     this.world.generate(start);
     const wg = this.lib.prop('trade_post');
     wg.position.set(start.x, 0, start.z); wg.rotation.y = 0.5;
@@ -82,15 +94,50 @@ class Game {
 
   async onBuilt(b, kind) {
     const w = this.world;
+    if (b.def.kind === 'ranch' && !b.animals) { decorate(b, w); this.herds.spawn(b); }
+    if (b.def.kind === 'orchard' && !b.trees) decorate(b, w);
+    if (b.ai) return;
+    if (b.def.deco) { this.audio.play('build', 0.6, b.x, b.z); return; }
+    if (b.def.kind === 'beacon') { this.lightBeacon(b, false); return; }
     this.audio.play('complete', 0.8, b.x, b.z);
     if (b.type === 'hall' && w.wagon) {
       this.people.unloadWagon(b, w.wagon);
       const wg = w.wagon;
       setTimeout(() => { this.stage.scene.remove(wg.obj); w.wagon = null; }, 12000);
       this.people.news('🏛️ 마을회관이 완성됐어요! 이제 길을 그리고 건물을 지어 보세요', 'party');
+      if (!this.rival.hall) {
+        // 이웃 마을은 지도 반대편에
+        const S = NUM.mapSize, rx = b.x < S / 2 ? S * 0.82 : S * 0.18, rz = b.z < S / 2 ? S * 0.8 : S * 0.2;
+        await this.rival.found(rx, rz);
+        this.people.news('🏘️ 저 멀리 이웃 마을 「서리골」도 자리를 잡았어요. 누가 먼저 봄의 봉화를 밝힐까요?', 'info');
+      }
       this.hud.cat = 'house'; this.hud.fillTools(); this.hud.refresh();
     } else if (b.def.kind === 'house') { this.people.assignHomes(); this.people.news(`🏠 ${b.name}이(가) ${kind === 'upgrade' ? '업그레이드' : '완성'}됐어요`, 'info'); }
     else this.people.news(`✅ ${b.name}이(가) 완성됐어요`, 'info');
+  }
+
+  /** 봄의 봉화 점화: 불기둥, 봄이 오고 축제 */
+  lightBeacon(b, ai) {
+    const top = b.height + 0.4;
+    const fire = new THREE.PointLight(0xff9a40, 30, 40, 1.4); fire.position.set(0, top, 0); b.group.add(fire);
+    b.fire = fire;
+    const flames = [];
+    const mat = new THREE.MeshBasicMaterial({ color: 0xffb040, transparent: true, opacity: 0.85 });
+    for (let k = 0; k < 14; k++) { const m = new THREE.Mesh(new THREE.ConeGeometry(0.35, 1.4, 6), mat); m.position.set((Math.random() - 0.5) * 1.2, top + Math.random(), (Math.random() - 0.5) * 1.2); b.group.add(m); flames.push({ m, s: 0.6 + Math.random(), p: Math.random() * 6 }); }
+    b.flames = flames;
+    if (ai) {
+      this.people.news(`🔥 이웃 마을 서리골이 먼저 봄의 봉화를 밝혔어요! 우리도 서둘러요`, 'warn');
+      return;
+    }
+    this.won = !this.rival.lit;
+    this.people.news(this.won ? '🌸 우리 마을이 먼저 봄의 봉화를 밝혔어요! 겨울이 물러가고 봄이 와요!' : '🌸 우리 마을도 봄의 봉화를 밝혔어요! 봄이 와요!', 'party');
+    // 봄으로
+    const c = this.clock, per = NUM.daysPerSeason;
+    const yearStart = Math.floor((c.day - 1) / (per * 4)) * per * 4 + 1;
+    if (c.seasonIndex === 0) c.day = yearStart + per;
+    this.people.eventQueue.unshift({ kind: 'festival', at: b.door });
+    this.audio.play('complete', 1);
+    this.stage.centerOn(b.x, b.z, 30);
   }
 
   // ---------------------------------------------------------------- 성능 시험
@@ -117,7 +164,8 @@ class Game {
     this.roadPts = null;
     if (this.ghost) { this.stage.scene.remove(this.ghost); this.ghost = null; }
     if (this.roadPrev) { this.stage.scene.remove(this.roadPrev); this.roadPrev = null; }
-    const type = m === 'settle' ? 'hall' : m.startsWith('build:') ? m.slice(6) : null;
+    const type = m === 'settle' ? 'hall' : m.startsWith('build:') ? m.slice(6) : m.startsWith('deco:') ? m.slice(5) : m.startsWith('move:') ? this.moving && this.moving.type : null;
+    if (m.startsWith('move:') && this.moving) this.placeRot = this.moving.rot;
     if (type) this.makeGhost(type);
     this.hud.refresh();
   }
@@ -144,7 +192,8 @@ class Game {
     g.add(model);
     g.userData = { foot, type };
     g.visible = false;
-    if (this.mode === (type === 'hall' ? 'settle' : 'build:' + type)) { this.ghost = g; this.stage.scene.add(g); }
+    const want = type === 'hall' && this.mode === 'settle' ? 'settle' : this.mode;
+    if (this.mode === want && (this.mode === 'settle' || this.mode.endsWith(type) || this.mode.startsWith('move:'))) { this.ghost = g; this.stage.scene.add(g); }
   }
 
   rotatePlacing(d) { this.placeRot += d; this.updateGhost(); }
@@ -159,7 +208,9 @@ class Game {
     const snapX = Math.round(p.x * 2) / 2, snapZ = Math.round(p.z * 2) / 2;
     g.position.set(snapX, 0, snapZ); g.rotation.y = this.placeRot; g.visible = true;
     const area = this.mode === 'settle' ? { x: this.world.wagon.x, z: this.world.wagon.z, r: 22 } : null;
+    if (this.moving && this.mode.startsWith('move:')) this.moving.dead = true;
     const res = this.world.check(type, snapX, snapZ, this.placeRot, area);
+    if (this.moving && this.mode.startsWith('move:')) this.moving.dead = false;
     g.userData.foot.material.color.setHex(res.ok ? 0x6fd36f : 0xe25b4f);
     g.userData.ok = res; g.userData.at = { x: snapX, z: snapZ };
   }
@@ -227,6 +278,22 @@ class Game {
         this.people.news('🔨 모두 함께 마을회관을 짓기 시작했어요!', 'info');
         return;
       }
+      if (m.startsWith('move:')) {
+        const b = this.moving; this.moving = null;
+        b.moveTo(at.x, at.z, this.placeRot);
+        this.territory.dirty = true;
+        this.audio.play('build', 0.7, at.x, at.z);
+        this.hud.toast(`${b.name}을(를) 옮겼어요`);
+        this.setMode('view');
+        return;
+      }
+      if (m.startsWith('deco:')) {
+        await w.place(type, at.x, at.z, this.placeRot);
+        this.econ.decos[type] = Math.max(0, (this.econ.decos[type] || 0) - 1);
+        if (!this.econ.decos[type]) this.setMode('view');
+        this.hud.fillTools();
+        return;
+      }
       await w.place(type, at.x, at.z, this.placeRot);
       this.audio.play('build', 0.7, at.x, at.z);
       this.hud.toast(`${BUILDINGS[type].name} 공사 자리를 정했어요. 길을 이어 주면 더 빨리 날라요!`);
@@ -278,6 +345,7 @@ class Game {
     if (a === 'remove') { if (sel.def) { w.remove(sel); this.hud.closeCard(); } }
     if (a === 'roadrm') { w.roads.removeEdge(sel); this.hud.closeCard(); }
     if (a === 'roadup') this.upgradeRoad(sel);
+    if (a === 'move') { this.moving = sel; this.hud.closeCard(); this.setMode('move:' + sel.id); this.hud.toast('새 자리를 눌러 주세요 (Q·E 로 돌리기)'); }
     this.hud.cardEl.__h = null;
   }
 
@@ -324,10 +392,17 @@ class Game {
       if (!this.perf) this.clock.update(h);
       this.updateBuildings(h);
       w.regrow(h); w.growTrees(h);
+      this.herds.update(h);
+      updateOrchards(w, h, 1 + this.econ.buff('grow'));
+      if (!this.perf) this.rival.update(h);
       if (this.perf) this.perfTick();
       this.people.update(h, st.rig);
     }
     w.updateFx(Math.min(real, 0.06));
+    this.econ.update(real);
+    this.territory.update(real);
+    if (w.lake) w.lake.update(real);
+    for (const b of w.blds) if (b.flames) for (const f of b.flames) { f.p += real * 6; f.m.scale.set(1, f.s * (0.8 + 0.3 * Math.sin(f.p)), 1); f.m.material.opacity = 0.6 + 0.3 * Math.sin(f.p * 1.3); }
     st.setTime(this.clock.frac, this.clock.season.tint);
     this.updateHover();
     this.bub.update(real);
@@ -335,7 +410,17 @@ class Game {
     st.render();
     // 느리면 화면 해상도 낮추기
     this.perfT = (this.perfT || 0) + real;
-    if (this.perfT > 3) { this.perfT = 0; const r = st.renderer.getPixelRatio(); if (this.fps < 32 && r > 1) st.renderer.setPixelRatio(Math.max(1, r - 0.25)); else if (this.fps > 55 && r < st.maxDpr) st.renderer.setPixelRatio(Math.min(st.maxDpr, r + 0.25)); }
+    if (this.perfT > 3) {
+      this.perfT = 0;
+      const r = st.renderer.getPixelRatio();
+      if (this.fps < 32 && r > 1) st.renderer.setPixelRatio(Math.max(1, r - 0.25));
+      else if (this.fps < 26 && r <= 1 && st.renderer.shadowMap.enabled && (this.slowN = (this.slowN || 0) + 1) >= 2) {
+        // 해상도를 낮춰도 느린 기기(약한 휴대폰): 그림자를 끈다
+        st.renderer.shadowMap.enabled = false;
+        st.scene.traverse((o) => { if (o.material) for (const m of [].concat(o.material)) m.needsUpdate = true; });
+        this.hud.toast('기기가 느려서 그림자를 껐어요 (더 부드럽게)');
+      } else if (this.fps > 55 && r < st.maxDpr) st.renderer.setPixelRatio(Math.min(st.maxDpr, r + 0.25));
+    }
   }
 
   updateBuildings(dt) {
@@ -346,7 +431,7 @@ class Game {
       b.update(dt, this.stage.night, busy);
       if (b.state !== 'active' || b.dead) continue;
       const def = b.def;
-      if (def.kind === 'farm') for (const p of b.plots) if (p.stage < 3) { p.t += dt; const s = Math.min(3, Math.floor(p.t / (def.grow / 3))); if (s !== p.stage) w.setPlotStage(p, s); }
+      if (def.kind === 'farm') for (const p of b.plots) if (p.stage < 3) { p.t += dt * (1 + this.econ.buff('grow')); const s = Math.min(3, Math.floor(p.t / (def.grow / 3))); if (s !== p.stage) w.setPlotStage(p, s); }
       if (def.kind === 'process') {
         const here = b.worker && b.worker.atWork && day;
         if (b.working) {
@@ -429,6 +514,7 @@ class Game {
             stock: Object.assign({}, w.stock), day: self.clock.day, phase: self.clock.phase, mode: self.mode, breadMade: w.stats.breadMade,
             jobs: self.people.list.reduce((a, p) => { const k = p.job ? p.job.kind : 'none'; a[k] = (a[k] || 0) + 1; return a; }, {}),
             draws: self.stage.renderer.info.render.calls, tris: self.stage.renderer.info.render.triangles,
+            coins: self.econ.coins, rival: Math.round(self.rival.beacon * 100), animals: self.herds.list.length,
           };
         },
         start() { return self.world.start; },
@@ -447,6 +533,17 @@ class Game {
         news() { return self.people.log.slice(0, 15).map((x) => x.text); },
         people() { return self.people.list.filter((p) => !p.dead).map((p) => ({ n: p.name, job: p.job ? p.job.kind + (p.job.bld ? ':' + p.job.bld.type : '') : '-', e: +p.energy.toFixed(2), m: +p.mood.toFixed(2), hid: p.hidden, slot: p.slot ? p.slot.s.action : null, home: p.home ? p.home.type : null })); },
         async finishAll() { for (const b of [...self.world.blds]) if (b.con) { for (const t in b.con.need) b.con.have[t] = b.con.need[t]; b.con.work = b.con.workNeeded; await self.world.finish(b); } },
+        econ() { const e = self.econ; return { coins: e.coins, decos: e.decos, buffs: e.buffs.map((b) => b.name), merchant: !!e.merchant, rival: Math.round(self.rival.beacon * 100), lit: self.rival.lit, won: self.won }; },
+        coins(n) { self.econ.coins += n; },
+        draw() { const r = self.econ.draw(); return r.err || r.title + ' / ' + r.card.name; },
+        async merchant() { await self.econ.arrive(); return self.econ.merchant.offers.map((o) => self.econ.offerName(o) + ':' + o.price); },
+        buy(i) { const m = self.econ.merchant; return m ? (self.econ.buy(m.offers[i]) || 'ok') : 'no merchant'; },
+        async placeDeco(key, x, z) { if (!(self.econ.decos[key] > 0)) return 'none'; await self.world.place(key, x, z, 0); self.econ.decos[key]--; return 'ok'; },
+        mine(x, z) { return self.territory.mine(x, z); },
+        forceLove() { const ad = self.people.list.filter((p) => !p.dead && !p.ai && p.stage === 'adult' && !p.spouse); const a = ad.find((p) => p.gender === 'm'), b = ad.find((p) => p.gender === 'f'); if (!a || !b) return null; a.partner = b; b.partner = a; a.romance.set(b.id, 5); b.romance.set(a.id, 5); self.people.checkLove(a, b); return a.name + '♥' + b.name; },
+        forceEvent(kind) { const pp = self.people; const alive = pp.list.filter((p) => !p.dead && !p.ai); if (kind === 'funeral') { const e = alive.find((p) => p.stage === 'elder'); if (e) pp.eventQueue.unshift({ kind, p: e }); } if (kind === 'birth') { const m = alive.find((p) => p.spouse && p.gender === 'f'); if (m) pp.eventQueue.unshift({ kind, mom: m, dad: m.spouse }); } return pp.eventQueue.length; },
+        async beacon() { const b = self.world.blds.find((x) => x.type === 'beacon' && !x.ai); if (b) { for (const t in b.con.need) b.con.have[t] = b.con.need[t]; b.con.work = b.con.workNeeded; await self.world.finish(b); } return !!b; },
+        rivalBlds() { return self.world.blds.filter((b) => b.ai).map((b) => b.type + ':' + b.state); },
         cutaway(type, on) { for (const b of self.world.blds) if (b.type === type) { b.pinned = on; b.setCutaway(on); } },
       },
     };

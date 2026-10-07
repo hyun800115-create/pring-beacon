@@ -1,0 +1,56 @@
+{
+ "key": "animal_chicken",
+ "clips": {
+  "idle": {
+   "start": 0,
+   "end": 4,
+   "frames": 4,
+   "fps": 4,
+   "loop": true
+  },
+  "walk": {
+   "start": 6,
+   "end": 14,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "eat": {
+   "start": 16,
+   "end": 22,
+   "frames": 6,
+   "fps": 6,
+   "loop": true
+  },
+  "sit": {
+   "start": 24,
+   "end": 28,
+   "frames": 4,
+   "fps": 3,
+   "loop": true
+  },
+  "happy": {
+   "start": 30,
+   "end": 36,
+   "frames": 6,
+   "fps": 9,
+   "loop": true
+  }
+ },
+ "joints": [
+  "body",
+  "head",
+  "knee_L",
+  "knee_R",
+  "leg_L",
+  "leg_R",
+  "neck",
+  "root",
+  "tail",
+  "wing_L",
+  "wing_R"
+ ],
+ "height": 0.459,
+ "tris": 1716,
+ "kind": "animal"
+}

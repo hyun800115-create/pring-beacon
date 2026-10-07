@@ -80,6 +80,7 @@ export class World {
         const a = r.range(0, Math.PI * 2), d = Math.sqrt(r.next()) * rad;
         const x = cx + Math.cos(a) * d, z = cz + Math.sin(a) * d;
         if (x < 2 || z < 2 || x > S - 2 || z > S - 2 || Math.hypot(x - start.x, z - start.z) < clearR) continue;
+        if (this.lake && this.lake.contains(x, z, 2)) continue;
         let near = false;
         this.natureNear(x, z, kind === 'tree' ? 1.5 : 2.2, () => { near = true; });
         if (near) continue;
@@ -98,7 +99,7 @@ export class World {
     blob(start.x + 40, start.z + 35, 5, 'rock', 0.3);
     for (let k = 0; k < 220; k++) {
       const x = r.range(3, S - 3), z = r.range(3, S - 3);
-      if (Math.hypot(x - start.x, z - start.z) < 8) continue;
+      if (Math.hypot(x - start.x, z - start.z) < 8 || (this.lake && this.lake.contains(x, z, 1.5))) continue;
       this.addNature('bush', r.next() < 0.55 ? 'bush_snow' : (r.next() < 0.5 ? 'snow_pile_b' : 'snow_pile_a'), x, z, r.range(0, 6.28), r.range(0.7, 1.1));
     }
     this.treeTarget = [...this.nature.values()].filter((o) => o.type === 'tree').length;
@@ -152,6 +153,7 @@ export class World {
 
   freeSpot(x, z, r) {
     if (x < 1 || z < 1 || x > this.size - 1 || z > this.size - 1) return false;
+    if (this.lake && this.lake.contains(x, z, r + 0.5)) return false;
     let ok = true;
     this.natureNear(x, z, r, (o) => { if (o.type !== 'bush') ok = false; });
     if (!ok) return false;
@@ -161,7 +163,7 @@ export class World {
   }
 
   // ---------------------------------------------------------------- 건물 놓기
-  check(type, x, z, rot, area) {
+  check(type, x, z, rot, area, ai) {
     const def = BUILDINGS[type];
     const [w, d] = def.size;
     const c = Math.cos(rot), s = Math.sin(rot);
@@ -171,12 +173,26 @@ export class World {
       if (p.x < 1 || p.z < 1 || p.x > this.size - 1 || p.z > this.size - 1) return { ok: false, why: '지도 밖이에요' };
       if (area && Math.hypot(p.x - area.x, p.z - area.z) > area.r) return { ok: false, why: '마차에서 너무 멀어요' };
     }
+    if (def.kind === 'beacon' && !ai && this.blds.some((b) => b.def.kind === 'beacon' && !b.ai && !b.dead)) return { ok: false, why: '봉화대는 하나만 지을 수 있어요' };
     const tmp = { size: def.size, x, z, rot };
     for (const b of this.blds) {
       if (b.dead) continue;
       if (obbOverlap(tmp, b, 0.6)) return { ok: false, why: `${b.name}과(와) 겹쳐요` };
     }
     for (const p of pts) if (this.roads.onRoad(p.x, p.z, 0.1)) return { ok: false, why: '길 위에는 지을 수 없어요' };
+    const lake = this.lake;
+    if (lake) {
+      if (def.water) {
+        if (lake.contains(x, z, 0.5)) return { ok: false, why: '물 위에는 지을 수 없어요' };
+        const door = { x: x + Math.sin(rot) * (d / 2 + 1.5), z: z + Math.cos(rot) * (d / 2 + 1.5) };
+        if (!lake.contains(door.x, door.z, 1.5)) return { ok: false, why: '정문(노란 화살표)이 호수를 보게 물가에 지어 주세요' };
+      } else if (pts.some((p) => lake.contains(p.x, p.z, 0.6))) return { ok: false, why: '호수 위에는 지을 수 없어요' };
+    }
+    const T = this.game && this.game.territory;
+    if (T && type !== 'hall' && !ai) {
+      const need = type === 'watchtower' ? [{ x, z }] : pts;
+      if (need.some((p) => !T.mine(p.x, p.z))) return { ok: false, why: T.rivalAt(x, z) ? '이웃 마을 서리골의 땅이에요' : '우리 마을 온기(주황 선) 안에만 지을 수 있어요. 화톳불 망루로 땅을 넓혀 보세요' };
+    }
     if (this.wagon && Math.hypot(this.wagon.x - x, this.wagon.z - z) < Math.max(w, d) / 2 + 2.5 && type !== 'hall') return { ok: false, why: '마차와 겹쳐요' };
     let rocks = 0;
     for (const p of pts) this.natureNear(p.x, p.z, 0.8, (o) => { if (o.type === 'rock') rocks++; });
@@ -186,14 +202,15 @@ export class World {
 
   async place(type, x, z, rot, opts = {}) {
     const b = new Building(this, type, x, z, rot, opts);
+    b.ai = !!opts.ai;
     // 자리의 나무·덤불·그루터기 치우기
     const r = Math.hypot(b.size[0], b.size[1]) / 2 + 1;
     const gone = [];
     this.natureNear(x, z, r, (o) => { if (b.contains(o.x, o.z, 0.8) && o.type !== 'rock') gone.push(o); });
     for (const o of gone) this.removeNature(o);
     this.blds.push(b);
-    if (BUILDINGS[type].kind === 'hq') this.hall = b;
-    if (opts.instant) { b.state = 'active'; await b.buildVisual(); }
+    if (BUILDINGS[type].kind === 'hq' && !opts.ai) this.hall = b;
+    if (opts.instant || BUILDINGS[type].deco) { b.state = 'active'; await b.buildVisual(); this.emit('built', b, 'instant'); }
     else { await b.buildVisual(); b.startSite(); }
     this.emit('bld', b);
     return b;
@@ -203,6 +220,8 @@ export class World {
     if (b.def.kind === 'hq' || b.dead) return false;
     b.dead = true;
     for (const p of b.plots) this.removePlot(p);
+    if (this.game) this.game.herds.remove(b);
+    if (b.bees) for (const e of b.bees) this.stage.scene.remove(e.m);
     b.dispose();
     this.blds.splice(this.blds.indexOf(b), 1);
     // 남은 재료·결과물은 창고로
@@ -256,7 +275,7 @@ export class World {
   // ---------------------------------------------------------------- 물건·물류
   itemModel(t) {
     const it = ITEMS[t];
-    if (it.model && this.lib.props[it.model]) { const o = this.lib.prop(it.model); o.scale.setScalar((it.scale || 1) * 0.9); return o; }
+    for (const m of [it.model, it.alt]) if (m && this.lib.props[m]) { const o = this.lib.prop(m); o.scale.setScalar((m === it.alt && it.scale ? it.scale : 1) * 0.9); return o; }
     if (!this.itemTpl[t]) {
       const g = new THREE.Group();
       const m = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 8), new THREE.MeshStandardMaterial({ color: it.color || 0xcccccc, roughness: 0.9 }));
@@ -273,6 +292,7 @@ export class World {
     const coming = this.tasks.filter((k) => k.to === b && k.type === t).length;
     if (b.con) return Math.max(0, (b.con.need[t] || 0) - (b.con.have[t] || 0) - coming);
     if (b.state === 'active' && b.def.kind === 'process' && b.def.in === t) return Math.max(0, NUM.inputCap - b.inputs - coming);
+    if (b.state === 'active' && b.def.kind === 'ranch' && b.def.feed === t) return Math.max(0, NUM.inputCap - Math.ceil(b.inputs) - coming);
     return 0;
   }
 
@@ -283,12 +303,12 @@ export class World {
     const open = (from, to, type) => this.tasks.push({ id: this.nid++, from, to, type, carrier: null });
     // 1) 건물의 결과물 내보내기
     for (const b of this.blds) {
-      if (b.dead || !b.def.out || b.state !== 'active') continue;
+      if (b.dead || !b.def.out || b.state !== 'active' || b.ai) continue;
       const leaving = this.tasks.filter((k) => k.from === b).length;
       let avail = b.out - leaving;
       while (avail > 0) {
         let best = null, bd = Infinity;
-        for (const c of this.blds) { if (c === b || this.wants(c, b.def.out) <= 0) continue; const d = Math.hypot(c.x - b.x, c.z - b.z); if (d < bd) { bd = d; best = c; } }
+        for (const c of this.blds) { if (c === b || c.ai || this.wants(c, b.def.out) <= 0) continue; const d = Math.hypot(c.x - b.x, c.z - b.z); if (d < bd) { bd = d; best = c; } }
         open(b, best || hall, b.def.out);
         avail--;
       }
@@ -296,7 +316,8 @@ export class World {
     // 2) 창고에서 꺼내 보내기
     for (const b of this.blds) {
       if (b === hall || b.dead) continue;
-      const types = b.con ? Object.keys(b.con.need) : (b.def.kind === 'process' && b.state === 'active' ? [b.def.in] : []);
+      if (b.ai) continue;
+      const types = b.con ? Object.keys(b.con.need) : b.state !== 'active' ? [] : b.def.kind === 'process' ? [b.def.in] : b.def.kind === 'ranch' && b.def.feed ? [b.def.feed] : [];
       for (const t of types) {
         let n = Math.min(this.wants(b, t), Math.floor(this.stock[t] || 0) - this.tasks.filter((k) => k.from === hall && k.type === t).length);
         while (n-- > 0) open(hall, b, t);
@@ -308,7 +329,7 @@ export class World {
   deliver(type, b) {
     if (!b || b.dead) { this.stock[type] = (this.stock[type] || 0) + 1; this.emit('stock'); return; }
     if (b.con && (b.con.need[type] || 0) > (b.con.have[type] || 0)) { b.con.have[type] = (b.con.have[type] || 0) + 1; b.updatePile(); this.emit('bld', b); return; }
-    if (b.def.kind === 'process' && b.def.in === type && b.state === 'active') { b.inputs++; this.emit('bld', b); return; }
+    if (((b.def.kind === 'process' && b.def.in === type) || (b.def.kind === 'ranch' && b.def.feed === type)) && b.state === 'active') { b.inputs++; this.emit('bld', b); return; }
     this.stock[type] = (this.stock[type] || 0) + 1;
     if (type === 'bread') this.stats.breadIn = (this.stats.breadIn || 0) + 1;
     this.emit('stock');

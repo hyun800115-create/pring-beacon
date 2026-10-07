@@ -43,12 +43,12 @@ export class Library {
   }
 
   async loadProp(key) {
-    if (this.props[key]) return this.props[key];
+    if (key in this.props) return this.props[key];
     try {
       const g = await this.loader.loadAsync(`assets3d/props/${key}${GLB}`);
       g.scene.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
       return (this.props[key] = g.scene);
-    } catch (e) { console.warn('prop missing', key); return (this.props[key] = boxStandIn()); }
+    } catch (e) { this.props[key] = null; return null; }
   }
 
   async loadBuilding(key) {

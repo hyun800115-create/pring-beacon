@@ -254,7 +254,7 @@ def main():
     if opt['chars'] == 'all':
         import vil_build
         import char_build
-        keys = [k for k in vil_build.KEYS] + ['lumberjack', 'miner', 'farmer', 'player']
+        keys = [k for k in vil_build.KEYS] + ['lumberjack', 'miner', 'farmer', 'player', 'fisherman']
     else:
         keys = opt['chars'].split(',')
     for k in keys:

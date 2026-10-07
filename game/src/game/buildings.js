@@ -72,11 +72,13 @@ export class Building {
       this.hasInterior = !!(this.parts.roof && this.parts.interior);
     } else {
       this.hasInterior = false;
-      const fb = (this.levelDef && this.levelDef.fallback) || this.def.fallback;
+      let fb = (this.levelDef && this.levelDef.fallback) || this.def.fallback;
+      if (this.def.deco) { await lib.loadProp(this.type); if (lib.props[this.type]) fb = [[this.type, 0, 0, 0, 1]]; }
       if (fb === 'windmill') vis.add(this.makeWindmill());
       else if (fb === 'well') vis.add(makeWell());
       else for (const [k, lx, lz, deg, sc] of fb || []) {
         await lib.loadProp(k);
+        if (!lib.props[k]) continue;
         const o = lib.prop(k);
         o.position.set(lx, 0, lz); o.rotation.y = (deg || 0) * Math.PI / 180; o.scale.setScalar(sc || 1);
         vis.add(o);
@@ -264,6 +266,18 @@ export class Building {
     this.setClip(null);
     this.clearSite();
     if (this.vis) this.vis.visible = true;
+  }
+
+  /** 집 옮기기: 자리만 바꾼다 (사는 사람·레벨 그대로) */
+  moveTo(x, z, rot) {
+    this.x = x; this.z = z; this.rot = rot;
+    this.group.position.set(x, 0, z); this.group.rotation.y = rot;
+    if (this.meta && this.meta.door) {
+      const o = this.meta.door.out, i = this.meta.door.in;
+      this.door = this.toWorld(o[0], -o[1]); this.doorIn = this.toWorld(i[0], -i[1]);
+    } else { this.door = this.toWorld(0, this.size[1] / 2 + 0.9); this.doorIn = this.toWorld(0, this.size[1] / 2 - 0.6); }
+    this.workSpot = this.toWorld(this.size[0] * 0.3, this.size[1] / 2 + 0.8);
+    if (this.trees) for (const t of this.trees) { const w = this.toWorld(t.node.position.x, t.node.position.z); t.x = w.x; t.z = w.z; }
   }
 
   // ---------------------------------------------------------------- 실내 보기

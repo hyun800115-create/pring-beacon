@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { PHASE } from './clock.js';
-import { NUM, LOOKS, NAMES, TRAITS, LINES, BUILDINGS } from './defs.js';
+import { NUM, LOOKS, NAMES, TRAITS, LINES, BUILDINGS, FOODS } from './defs.js';
 
 const KID_ADULT_AGE = 2, ELDER_DEATH_AGE = 79;
 const BUILDER_LOOK = 'lumberjack';
@@ -102,7 +102,7 @@ export class People {
 
   speed(p, mul) {
     const tr = TRAITS[p.trait] || {};
-    let s = NUM.walkSpeed * mul * (tr.speed || 1);
+    let s = NUM.walkSpeed * mul * (tr.speed || 1) * (1 + (this.econ ? this.econ.buff('speed') : 0));
     if (p.energy < 0.25) s *= 0.8;
     if (p.stage === 'elder') s *= 0.72;
     if (p.stage === 'kid') s *= 1.05;
@@ -183,6 +183,7 @@ export class People {
   // ================================================================ 생각하기
   think(p, phase) {
     if (p.event) { this.wait(p, 0.5, p.eventAnim || 'idle'); return; }
+    if (p.ai) { this.aiThink(p, phase); return; }
     if (p.slot && !(phase === PHASE.NIGHT && p.slot.s.action === 'sleep')) this.leaveSlot(p);
     if (phase === PHASE.NIGHT) { this.offDuty(p); this.goSleep(p); return; }
     if (phase === PHASE.EVENING) { this.offDuty(p); this.freeTime(p, true); return; }
@@ -292,11 +293,12 @@ export class People {
     }
     if (evening) {
       // 선술집·가게 가기
-      const shops = this.w.blds.filter((b) => b.def.kind === 'shop' && b.state === 'active');
-      if (shops.length && r < 0.35) {
+      const shops = this.w.blds.filter((b) => !b.ai && b.state === 'active' && (b.def.kind === 'shop' || b.type === 'bakery'));
+      if (shops.length && r < 0.4) {
         const b = pick(shops, this.r);
-        if (this.useSlot(p, b, ['eat', 'tea', 'sit', 'shop', 'chat'], 8 + this.r() * 8, () => { p.joy = Math.min(0.3, (p.joy || 0) + (b.def.fun || 0.1)); })) return;
-        this.walkTo(p, b.door.x, b.door.z); this.wait(p, 3, 'talk'); this.doit(p, () => { p.joy = Math.min(0.3, (p.joy || 0) + (b.def.fun || 0.1) * 0.6); });
+        const buy = () => { p.joy = Math.min(0.3, (p.joy || 0) + (b.def.fun || 0.08)); if (this.econ) this.econ.shopVisit(p, b); };
+        if (this.useSlot(p, b, ['eat', 'tea', 'shop', 'sit', 'chat'], 7 + this.r() * 7, buy)) return;
+        this.walkTo(p, b.door.x, b.door.z); this.wait(p, 3, 'talk'); this.doit(p, buy);
         return;
       }
       // 집안 생활
@@ -398,20 +400,20 @@ export class People {
   assignJobs() {
     const w = this.w, jobs = [];
     for (const b of w.blds) {
-      if (b.dead) continue;
+      if (b.dead || b.ai) continue;
       if (b.con) {
         if (b.free && b.type !== 'hall') continue;   // 이주민 집은 자기들이 짓는다
         const max = b.type === 'hall' ? 99 : 1;
         const any = !Object.keys(b.con.need).length || Object.values(b.con.have).some((v) => v > 0);
         if (b.builders.length < max) jobs.push({ kind: 'builder', bld: b, x: b.x, z: b.z, pri: any ? 3 : 0.6 });
-      } else if (b.state === 'active' && !b.worker && ['gather', 'farm', 'process'].includes(b.def.kind)) jobs.push({ kind: 'worker', bld: b, x: b.x, z: b.z, pri: 2 });
+      } else if (b.state === 'active' && !b.worker && ['gather', 'farm', 'process', 'ranch', 'orchard', 'fishing'].includes(b.def.kind)) jobs.push({ kind: 'worker', bld: b, x: b.x, z: b.z, pri: 2 });
     }
     for (const t of w.tasks) if (!t.carrier) jobs.push({ kind: 'haul', task: t, x: t.from.x, z: t.from.z, pri: 2.4 });
     jobs.sort((a, b) => b.pri - a.pri);
     for (const j of jobs) {
       let best = null, bd = Infinity;
       for (const p of this.list) {
-        if (p.dead || p.stage !== 'adult' || p.job || p.event || p.hidden || p.leaving) continue;
+        if (p.dead || p.ai || p.stage !== 'adult' || p.job || p.event || p.hidden || p.leaving) continue;
         const d = Math.hypot(p.x - j.x, p.z - j.z) + (p.slot ? 8 : 0) + (p.chatting ? 6 : 0);
         if (d < bd) { bd = d; best = p; }
       }
@@ -467,6 +469,9 @@ export class People {
     if (k === 'gather') return this.doGather(p);
     if (k === 'farm') return this.doFarm(p);
     if (k === 'process') return this.doProcess(p);
+    if (k === 'ranch') return this.doRanch(p);
+    if (k === 'orchard') return this.doOrchard(p);
+    if (k === 'fishing') return this.doFishing(p);
     this.loseJob(p);
   }
 
@@ -681,6 +686,104 @@ export class People {
     }, 'idle');
   }
 
+  // ---------------------------------------------------------------- 목축 (동물 돌보기)
+  doRanch(p) {
+    const b = p.job.bld, w = this.w;
+    if (b.out >= NUM.outputCap) { this.wait(p, 2, 'idle'); return; }
+    const a = (b.animals || []).find((x) => x.ready && !x.reserved);
+    if (!a) { const t = b.toWorld(0, b.size[1] / 2 + 0.6); this.walkTo(p, t.x, t.z, 1, { skip: b }); this.wait(p, 3, this.r() < 0.3 ? 'happy' : 'idle'); return; }
+    a.reserved = true;
+    if (p.lookNow !== 'farmer') this.doit(p, () => this.setLook(p, 'farmer'));
+    this.walkTo(p, a.x - 0.7, a.z, 1, { skip: b });
+    this.doit(p, () => { a.held = true; a.state = 'idle'; p.yaw = angTo(p.x, p.z, a.x, a.z); });
+    this.wait(p, b.def.workTime / Math.max(0.5, p.workRate || 1), 'work_hands');
+    this.doit(p, () => {
+      a.held = false; a.reserved = false; a.ready = false;
+      if (this.r() < 0.3) this.say(p, 'happy', false, b.def.out === 'egg' ? 'emote_sparkle' : 'emote_heart');
+      this.carryItem(p, b.def.out);
+      const s = b.toWorld(-b.size[0] / 2 + 0.6, b.size[1] / 2 + 1.2);
+      this.walkTo(p, s.x, s.z, 1, { skip: b });
+      this.doit(p, () => { this.carryItem(p, null); b.out++; b.updateOutPile(); });
+    });
+  }
+
+  // ---------------------------------------------------------------- 과수원·양봉장
+  doOrchard(p) {
+    const b = p.job.bld;
+    if (b.out >= NUM.outputCap) { this.wait(p, 2); return; }
+    const t = (b.trees || []).find((x) => x.ready && !x.reserved);
+    if (!t) { this.wait(p, 3, 'idle'); return; }
+    t.reserved = true;
+    this.doit(p, () => this.setLook(p, b.def.tool || 'farmer'));
+    this.walkTo(p, t.x + 0.8, t.z + 0.4, 1, { skip: b });
+    this.wait(p, b.def.workTime / Math.max(0.5, p.workRate || 1), b.def.hives ? 'work_hands' : 'work', angTo(t.x + 0.8, t.z + 0.4, t.x, t.z));
+    this.doit(p, () => {
+      t.reserved = false; t.ready = false; t.t = 0; if (t.fruit) t.fruit.visible = false;
+      if (b.def.hives && this.r() < 0.35) this.say(p, 'tired', true, 'emote_exclaim');   // 벌에 쏘일 뻔!
+      this.carryItem(p, b.def.out);
+      const s = b.toWorld(-b.size[0] / 2 + 0.6, b.size[1] / 2 + 1.2);
+      this.walkTo(p, s.x, s.z, 1, { skip: b });
+      this.doit(p, () => { this.carryItem(p, null); b.out++; b.updateOutPile(); });
+    });
+  }
+
+  // ---------------------------------------------------------------- 낚시
+  doFishing(p) {
+    const b = p.job.bld, def = b.def;
+    if (b.out >= NUM.outputCap) { this.wait(p, 2); return; }
+    const s = b.hasInterior ? b.slots.find((x) => x.action === 'work') : null;
+    const spot = s ? b.slotWorld(s) : Object.assign(b.toWorld(0.3, b.size[1] / 2 + 2.6), { yaw: b.rot });
+    this.doit(p, () => this.setLook(p, 'fisherman'));
+    this.walkTo(p, spot.x, spot.z, 1, { skip: b });
+    this.wait(p, def.workTime / Math.max(0.5, p.workRate || 1), 'work', spot.yaw);
+    this.doit(p, () => {
+      if (this.r() < 0.25) { this.say(p, 'grumble', false, 'emote_dots'); return; }   // 놓쳤다!
+      this.w.puff(spot.x + Math.sin(spot.yaw) * 2, spot.z + Math.cos(spot.yaw) * 2, 0xbfe3ff, 5, 0.4, 0.1);
+      if (this.r() < 0.3) this.say(p, 'happy', true, 'emote_fish');
+      this.carryItem(p, def.out);
+      const s2 = b.toWorld(-b.size[0] / 2 + 0.6, -b.size[1] / 2 - 0.6);
+      this.walkTo(p, s2.x, s2.z, 1, { skip: b });
+      this.doit(p, () => { this.carryItem(p, null); b.out++; b.updateOutPile(); });
+    });
+  }
+
+  // ---------------------------------------------------------------- 이웃 마을 주민 (서리골)
+  aiThink(p, phase) {
+    const blds = this.w.blds.filter((b) => b.ai && !b.dead);
+    if (!blds.length) { this.wait(p, 2); return; }
+    if (phase === PHASE.NIGHT) {
+      const homes = blds.filter((b) => b.def.kind === 'house' || b.def.kind === 'hq');
+      const h = homes[p.id % homes.length];
+      this.walkTo(p, h.door.x, h.door.z);
+      this.doit(p, () => { if (this.clock.phase === PHASE.NIGHT) { this.hide(p); p.sleeping = true; p.sleepAt = h; } });
+      return;
+    }
+    const site = blds.find((b) => b.con);
+    if (site && phase === PHASE.DAY && this.r() < 0.6) {
+      const a = this.r() * Math.PI * 2, rr = Math.max(site.size[0], site.size[1]) / 2 + 0.8;
+      this.walkTo(p, site.x + Math.cos(a) * rr, site.z + Math.sin(a) * rr);
+      this.doit(p, () => { p.yaw = angTo(p.x, p.z, site.x, site.z); });
+      this.wait(p, 6, 'work_hands');
+      return;
+    }
+    const b = blds[Math.floor(this.r() * blds.length)];
+    const t = this.near(b, 6);
+    this.walkTo(p, t.x, t.z, 0.8);
+    this.wait(p, 2 + this.r() * 3, this.r() < 0.3 ? 'talk' : 'idle');
+  }
+
+  /** 카드로 뽑은 특별 주민이 이사 온다 */
+  async specialArrive(sp) {
+    await this.lib.loadChar(sp.look);
+    const w = this.w, ex = w.size - 2, ez = w.size / 2;
+    const p = this.makePerson({ x: ex, z: ez, gender: sp.gender, look: sp.look, name: sp.name, trait: sp.trait, age: 28 });
+    p.special = true; p.leaving = true;
+    const t = this.near(w.hall, 4);
+    this.walkTo(p, t.x, t.z);
+    this.doit(p, () => { p.leaving = false; this.emote(p, 'happy', 'wave', 1.5); this.assignHomes(); });
+    this.news(`🌟 특별 주민 ${sp.name}이(가) 마을로 이사 와요!`, 'party');
+  }
+
   // ================================================================ 필요
   tickNeeds(dt) {
     for (const p of this.list) {
@@ -695,9 +798,10 @@ export class People {
       let fr = 0; for (const v of p.friends.values()) if (v > 1) fr++;
       target += Math.min(0.15, fr * 0.04);
       target += (p.joy || 0);
+      if (this.econ) { target += this.econ.buff('mood') + this.econ.decoJoy(p.x, p.z); if (p.ate && p.ate.size >= 3) target += 0.06; }
       p.joy = Math.max(-0.3, (p.joy || 0) - dt * 0.002 * Math.sign(p.joy || 0));
       p.mood += (Math.max(0, Math.min(1, target)) - p.mood) * dt * 0.02;
-      p.workRate = (tr.work || 1) * (0.6 + 0.4 * p.energy) * (0.8 + 0.4 * p.mood);
+      p.workRate = (tr.work || 1) * (0.6 + 0.4 * p.energy) * (0.8 + 0.4 * p.mood) * (1 + (this.econ ? this.econ.buff('work') : 0));
     }
   }
 
@@ -727,8 +831,12 @@ export class People {
     const alive = this.list.filter((p) => !p.dead);
     let need = alive.length * NUM.foodPerDay;
     const s = this.w.stock;
-    const eat = (t) => { const k = Math.min(s[t] || 0, Math.ceil(need)); s[t] = (s[t] || 0) - k; need -= k; };
+    const eat = (t) => { const k = Math.min(s[t] || 0, Math.ceil(need)); s[t] = (s[t] || 0) - k; need -= k; return k; };
+    const eaten = new Set();
+    // 여러 가지 음식을 골고루 (있는 것부터 나눠 먹기)
+    for (let round = 0; round < 3 && need > 0; round++) for (const t of FOODS) { if (need <= 0) break; const per = Math.min(Math.ceil(need / 2), s[t] || 0); if (per > 0) { s[t] -= per; need -= per; eaten.add(t); } }
     eat('bread'); eat('fish');
+    for (const p of this.list) if (!p.dead) p.ate = new Set(eaten);
     const hungryN = Math.max(0, Math.ceil(need / NUM.foodPerDay));
     alive.forEach((p, k) => { p.hungry = k < hungryN; if (p.hungry) this.say(p, 'hungry'); });
     if (hungryN > 0) this.news(`🍞 식량이 모자라요! ${hungryN}명이 배고파요`, 'warn');
@@ -783,6 +891,9 @@ export class People {
       kid.home = h; kid.age = 0; e.kid = kid;
       this.news(`👶 ${e.mom.name}와(과) ${e.dad.name}에게 아기 ${kid.name}이(가) 태어났어요!`, 'party');
       w.audio && w.audio.play('coin', 0.8);
+    } else if (e.kind === 'festival') {
+      center = e.at; e.dur = 22; e.anim = 'dance';
+      this.news('🎆 봄맞이 축제! 모두 봉화 앞에 모여 춤을 춰요', 'party');
     } else if (e.kind === 'funeral') {
       const p = e.p;
       const g = hall.toWorld(hall.size[0] / 2 + 6, -hall.size[1] / 2 + (this.graves || 0) * 1.4);
@@ -798,7 +909,7 @@ export class People {
       this.news(`🕯️ ${p.name}(${p.age}세)이(가) 세상을 떠났어요. 마을 사람들이 장례식을 열어요`, 'sad');
     }
     e.center = center;
-    const who = this.list.filter((q) => !q.dead && !q.leaving && !(q.sleeping));
+    const who = this.list.filter((q) => !q.dead && !q.leaving && !q.sleeping && !q.ai);
     who.forEach((q, k) => {
       if (q.job) this.loseJob(q);
       if (q.slot) this.leaveSlot(q);
@@ -825,6 +936,7 @@ export class People {
     if (Math.floor(e.t * 1.2) !== Math.floor((e.t - dt) * 1.2)) {
       const q = e.who[Math.floor(this.r() * e.who.length)];
       if (q && !q.dead) this.say(q, e.kind === 'funeral' ? 'sad' : 'party', true);
+      if (e.kind === 'festival' && this.r() < 0.7) this.w.puff(e.center.x, e.center.z, [0xff8f5a, 0xffe066, 0xff5a5a][Math.floor(this.r() * 3)], 5, 3, 3);
       if (e.kind === 'wedding' && this.r() < 0.6) this.w.puff(e.center.x, e.center.z, [0xff8fb5, 0xffe066, 0x8fd3ff][Math.floor(this.r() * 3)], 4, 2.5, 1.8);
     }
     if (e.t < e.dur) return;

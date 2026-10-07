@@ -122,6 +122,7 @@ class State:
         self.anim_origin = {}
         self.low_cap = {'walls': 'end', 'iwalls': 'pale2'}
         self.wall_cut = []     # extra info
+        self.extra = {}        # extra JSON sidecar fields (pen, trees, ...)
         self.n = 0
 
 
@@ -919,7 +920,7 @@ def finalize(low=True):
             nodes[base].name = base
     # anim nodes: move origin to the pivot
     for g, ob in nodes.items():
-        if g.startswith('anim_') and g in S.anim_origin:
+        if g in S.anim_origin:          # anim_* pivots, tree_* bases
             pv = Vector(S.anim_origin[g])
             ob.data.transform(Matrix.Translation(-pv))
             ob.location = pv

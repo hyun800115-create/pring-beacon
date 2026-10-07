@@ -71,3 +71,31 @@
 | 상업 | `tavern` | 선술집 | 술통, 바 카운터, 식탁들, 벽난로 |
 | 상업 | `shop` | 잡화점 | 진열대, 계산대, 상자 |
 | 공공 | `well` | 우물 | 실내 없음 |
+
+## 6. 부록 A (2026-10-08): 가축·새 생산 건물·새 물건
+### 6.1 동물 GLB — `game/assets3d/chars/<key>.glb` + `<key>.json` (주민과 같은 형식)
+- 관절(빈 객체) 계층 + 관절에 붙은 메쉬. 원점 = 발 사이 바닥, 정면 Blender -Y. 동작은 한 시간줄에 이어 굽고 JSON `clips` 에 구간을 적는다
+  (`game/tools/blender/export_glb.py` 의 `join_parts`, `bake` 를 그대로 쓴다).
+- 키와 크기: `animal_chicken`(0.4 m), `animal_cow`(젖소, 흰 바탕 검은 무늬, 1.3 m), `animal_cattle`(고기소, 갈색, 1.3 m), `animal_sheep`(털 뭉치, 0.8 m),
+  `animal_pig`(분홍, 0.7 m), `animal_goat`(0.8 m). 서리마을 `char_animals.py`(사슴·멧돼지) 스타일과 방식 참고, 귀여운 장난감 느낌.
+- 동작(필수): `idle`(4프레임), `walk`(8), `eat`(풀 뜯기, 6), `sit`(엎드려 쉬기, 4), `happy`(깡충/꼬리, 6). 닭은 `eat` = 모이 쪼기.
+### 6.2 건물 (2장 규칙 그대로, `assets3d/buildings/`)
+| 키 | 이름 | 분류 | 비고 |
+|---|---|---|---|
+| `coop` | 닭장 | 생산 | 작은 닭집 + 울타리 마당(6×5 m). 실내: 횃대·둥지(`slot.work`) |
+| `barn` | 외양간 | 생산 | 소·염소용. 헛간 + 울타리 목장(10×8 m 정도). 실내: 여물통, 우유 짜는 자리(`slot.work`) |
+| `sheepfold` | 양 우리 | 생산 | 우리 + 울타리, 털 깎는 자리 |
+| `pigsty` | 돼지우리 | 생산 | 진흙 웅덩이 + 울타리 |
+| `orchard` | 과수원 | 생산 | 사과나무 6~9그루를 줄지어(나무는 별도 노드 `tree_1..n`, 사과 달린 모습), 작은 창고 |
+| `apiary` | 양봉장 | 생산 | 벌통 5~6개 + 작은 헛간 + 꽃밭 |
+| `fishing` | 낚시터 | 생산 | 물가 오두막 + 나무 부두(부두 끝이 앞 -Y 쪽으로 물 위에 나감), `slot.work` 낚시 자리 |
+| `dairy` | 치즈 공방 | 생산 | 우유 → 치즈. 실내: 큰 솥, 치즈 선반 |
+| `beacon` | 봄의 봉화대 | 공공 | 돌로 쌓은 높은 탑(8~10 m) 꼭대기 화로. `fx_fire` 꼭대기. 마을의 최종 목표 건물 |
+| `watchtower` | 화톳불 망루 | 공공 | 나무 망루(5 m) 위 화톳불. 영토(온기)를 넓힌다. `fx_fire` |
+| `market` | 시장 가판대 | 상업 | 외부 상인이 머무는 노점(차양) |
+| `statue` | 마을 동상 | 공공(장식) | 미술품 장식 |
+### 6.3 새 물건 GLB — `game/assets3d/props/item_<키>.glb` (손에 들 크기 0.2~0.4 m, 원점 바닥 가운데)
+`item_egg`(달걀 바구니), `item_milk`(우유통), `item_cheese`(치즈 바퀴), `item_wool`(털 뭉치), `item_meat`(고기), `item_apple`(사과 바구니), `item_honey`(꿀 단지),
+`item_fish`(생선 꾸러미), `item_flour`(밀가루 자루), `item_stone`(돌 덩이 2~3개), `item_coin_bag`(동전 주머니)
+### 6.4 장식 소품 (상인이 파는 것) — `game/assets3d/props/deco_<키>.glb`
+`deco_fountain`(분수), `deco_flowerbed`(꽃밭), `deco_painting_easel`(이젤 그림), `deco_gazebo`(정자), `deco_snowman_big`, `deco_lantern_post`(장식 등), `deco_swing`(그네)

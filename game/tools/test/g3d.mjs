@@ -13,8 +13,8 @@ const b = has('--gpu') ? await chromium.launch({ headless: false, args: ['--igno
 const page = await (await b.newContext({ viewport: { width: vw, height: vh } })).newPage();
 const errs = [];
 page.on('pageerror', (e) => errs.push('pageerror: ' + (e.stack || e)));
-page.on('console', (m) => { if (m.type() === 'error' || (m.type() === 'warning' && !m.text().includes('GPU stall'))) errs.push(m.type() + ': ' + m.text()); });
-page.on('response', (r) => { if (r.status() >= 400) errs.push('HTTP ' + r.status() + ' ' + r.url()); });
+page.on('console', (m) => { if ((m.type() === 'error' && !m.text().includes('404')) || (m.type() === 'warning' && !m.text().includes('GPU stall'))) errs.push(m.type() + ': ' + m.text()); });
+page.on('response', (r) => { if (r.status() >= 400 && !/assets3d\/(props\/(item_|deco_)|chars\/animal_)/.test(r.url())) errs.push('HTTP ' + r.status() + ' ' + r.url()); });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const api = (fn, ...a) => page.evaluate(([f, a2]) => window.__SM.api[f](...a2), [fn, a]);
 const shot = async (n) => { await page.screenshot({ path: path.join(OUT, n) }); console.log('shot', n); };

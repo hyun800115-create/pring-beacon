@@ -21,6 +21,11 @@ import bl_common as bc  # noqa: E402
 import b3d_kit as K  # noqa: E402
 import b3d_furniture as F  # noqa: E402
 import b3d_buildings as B  # noqa: E402
+import b3d_buildings2 as B2  # noqa: E402
+from collections import OrderedDict  # noqa: E402
+
+ALL_B = OrderedDict(B.BUILDINGS)
+ALL_B.update(B2.BUILDINGS)
 
 TRI_B, TRI_F, MAT_MAX = 60000, 3000, 30
 
@@ -50,7 +55,7 @@ def export_furniture(key):
 def export_building(key):
     t0 = time.time()
     K.reset()
-    spec = B.BUILDINGS[key]
+    spec = ALL_B[key]
     spec['fn']()
     nodes = K.finalize(low=spec.get('low', True))
     nm = K._limit_materials(list(nodes.values()), MAT_MAX)
@@ -62,6 +67,7 @@ def export_building(key):
     side = dict(key=key, name=spec['name'], category=spec['cat'], size=list(spec['size']), height=height,
                 rooms=K.S.rooms, slots=slots, door=K.S.door, levels=1, fx=fxl,
                 nodes=sorted(n for n in info['tris']), tris=info['total'])
+    side.update(K.S.extra)
     with open(os.path.join(K.OUT_B, key + '.json'), 'w', encoding='utf-8') as f:
         json.dump(side, f, ensure_ascii=False, indent=1)
     need = ['roof', 'walls', 'floor', 'interior', 'exterior']
@@ -94,7 +100,7 @@ def main():
                 old = {e['key']: e for e in json.load(open(idx_path, encoding='utf-8'))}
             except Exception:
                 old = {}
-        todo = [k for k in (keys or list(B.BUILDINGS)) if k in B.BUILDINGS]
+        todo = [k for k in (keys or list(ALL_B)) if k in ALL_B]
         for k in todo:
             try:
                 old[k] = export_building(k)
@@ -103,8 +109,8 @@ def main():
                 traceback.print_exc()
                 print('[bld %s] FAILED: %s' % (k, e), flush=True)
         out = [dict(key=e['key'], name=e['name'], category=e['category'], size=e['size'], height=e['height'])
-               for k, e in sorted(old.items(), key=lambda kv: list(B.BUILDINGS).index(kv[0])
-                                  if kv[0] in B.BUILDINGS else 99)]
+               for k, e in sorted(old.items(), key=lambda kv: list(ALL_B).index(kv[0])
+                                  if kv[0] in ALL_B else 99)]
         with open(idx_path, 'w', encoding='utf-8') as f:
             json.dump(out, f, ensure_ascii=False, indent=1)
     if do_f:

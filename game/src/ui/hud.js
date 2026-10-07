@@ -1,10 +1,10 @@
 // 화면 위 메뉴 (HTML): 시간·속도, 창고, 소식, 할 일, 분류별 건축 메뉴, 카메라 버튼, 정보 카드, 이주민 팝업, 알림.
 
-import { BUILDINGS, BUILD_MENU, CATEGORIES, ITEMS, ITEM_ORDER, NUM, ROADS, ROAD_ORDER } from '../game/defs.js';
+import { BUILDINGS, BUILD_MENU, CATEGORIES, ITEMS, ITEM_ORDER, NUM, ROADS, ROAD_ORDER, CARDS, CARD_COST, DECOS } from '../game/defs.js';
 
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const ITEM_EMOJI = { log: '🪵', plank: '🟫', stone: '🪨', wheat: '🌾', flour: '🥡', bread: '🍞', fish: '🐟' };
+const ITEM_EMOJI = { log: '🪵', plank: '🟫', stone: '🪨', wheat: '🌾', flour: '🥡', bread: '🍞', fish: '🐟', egg: '🥚', milk: '🥛', cheese: '🧀', wool: '🧶', meat: '🍖', apple: '🍎', honey: '🍯' };
 export const costText = (c) => (c ? Object.keys(c).map((t) => `${ITEMS[t].name}${c[t]}`).join(' ') : '');
 
 export class Hud {
@@ -44,6 +44,18 @@ export class Hud {
     this.rightEl = el('div', 'right panel pe');
     this.rightTxt = el('span');
     this.rightEl.appendChild(this.rightTxt);
+    this.coinEl = el('span', '', '🪙 0');
+    this.coinEl.style.cssText = 'font-weight:900;color:#a8770c';
+    this.rightEl.appendChild(this.coinEl);
+    const card = el('button', 'sysb', '🎴 카드');
+    card.title = '코인으로 카드 뽑기';
+    card.onclick = () => this.cardModal();
+    this.rightEl.appendChild(card);
+    this.merchBtn = el('button', 'sysb', '🧳 상인');
+    this.merchBtn.title = '외부 상인 가게';
+    this.merchBtn.style.background = '#ffe7a8';
+    this.merchBtn.onclick = () => this.merchantModal();
+    this.rightEl.appendChild(this.merchBtn);
     const snd = el('button', 'sysb', '🔊');
     snd.title = '소리 켜기/끄기';
     snd.onclick = () => { g.audio.setOn(!g.audio.on); snd.textContent = g.audio.on ? '🔊' : '🔇'; };
@@ -97,6 +109,11 @@ export class Hud {
     this.bar.innerHTML = '';
     const tools = [{ m: 'view', em: '👆', nm: '보기' }];
     if (this.cat === 'road') tools.push({ m: 'road', em: '🛤️', nm: '흙길 그리기', co: '끌어서 그리기' });
+    else if (this.cat === 'deco') {
+      const inv = Object.entries(g.econ ? g.econ.decos : {}).filter(([, n]) => n > 0);
+      for (const [k, n] of inv) tools.push({ m: 'deco:' + k, key: k, em: '🌷', nm: DECOS[k].name, co: `${n}개 있음` });
+      if (!inv.length) tools.push({ m: 'view', em: '🧳', nm: '장식 없음', co: '상인·카드로 얻기' });
+    }
     else for (const t of BUILD_MENU[this.cat] || []) tools.push({ m: 'build:' + t, key: t, em: BUILDINGS[t].icon || '🏠', nm: BUILDINGS[t].name, co: costText(BUILDINGS[t].cost) });
     tools.push({ m: 'remove', em: '🧹', nm: '없애기' });
     this.toolBtns = [];
@@ -136,7 +153,9 @@ export class Hud {
     this.t = 0;
     const g = this.g, w = g.world, c = g.clock, ppl = g.people;
     this.clockTxt.innerHTML = `<span class="yr">${c.year}년 </span><span class="sea">${c.season.name} ${c.dayOfSeason}일</span> · ${c.timeText} ${c.phase === 'night' ? '🌙' : c.phase === 'evening' ? '🌇' : '☀️'}`;
-    for (const t of ITEM_ORDER) this.chips[t].lastChild.textContent = Math.max(0, Math.floor(w.stock[t] || 0));
+    for (const t of ITEM_ORDER) { const v = Math.max(0, Math.floor(w.stock[t] || 0)); this.chips[t].lastChild.textContent = v; this.chips[t].style.display = v > 0 || ['log', 'plank', 'stone', 'bread', 'fish'].includes(t) ? '' : 'none'; }
+    this.coinEl.textContent = `🪙 ${g.econ.coins}`;
+    this.merchBtn.style.display = g.econ.merchant ? '' : 'none';
     const alive = ppl.list.filter((p) => !p.dead);
     const homes = w.blds.filter((b) => b.def.kind === 'house' && b.state === 'active');
     const cap = homes.reduce((a, b) => a + b.def.levels[b.level].cap, 0);
@@ -144,6 +163,7 @@ export class Hud {
     let txt = `👥 ${alive.length}명<span class="ex"> · 🏠 ${cap}칸 · 🙋 쉬는 사람 ${idle}</span>`;
     const food = (w.stock.bread || 0) + (w.stock.fish || 0);
     if (food < alive.length * NUM.foodPerDay * 2) txt += ' · <span style="color:#c43e30">🍞 부족</span>';
+    if (g.rival && g.rival.hall) txt += `<span class="ex"> · 🏘️ 서리골 봉화 ${Math.round(g.rival.beacon * 100)}%</span>`;
     if (g.showFps) txt += ` · ${Math.round(g.fps)}fps`;
     this.rightTxt.innerHTML = txt;
     this.updateGoals();
@@ -163,6 +183,9 @@ export class Hud {
       ['채석장에서 돌 캐기', has('quarry')],
       ['밀 농장 → 풍차 → 빵집 잇기', has('farm') && has('windmill') && has('bakery')],
       ['선술집에서 저녁 모임', has('tavern')],
+      ['목축: 닭장이나 외양간 짓기', has('coop') || has('barn')],
+      ['화톳불 망루로 땅 넓히기', has('watchtower')],
+      [this.g.won ? '봄의 봉화를 서리골보다 먼저 밝히기 🏆' : '봄의 봉화 밝히기', w.blds.some((b) => b.type === 'beacon' && !b.ai && b.state === 'active')],
     ];
     const html = '<b>📋 할 일</b>' + g.map(([t, ok]) => `<div class="${ok ? 'ok' : 'no'}">${esc(t)}</div>`).join('');
     if (this.goalEl.__h !== html) { this.goalEl.innerHTML = html; this.goalEl.__h = html; }
@@ -238,7 +261,12 @@ export class Hud {
         const nx = def.levels[b.level + 1];
         btns += `<button data-act="upgrade">⬆ ${esc(nx.name)}로 (${esc(costText(nx.cost))})</button>`;
       }
-      if (def.kind !== 'hq') btns += `<button class="red" data-act="remove">없애기</button>`;
+      if ((def.kind === 'house' || def.deco) && b.state === 'active' && !b.con) btns += `<button class="gray" data-act="move">↔ 옮기기</button>`;
+      if (def.kind === 'beacon') rows.push(['봉화', b.state === 'active' ? '🔥 타오르는 중 · 봄이 왔어요' : '공사가 끝나면 봉화가 켜져요']);
+      if (def.kind === 'ranch') { rows.push(['동물', `${(b.animals || []).length}마리, 거둘 것 ${(b.animals || []).filter((a) => a.ready).length}`]); if (def.feed) rows.push(['먹이', `${ITEMS[def.feed].name} ${Math.ceil(b.inputs)}개`]); }
+      if (def.kind === 'orchard') rows.push([def.hives ? '벌통' : '나무', `${(b.trees || []).length}개, 다 익은 것 ${(b.trees || []).filter((t) => t.ready).length}`]);
+      if (b.ai) rows.unshift(['마을', '🏘️ 이웃 마을 서리골']);
+      if (def.kind !== 'hq' && !b.ai) btns += `<button class="red" data-act="remove">없애기</button>`;
       return `<button class="x">✕</button><h3>${def.icon || '🏛️'} ${esc(b.name)}</h3><div class="sub">${esc(def.desc)}</div>` +
         `<table>${rows.map(([a, c]) => `<tr><td>${esc(a)}</td><td>${c}</td></tr>`).join('')}</table><div class="btns">${btns}</div>`;
     });
@@ -260,6 +288,39 @@ export class Hud {
       return `<button class="x">✕</button><h3>🛤️ ${esc(r.name)}</h3><div class="sub">길이 ${e.len.toFixed(0)}m · 걷는 속도 ×${r.speed}${e.busy ? ' · 공사 중' : ''}</div>` +
         `<table><tr><td>길 종류</td><td>흙길 → 자갈길 → 돌길 순서로 좋아져요</td></tr></table><div class="btns">${btns}</div>`;
     });
+  }
+
+  merchantModal() {
+    const e = this.g.econ, m = this.modalEl;
+    if (!e.merchant) { this.toast('지금은 상인이 없어요. 며칠마다 찾아와요'); return; }
+    const render = () => {
+      const rows = e.merchant.offers.map((o, i) => `<div style="display:flex;align-items:center;gap:8px;padding:6px 4px;border-bottom:1px solid #eef1f5;text-align:left${o.sold ? ';opacity:.45' : ''}">
+        <span style="font-size:11px;background:#eef3f9;border-radius:6px;padding:2px 6px;white-space:nowrap">${esc(o.tag)}</span>
+        <span style="flex:1"><b>${esc(e.offerName(o))}</b><br><small style="color:#5d6b80">${esc(e.offerDesc(o))}</small></span>
+        <button data-i="${i}" ${o.sold ? 'disabled' : ''} style="margin:0;padding:7px 10px">${o.sold ? '팔림' : '🪙 ' + o.price}</button></div>`).join('');
+      m.innerHTML = `<h2>🧳 외부 상인</h2><div style="color:#5d6b80;font-size:13px">내일 아침에 떠나요 · 가진 코인 🪙 ${e.coins}</div><div style="max-height:52vh;overflow:auto;margin:8px 0">${rows}</div><button class="gray" data-x="1">닫기</button>`;
+      m.style.display = '';
+      for (const b of m.querySelectorAll('button[data-i]')) b.onclick = () => { const err = e.buy(e.merchant.offers[+b.dataset.i]); if (err) this.toast(err, true); render(); this.fillTools(); };
+      m.querySelector('[data-x]').onclick = () => { m.style.display = 'none'; };
+    };
+    render();
+  }
+
+  cardModal() {
+    const e = this.g.econ, m = this.modalEl;
+    const odds = CARDS.map((c) => `<tr><td>${esc(c.name)}</td><td style="text-align:right">${(c.rate * 100).toFixed(0)}%</td><td style="color:#5d6b80;font-size:12px">${esc(c.desc)}</td></tr>`).join('');
+    const show = (res) => {
+      const card = res ? `<div style="margin:10px auto;width:180px;padding:16px 10px;border-radius:16px;background:linear-gradient(160deg,#fff4d6,#ffd9e6);box-shadow:0 6px 18px rgba(0,0,0,.15);animation:smflip .5s ease-out">
+          <div style="font-size:12px;color:#8a6a2a;font-weight:800">${esc(res.card.name)}</div><div style="font-size:20px;font-weight:900;margin:6px 0">${esc(res.title)}</div><div style="font-size:12.5px">${esc(res.desc)}</div></div>` : '';
+      m.innerHTML = `<style>@keyframes smflip{from{transform:rotateY(90deg) scale(.6)}to{transform:none}}</style><h2>🎴 카드 뽑기</h2>
+        <div style="font-size:13px;color:#5d6b80">한 번에 🪙 ${CARD_COST} · 가진 코인 🪙 ${e.coins}</div>${card}
+        <table style="margin:8px auto;font-size:13px;border-collapse:collapse"><tr><th colspan="3" style="text-align:left;padding-bottom:4px">나올 확률 (공개)</th></tr>${odds}</table>
+        <button data-d="1">뽑기 (🪙 ${CARD_COST})</button><button class="gray" data-x="1">닫기</button>`;
+      m.style.display = '';
+      m.querySelector('[data-d]').onclick = () => { const r = e.draw(); if (r.err) { this.toast(r.err, true); return; } show(r); this.fillTools(); };
+      m.querySelector('[data-x]').onclick = () => { m.style.display = 'none'; };
+    };
+    show(null);
   }
 
   offer(o) {
