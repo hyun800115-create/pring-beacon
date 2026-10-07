@@ -1,0 +1,564 @@
+{
+ "version": 1,
+ "generator": "tools/fx/gen_ui.py",
+ "conventions": {
+  "text": "No text is baked into any UI image; the game renders all text.",
+  "iconSize": [
+   96,
+   96
+  ],
+  "pads": "ui_pad_* are 192x96 iso (2:1) diamonds: floor square of ~2.1 m at PPU 64; anchor = centre.",
+  "colours": {
+   "blue": "#3D8BE0",
+   "green": "#5CC86A",
+   "gold": "#FFC83D",
+   "darkText": "#2B2F3A",
+   "cream": "#FFF8EC"
+  }
+ },
+ "atlases": [
+  {
+   "key": "ui_icons",
+   "png": "ui/ui_icons.png",
+   "json": "ui/ui_icons.json"
+  }
+ ],
+ "images": [
+  {
+   "key": "ui_panel",
+   "png": "ui/ui_panel.png"
+  },
+  {
+   "key": "ui_button_blue",
+   "png": "ui/ui_button_blue.png"
+  },
+  {
+   "key": "ui_button_green",
+   "png": "ui/ui_button_green.png"
+  },
+  {
+   "key": "ui_button_gray",
+   "png": "ui/ui_button_gray.png"
+  },
+  {
+   "key": "ui_coin_bar",
+   "png": "ui/ui_coin_bar.png"
+  },
+  {
+   "key": "ui_bubble_body",
+   "png": "ui/ui_bubble_body.png"
+  },
+  {
+   "key": "ui_title_bg",
+   "png": "ui/ui_title_bg.png"
+  }
+ ],
+ "sprites": {
+  "ui_icon_coin": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_coin",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_settings": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_settings",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_sound_on": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_sound_on",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_sound_off": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_sound_off",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_music_on": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_music_on",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_music_off": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_music_off",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_lock": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_lock",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_close": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_close",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_check": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_check",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_backpack": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_backpack",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_speed": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_speed",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_icon_worker": {
+   "atlas": "ui_icons",
+   "frame": "ui_icon_worker",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "icon",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_arrow": {
+   "atlas": "ui_icons",
+   "frame": "ui_arrow",
+   "anchor": [
+    0.5,
+    0.89
+   ],
+   "kind": "ui",
+   "frameSize": [
+    132,
+    168
+   ],
+   "notes": "Points DOWN; anchor = arrow tip. Bounce it with a y tween."
+  },
+  "ui_bubble": {
+   "atlas": "ui_icons",
+   "frame": "ui_bubble",
+   "anchor": [
+    0.5,
+    0.975
+   ],
+   "kind": "ui",
+   "frameSize": [
+    160,
+    132
+   ],
+   "notes": "Speech bubble 160x132, tail at bottom centre (anchor = tail tip). Content area ~ x 14..146, y 12..96."
+  },
+  "ui_bubble_tail": {
+   "atlas": "ui_icons",
+   "frame": "ui_bubble_tail",
+   "anchor": [
+    0.5,
+    0.0
+   ],
+   "kind": "ui",
+   "frameSize": [
+    40,
+    30
+   ],
+   "notes": "Extra: tail only, to pair with the 9-slice ui_bubble_body for wider bubbles (anchor = top centre)."
+  },
+  "ui_badge_max": {
+   "atlas": "ui_icons",
+   "frame": "ui_badge_max",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    128,
+    60
+   ],
+   "notes": "Red/gold pill badge; game draws \"MAX\" text (white, dark stroke) centred."
+  },
+  "ui_joystick_base": {
+   "atlas": "ui_icons",
+   "frame": "ui_joystick_base",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    220,
+    220
+   ],
+   "notes": "220x220, translucent; knob travel radius ~70 px."
+  },
+  "ui_joystick_knob": {
+   "atlas": "ui_icons",
+   "frame": "ui_joystick_knob",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    104,
+    104
+   ]
+  },
+  "ui_ring_bg": {
+   "atlas": "ui_icons",
+   "frame": "ui_ring_bg",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    128,
+    128
+   ],
+   "notes": "Dark translucent track with a soft white rim."
+  },
+  "ui_ring_fill": {
+   "atlas": "ui_icons",
+   "frame": "ui_ring_fill",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    128,
+    128
+   ],
+   "tintable": true,
+   "notes": "White ring (tint it). Same geometry as ui_ring_bg: centre radius 52, thickness 18 in a 128 frame."
+  },
+  "ui_pad_unlock": {
+   "atlas": "ui_icons",
+   "frame": "ui_pad_unlock",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    192,
+    96
+   ],
+   "footprint": [
+    170,
+    85
+   ],
+   "notes": "Iso 2:1 floor pad (192x96), white dashed rounded border, translucent navy fill. Diamond tip-to-tip ~170 px (0.89 of the frame width); anchor = centre."
+  },
+  "ui_pad_input": {
+   "atlas": "ui_icons",
+   "frame": "ui_pad_input",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    192,
+    96
+   ],
+   "footprint": [
+    170,
+    85
+   ],
+   "notes": "Iso 2:1 floor pad (192x96) with an engraved white symbol; colour-coded (input blue, output green, cash gold, hire orange + helmet, upgrade purple). Diamond tip-to-tip ~170 px (0.89 of the frame width)."
+  },
+  "ui_pad_output": {
+   "atlas": "ui_icons",
+   "frame": "ui_pad_output",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    192,
+    96
+   ],
+   "footprint": [
+    170,
+    85
+   ],
+   "notes": "Iso 2:1 floor pad (192x96) with an engraved white symbol; colour-coded (input blue, output green, cash gold, hire orange + helmet, upgrade purple). Diamond tip-to-tip ~170 px (0.89 of the frame width)."
+  },
+  "ui_pad_cash": {
+   "atlas": "ui_icons",
+   "frame": "ui_pad_cash",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    192,
+    96
+   ],
+   "footprint": [
+    170,
+    85
+   ],
+   "notes": "Iso 2:1 floor pad (192x96) with an engraved white symbol; colour-coded (input blue, output green, cash gold, hire orange + helmet, upgrade purple). Diamond tip-to-tip ~170 px (0.89 of the frame width)."
+  },
+  "ui_pad_hire": {
+   "atlas": "ui_icons",
+   "frame": "ui_pad_hire",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    192,
+    96
+   ],
+   "footprint": [
+    170,
+    85
+   ],
+   "notes": "Iso 2:1 floor pad (192x96) with an engraved white symbol; colour-coded (input blue, output green, cash gold, hire orange + helmet, upgrade purple). Diamond tip-to-tip ~170 px (0.89 of the frame width)."
+  },
+  "ui_pad_upgrade": {
+   "atlas": "ui_icons",
+   "frame": "ui_pad_upgrade",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    192,
+    96
+   ],
+   "footprint": [
+    170,
+    85
+   ],
+   "notes": "Iso 2:1 floor pad (192x96) with an engraved white symbol; colour-coded (input blue, output green, cash gold, hire orange + helmet, upgrade purple). Diamond tip-to-tip ~170 px (0.89 of the frame width)."
+  },
+  "ui_panel": {
+   "image": "ui_panel",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    96,
+    96
+   ]
+  },
+  "ui_button_blue": {
+   "image": "ui_button_blue",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    128,
+    96
+   ]
+  },
+  "ui_button_green": {
+   "image": "ui_button_green",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    128,
+    96
+   ]
+  },
+  "ui_button_gray": {
+   "image": "ui_button_gray",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    128,
+    96
+   ]
+  },
+  "ui_coin_bar": {
+   "image": "ui_coin_bar",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    200,
+    64
+   ],
+   "notes": "Dark translucent pill (9-slice). Put ui_icon_coin overlapping the left end and white text."
+  },
+  "ui_bubble_body": {
+   "image": "ui_bubble_body",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    96,
+    82
+   ]
+  },
+  "ui_title_bg": {
+   "image": "ui_title_bg",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "frameSize": [
+    720,
+    1280
+   ],
+   "notes": "720x1280 painterly snowy dawn. Calm sky for the title text at y 160-460 (light text with dark stroke reads best); tap-to-start prompt on the snow field around y 1060-1120 (dark text or white with dark stroke). Village focal point at y ~1000."
+  }
+ },
+ "nineSlice": {
+  "ui_panel": {
+   "image": "ui_panel",
+   "left": 22,
+   "right": 22,
+   "top": 22,
+   "bottom": 30
+  },
+  "ui_button_blue": {
+   "image": "ui_button_blue",
+   "left": 32,
+   "right": 32,
+   "top": 32,
+   "bottom": 36
+  },
+  "ui_button_green": {
+   "image": "ui_button_green",
+   "left": 32,
+   "right": 32,
+   "top": 32,
+   "bottom": 36
+  },
+  "ui_button_gray": {
+   "image": "ui_button_gray",
+   "left": 32,
+   "right": 32,
+   "top": 32,
+   "bottom": 36
+  },
+  "ui_coin_bar": {
+   "image": "ui_coin_bar",
+   "left": 34,
+   "right": 34,
+   "top": 30,
+   "bottom": 30
+  },
+  "ui_bubble_body": {
+   "image": "ui_bubble_body",
+   "left": 34,
+   "right": 34,
+   "top": 32,
+   "bottom": 36
+  }
+ }
+}

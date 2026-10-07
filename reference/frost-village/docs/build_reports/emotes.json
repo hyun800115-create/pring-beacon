@@ -1,0 +1,72 @@
+{
+ "summary": "Built section C of CONTRACT_VILLAGERS: 20 emote icons, emote and chat bubbles, and social FX. Everything is procedural (numpy + Pillow on top of fxlib.py) in the same soft-toy style as the existing UI and FX. Faces use warm emoji-yellow with the villagers' dark-brown eyes and rosy cheeks.\n\nAll 20 emotes are 64x64 and readable at 32-40 px:\n- Faces: heart eyes (love), laughing with tears, crying (tear), ^^; with a big sweat drop (sweat), and a blue shivering face (cold) with chattering teeth, red nose, snow on the head and shiver marks.\n- Symbols: red cross-vein (anger), red !, blue ?, purple beamed notes, blue Z shapes, glowing light bulb (idea), gold twinkles, typing dots, gold star.\n- Objects: fish, bread with steam, waving hand and thumbs-up (both with a red parka cuff), flying snowball.\n- No text is baked in except the Z, ! and ? shapes.\n\nBubbles:\n- `ui_emote_bubble`: round white bubble with a tail; anchor is the tail tip.\n- `ui_chat_bubble`: 9-slice body, stretches cleanly from 80x56 to 320x96.\n- `ui_chat_tail`: separate tail piece. It is \"un-blended\" against the exact body pixels, so body + tail is seamless; the worst difference is 12 faint shadow pixels under alpha 45.\n\nFX:\n- `fx_snowball` (in the atlas).\n- Spritesheets: `fx_snow_splat` (10 frames, one-shot), `fx_music_notes` (seamless loop), `fx_hearts`, `fx_anger_puff` (two dark huff puffs plus a throbbing red vein), `fx_sweat_drops`.\n- Extra: `fx_zzz` (loop) for dozing villagers.\n- All sheets use NORMAL blend with dark tinted rims, so they read on snow, plaza and sea.\n\nVerification:\n- `emote_check.py` passes with 0 errors and 0 warnings.\n- Payload is 299 KB (limit 1 MB).\n- Output is deterministic: a second build gave byte-identical assets.\n- A scratch test page (not committed) rendered everything in real Phaser 3.90 in headless Chromium. Bubble and tail tips land exactly on the target points, nine-slice + tail is seamless with tail offsets -30 and +50, sheet anchors are correct, and there were no console errors.\n\nPreviews were checked visually on snow and plaza, inside bubbles, and at phone sizes. There is also a game-scale scene still and GIF using the existing villager_a/b/c and hunter characters as stand-ins. In the GIF: typing dots, then the chat line \"오늘 생선 최고!\", a snowball thrown on an arc that splats, the hit villager huffs and sulks, the thrower laughs, plus music notes, zzz, hearts and sweat drops.",
+ "generator_scripts": [
+  "/home/user/nurient/frost-village/tools/fx/gen_emotes.py",
+  "/home/user/nurient/frost-village/tools/fx/emote_art.py",
+  "/home/user/nurient/frost-village/tools/fx/emote_bubbles.py",
+  "/home/user/nurient/frost-village/tools/fx/emote_fx.py",
+  "/home/user/nurient/frost-village/tools/fx/emote_check.py"
+ ],
+ "manifests": [
+  "/home/user/nurient/frost-village/assets/emotes/manifest.json"
+ ],
+ "keys": [
+  "emote_heart",
+  "emote_love",
+  "emote_laugh",
+  "emote_exclaim",
+  "emote_question",
+  "emote_anger",
+  "emote_sweat",
+  "emote_music",
+  "emote_zzz",
+  "emote_idea",
+  "emote_sparkle",
+  "emote_cold",
+  "emote_tear",
+  "emote_dots",
+  "emote_star",
+  "emote_fish",
+  "emote_bread",
+  "emote_wave",
+  "emote_thumbs",
+  "emote_snowball",
+  "ui_emote_bubble",
+  "ui_chat_bubble",
+  "ui_chat_tail",
+  "fx_snowball",
+  "fx_snow_splat",
+  "fx_music_notes",
+  "fx_hearts",
+  "fx_anger_puff",
+  "fx_sweat_drops",
+  "fx_zzz (extra)",
+  "atlas: emotes (frames also include emote_dots_a0..a2)",
+  "image: ui_chat_bubble"
+ ],
+ "payload_mb": 0.29,
+ "per_key_anims": "Emotes are static 64x64 sprites (kind \"emote\", anchor [0.5,0.5]), except emote_dots, which has a sprite anim `typing`: frames [emote_dots_a0, emote_dots_a1, emote_dots_a2, emote_dots] at 6 fps, repeat -1. Assets.finalize creates it automatically as `spr:emote_dots:typing`.\n\nSpritesheets (horizontal strips; the anim key is the sheet key; all NORMAL blend):\n- fx_snow_splat: 112x112, 10 frames, 24 fps, repeat 0, anchor [0.5,0.45] = impact point.\n- fx_music_notes: 96x128, 16 frames, 12 fps, repeat -1 (seamless), anchor [0.5,0.9] = lute / head side.\n- fx_hearts: 96x128, 16 frames, 16 fps, repeat 0, anchor [0.5,0.9] = head top.\n- fx_anger_puff: 144x96, 12 frames, 18 fps, repeat 0, anchor [0.5,0.85] = head top (the vein appears about 54 px above it).\n- fx_sweat_drops: 112x96, 12 frames, 18 fps, repeat 0, anchor [0.5,0.7] = head top.\n- fx_zzz (extra): 96x128, 18 frames, 8 fps, repeat -1, anchor [0.35,0.92] = head top; Z shapes drift up-right, so use flipX to drift up-left.\n\nThe one-shot sheets already show the effect on frame 0; only the last frame may be blank.",
+ "previews": [
+  "/home/user/nurient/frost-village/docs/previews/emotes_sheet.png",
+  "/home/user/nurient/frost-village/docs/previews/emotes_scene.png",
+  "/home/user/nurient/frost-village/docs/previews/emotes_scene.gif",
+  "/home/user/nurient/frost-village/docs/previews/emotes_fx_snow_splat.gif",
+  "/home/user/nurient/frost-village/docs/previews/emotes_fx_music_notes.gif",
+  "/home/user/nurient/frost-village/docs/previews/emotes_fx_hearts.gif",
+  "/home/user/nurient/frost-village/docs/previews/emotes_fx_anger_puff.gif",
+  "/home/user/nurient/frost-village/docs/previews/emotes_fx_sweat_drops.gif",
+  "/home/user/nurient/frost-village/docs/previews/emotes_fx_zzz.gif"
+ ],
+ "contract_gaps": [
+  "Not loaded yet: src/core/Assets.js only lists the 6 base fragments. Add 'emotes' to FRAGMENTS so assets/emotes/manifest.json is read. Until then every key falls back to a placeholder.",
+  "emote_sweat is drawn as a face (^^; awkward smile with a big sweat drop) rather than a lone drop, because it reads better and differs clearly from the drop shapes. The flying drops are in fx_sweat_drops.",
+  "emote_tear is a crying face (worried brows, teary eyes, tears) rather than a single drop, so it does not look like sweat.",
+  "ui_chat_bubble is a standalone image (images[] plus a sprites entry with `image`), not an atlas frame, because Phaser NineSlice must not use a trimmed atlas frame. ui_chat_tail and ui_emote_bubble are in the trimmed `emotes` atlas; their anchors refer to the untrimmed frame, as in the other atlases.",
+  "ui_emote_bubble frame is 92x106 (bubble about 81 px across, tail tip at y 97.5, anchor [0.5,0.9198]). The contract says roughly 84x84 plus tail.",
+  "Frame sizes the contract left open: fx_snow_splat 112x112, fx_anger_puff 144x96, fx_sweat_drops 112x96, notes and hearts 96x128.",
+  "A few emotes are drawn up to about 7% smaller so nothing is clipped at the 64 px frame edge: love, laugh and sweat at 0.97, music and idea at 0.985, thumbs about 0.95, wave about 0.93. The rest are full size.",
+  "Extras beyond the contract: fx_zzz loop; atlas frames emote_dots_a0..a2 with the sprites.emote_dots.anims.typing anim; extra manifest fields (conventions, contentCenter, contentRadius, minSize, contentInset, bodyBottomInset, attachTo, attachY, tip). The game ignores unknown fields."
+ ],
+ "regenerate": "python3 frost-village/tools/fx/gen_emotes.py\nBuilds everything in about 25 s, then runs emote_check.py and exits 0 if OK. Needs Python 3 with numpy and Pillow (imagequant optional, used for the palette PNG strips); no Blender.\n\nOptions:\n- --no-gif: skip the preview GIFs.\n- --only emote_laugh,fx_hearts: write zoomed scratch previews to tools/fx/_cache/emotes/ (gitignored) without touching the assets.\n\nCheck only: python3 frost-village/tools/fx/emote_check.py\n\nImports tools/fx/fxlib.py, tools/fx/gen_fx.py and tools/pack_utils.py read-only. The scene preview also reads assets/characters/char_villager_*.json/.png and assets/ground/ground_{snow,plaza}.png read-only. Korean preview text uses the system WenQuanYi font if present (Malgun Gothic or AppleSDGothicNeo on PC/Mac); otherwise it falls back to English.",
+ "notes_for_integrator": "The manifest's `conventions` block holds the same recipes as below. Recommended sizes are in world px at camera zoom 1.2.\n\n1. Loading: add 'emotes' to FRAGMENTS in src/core/Assets.js. Anims are then created automatically: spritesheet anims use the sheet key; the typing dots are 'spr:emote_dots:typing'.\n\n2. Emote bubble over a villager:\n   - Head point H = villager anchor + (0, headTop - 4) * charScale.\n   - bubble = Assets.image(scene, H.x, H.y, 'ui_emote_bubble').setScale(0.75). Its anchor is the tail tip.\n   - emote = Assets.image(scene, H.x, H.y + (-54.5 * 0.75), key).setScale(0.75). contentCenter is [0, -54.5] at scale 1.\n   - Put both in a container and pop it: scale 0 -> 1.15 -> 1 over about 200 ms, hold 1.5-2.5 s, then fade.\n   - Floating emotes without a bubble: scale about 0.7 with a small bob.\n   - Give bubbles a high depth so the y-sort never puts them behind other villagers.\n\n3. Speech bubble (tail tip at head point P):\n   - n = Assets.nine('ui_chat_bubble') (margins 22/22/22/30).\n   - body = scene.add.nineslice(x, y, n.tex, n.frame, w, h, n.l, n.r, n.t, n.b).setOrigin(0.5, 1), with y = P.y - 5 and x = P.x - dx.\n   - tail = Assets.image(scene, x + dx, y - 20, 'ui_chat_tail'). Its anchor is [0.5, 0] at the join; draw it after the body. The tail tip is then exactly at P.\n   - Minimum size 80x56. Keep |dx| <= w/2 - 36.\n   - Text: #2B2F3A, about 20 px, centred at (x, y - h + 8 + (h - 26) / 2). Content inset is l12 r12 t8 b18; the bottom ~10 px of the frame is drop shadow.\n   - Emote inside a chat bubble: scale about 0.55, about 18 px left of the text start.\n   - To scale a whole speech bubble, scale a container. If you scale the parts separately, the tail offset (-20) must scale too.\n   - The seamless join relies on exact pixels. If tools/build/webp_assets.py (another agent's new script) converts assets to lossy WebP, keep ui_chat_bubble.png and emotes.png lossless or near-lossless, or a faint seam may appear at the tail neck.\n\n4. Snowball fight:\n   - Fly 'fx_snowball' (about 22 px) on a parabola (0.35-0.5 s, peak about 60 px) with a soft ground ellipse under it.\n   - Do not rotate it; the lighting is baked from the upper-left.\n   - On arrival, play the 'fx_snow_splat' sprite at the hit point (target anchor + about (0, -40..-58)) with origin [0.5, 0.45], destroy it on animationcomplete, and play the target's hit anim.\n   - Then the target can use fx_anger_puff (head top, origin [0.5, 0.85]) followed by an emote_anger bubble, or emote_laugh.\n   - Avoid showing the anger puff and the anger bubble at the same time: both contain the red vein.\n\n5. Other mappings:\n   - Bard: fx_music_notes looping near the lute (anchor + about (14, -50)).\n   - Bench nap: fx_zzz at the head top (flipX for the other side), or a static emote_zzz bubble.\n   - Chief greeting: emote_wave or emote_heart bubble, or fx_hearts.\n   - Startled or nervous: fx_sweat_drops plus an emote_sweat or emote_exclaim bubble.\n   - Typing: the 'spr:emote_dots:typing' anim inside an 80-100 x 56 chat bubble.\n   - Customers: emote_fish or emote_bread.\n   - Area unlock: emote_sparkle or emote_star.\n\n6. Known limitations:\n   - Scene previews use the old villager_a/b/c and hunter atlases as stand-ins; the new vil_* NPCs were not available yet.\n   - The scratch Phaser test lives only in my scratchpad and was not committed.\n   - No game code was touched."
+}

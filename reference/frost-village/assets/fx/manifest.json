@@ -1,0 +1,380 @@
+{
+ "version": 1,
+ "generator": "tools/fx/gen_fx.py",
+ "conventions": {
+  "particles": "White/greyscale (tint in game) except fx_heart, fx_flame, fx_coin. Frames are untrimmed squares.",
+  "blend": "All sheets are NORMAL-blend artwork (saturated cores + warm/cool rims) so they read on white snow, where ADD is invisible. fx_fire / fx_sparkle / fx_glow also look fine with ADD over dark ground.",
+  "sheets": "Frames left->right, then wrapped into rows so no sheet is wider than 2048 px (GPUs with a 2048 texture limit). Phaser anim key = sheet key."
+ },
+ "atlases": [
+  {
+   "key": "fx_particles",
+   "png": "fx/fx_particles.png",
+   "json": "fx/fx_particles.json"
+  }
+ ],
+ "spritesheets": [
+  {
+   "key": "fx_poof",
+   "png": "fx/fx_poof.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frameCount": 12,
+   "fps": 24,
+   "repeat": 0,
+   "anchor": [
+    0.5,
+    0.6
+   ],
+   "blend": "NORMAL",
+   "notes": "Snowy cloud burst for unlock / spawn / despawn. Anchor = ground point."
+  },
+  {
+   "key": "fx_splash",
+   "png": "fx/fx_splash.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frameCount": 12,
+   "fps": 24,
+   "repeat": 0,
+   "anchor": [
+    0.5,
+    0.74
+   ],
+   "blend": "NORMAL",
+   "notes": "Water splash; anchor = water surface point (ripples are iso 2:1)."
+  },
+  {
+   "key": "fx_hit",
+   "png": "fx/fx_hit.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frameCount": 8,
+   "fps": 30,
+   "repeat": 0,
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "blend": "NORMAL",
+   "notes": "Cartoon impact star; anchor = impact point."
+  },
+  {
+   "key": "fx_levelup",
+   "png": "fx/fx_levelup.png",
+   "frameWidth": 192,
+   "frameHeight": 192,
+   "frameCount": 16,
+   "fps": 20,
+   "repeat": 0,
+   "anchor": [
+    0.5,
+    0.8
+   ],
+   "blend": "NORMAL",
+   "notes": "Rising golden rings + column + sparkles; anchor = feet."
+  },
+  {
+   "key": "fx_unlock",
+   "png": "fx/fx_unlock.png",
+   "frameWidth": 192,
+   "frameHeight": 192,
+   "frameCount": 14,
+   "fps": 24,
+   "repeat": 0,
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "blend": "NORMAL",
+   "notes": "Burst ring + rotating rays + thrown stars; anchor = centre."
+  },
+  {
+   "key": "fx_fire",
+   "png": "fx/fx_fire.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frameCount": 12,
+   "fps": 14,
+   "repeat": -1,
+   "anchor": [
+    0.5,
+    0.88
+   ],
+   "blend": "NORMAL",
+   "notes": "Seamless fire loop; anchor = base of the flames."
+  },
+  {
+   "key": "fx_smoke_puff",
+   "png": "fx/fx_smoke_puff.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frameCount": 12,
+   "fps": 14,
+   "repeat": 0,
+   "anchor": [
+    0.5,
+    0.86
+   ],
+   "blend": "NORMAL",
+   "notes": "One chimney puff rising ~70px; anchor = chimney top. Spawn every ~0.6 s."
+  },
+  {
+   "key": "fx_coin_spin",
+   "png": "fx/fx_coin_spin.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frameCount": 10,
+   "fps": 14,
+   "repeat": -1,
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "blend": "NORMAL",
+   "notes": "Coin turning about its vertical axis (loop)."
+  },
+  {
+   "key": "fx_sparkle",
+   "png": "fx/fx_sparkle.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frameCount": 12,
+   "fps": 12,
+   "repeat": -1,
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "blend": "NORMAL",
+   "notes": "Twinkle loop for \"ready\" highlights."
+  }
+ ],
+ "sprites": {
+  "fx_spark": {
+   "atlas": "fx_particles",
+   "frame": "fx_spark",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Four-point glint. Tint gold/white."
+  },
+  "fx_star": {
+   "atlas": "fx_particles",
+   "frame": "fx_star",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Rounded 5-point star with grey rim (reads on snow when tinted)."
+  },
+  "fx_glow": {
+   "atlas": "fx_particles",
+   "frame": "fx_glow",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    128,
+    128
+   ],
+   "notes": "Soft round gaussian glow (fills ~70% of the frame)."
+  },
+  "fx_smoke": {
+   "atlas": "fx_particles",
+   "frame": "fx_smoke",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    128,
+    128
+   ],
+   "notes": "Cotton-ball smoke puff with feathered rim."
+  },
+  "fx_snowflake": {
+   "atlas": "fx_particles",
+   "frame": "fx_snowflake",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "6-arm snowflake with faint grey edge + halo."
+  },
+  "fx_chip_wood": {
+   "atlas": "fx_particles",
+   "frame": "fx_chip_wood",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    48,
+    48
+   ],
+   "notes": "Wood splinter (tint brown)."
+  },
+  "fx_chip_rock": {
+   "atlas": "fx_particles",
+   "frame": "fx_chip_rock",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    48,
+    48
+   ],
+   "notes": "Faceted rock chip (tint grey / ore orange)."
+  },
+  "fx_droplet": {
+   "atlas": "fx_particles",
+   "frame": "fx_droplet",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    48,
+    48
+   ],
+   "notes": "Teardrop pointing UP (rotate along velocity)."
+  },
+  "fx_wheat_bit": {
+   "atlas": "fx_particles",
+   "frame": "fx_wheat_bit",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    48,
+    48
+   ],
+   "notes": "Wheat grain with awn (tint wheat yellow)."
+  },
+  "fx_heart": {
+   "atlas": "fx_particles",
+   "frame": "fx_heart",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": false,
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Pink heart, colours baked (do not tint)."
+  },
+  "fx_ring": {
+   "atlas": "fx_particles",
+   "frame": "fx_ring",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    128,
+    128
+   ],
+   "notes": "Thin soft ring, radius 0.40 of the frame."
+  },
+  "fx_flame": {
+   "atlas": "fx_particles",
+   "frame": "fx_flame",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": false,
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Orange flame tongue, colours baked; base at the bottom."
+  },
+  "fx_coin": {
+   "atlas": "fx_particles",
+   "frame": "fx_coin",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": false,
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Gold coin with embossed star, colours baked."
+  },
+  "fx_leaf": {
+   "atlas": "fx_particles",
+   "frame": "fx_leaf",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    48,
+    48
+   ],
+   "notes": "Leaf with midrib (tint green)."
+  },
+  "fx_dust": {
+   "atlas": "fx_particles",
+   "frame": "fx_dust",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "tintable": true,
+   "frameSize": [
+    96,
+    96
+   ],
+   "notes": "Soft low dust puff (lighter than fx_smoke)."
+  }
+ }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "서리마을 개척기 · Frost Village",
+  "short_name": "서리마을",
+  "description": "눈 덮인 개척지에서 자원을 모으고, 가공하고, 팔아서 마을을 키우는 캐주얼 게임",
+  "lang": "ko",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#dbe6f2",
+  "theme_color": "#cfdcec",
+  "icons": [
+    { "src": "assets/characters/portrait_player_512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/characters/portrait_player.png", "sizes": "128x128", "type": "image/png", "purpose": "any" }
+  ]
+}

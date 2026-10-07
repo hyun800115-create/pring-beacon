@@ -1,0 +1,16 @@
+{
+  "name": "frost-village-build",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Build tools for Frost Village (artifact bundle). Not needed to play the game.",
+  "type": "module",
+  "scripts": {
+    "artifact": "node build_artifact.mjs",
+    "artifact:webp": "node build_artifact.mjs --webp",
+    "artifact:inline": "node build_artifact.mjs --inline --webp",
+    "test": "node test_deploy.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.12"
+  }
+}

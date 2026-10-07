@@ -1,0 +1,1169 @@
+{
+ "reviews": [
+  {
+   "lens": "gameplay",
+   "overall": "The game can't be finished by honest play yet. The `hire_miner` pad sits inside the `mine_entrance` collision circle, so step 8 of 11 can never be paid. Separately, the customer market dies around minute 9–10: departing villagers never despawn, pile up at the map's bottom edge, and trap newly spawned customers. On top of that, two independent softlocks are easy to hit naturally: a customer who got part of their order waits forever for that one food, and raw items in a full bag can't go anywhere. Each of them stopped every honest full run I made. I measured with a bot that steers only via `__FV.setInput`, running a fixed 60 fps simulation about 20–30x faster than real time. With those bugs worked around in memory only (no files edited), pacing is roughly on target: the optimal bot completes the village in 13.9 min, and a casual-human model (about 1.2 s pause between actions, 85% joystick) takes 22.1 min, so I estimate 25–30 min for a real first-timer. Beats come every 0.5–1.8 min, and there are no dead moments: the player always has hauling to do. The design weaknesses are that the player carries 100% of finished goods forever (about 85% of playtime is courier work, with no idle income); backpack/boots upgrades make you slower to finish (12.1 min without vs 13.9 min with); and three of the five second-worker pads add zero output. The tutorial arrow is good for the first 30 s, but afterwards it can point at impossible actions, and an arrow-only player got stuck for 27+ minutes. I propose concrete balance.js numbers below (v1): they keep a casual session around 20 min, keep the longest gap between beats near 1.7 min for the optimal bot, and make upgrades pay back.",
+   "n": 11
+  },
+  {
+   "lens": "visual",
+   "overall": "The build looks close to the reference: the palette matches (blue sea with fish, terracotta plaza, log palisades, white-parka chief, item towers), and the core art pieces hold together. The basics are solid. The 8-direction mirroring is clean (per-frame body centroids sit within ±3 px of the anchor, so W/SW/NW don't jump sideways), feet sit on the soft shadows, and depth sorting against fences, the grill, trees, huts and the lodge is correct. The biggest first-impression problems are three. First, the carried tower hides the chief's face whenever he walks toward the camera, which happens on the very first trip from the net to the grill. Second, the canvas always renders at 720 px wide, so on 3x phones everything, text included, is upscaled 1.8x and looks soft. Third, the opening frame is weak: the view is clamped to the top, nearly half the screen is empty floor, and the counter and its queue are cut off at the right edge. Next in importance: integration bugs a player will notice. The fisherman's splashes land on snow and on the hut roof. Customer bubbles stack so the front customer's request is the one hidden. The market, trade post and stations never fade, so the chief can vanish behind them. Customers come in only 3 variants (one looks like Santa). Further down the list are the trodden paths, which look like glass tubes, particles that disappear on white snow, a title hero who floats in mid-air, no landscape fallback, and no safe-area handling for the planned Capacitor app. I prototyped tower placements at runtime (no source edits). Putting the tower on the head for all directions (C_all) reads best: the face is always visible, the count stays readable and nothing jumps between directions. A side/behind carry (A2) is the alternative if the arms-at-chest pose must stay.",
+   "n": 15
+  },
+  {
+   "lens": "robust",
+   "overall": "The basics hold up well in real browser runs. The game starts and plays when localStorage throws on every access. Coins and partial payments are conserved when the page reloads during an unlock payment. Six in-game resets in a row leave listener, timer, texture and sound counts unchanged. Multi-touch ownership, releasing outside the canvas, touchcancel, window blur with a key held and 40 rapid taps all behave. The GPU side is cheap: 4–6 draw calls per frame, and no texture uploads except while a pad's cost text changes. There were 0 console warnings. Four serious problems are confirmed, with the details below. (1) Every customer who buys something never despawns: their last exit waypoint is outside the walkable area. In a 12-minute soak, 132 accumulated and Game update time grew 7×. With 600 injected it reaches 35 ms per frame, so long sessions will grind down. (2) Saves are never validated. Some corrupted fields brick the game with a blank screen that survives every reload; others set coins to NaN or stop the chief moving for good. Any exception inside Phaser's loop freezes the game with no error shown. (3) While the window is blurred but still visible, sound objects pile up (~12/s) and play all at once when focus returns. (4) Payment state and designer edits can cause softlocks: upgrades leave stale \"paid\" credit after a reload, and a cost of 0 or a lowered cost never completes. Absolute FPS here is not representative: SwiftShader software rendering on 4 shared cores gave 2–4 FPS rendered and 30–50 FPS logic-only. I relied on per-frame logic times and object counts instead.",
+   "n": 22
+  },
+  {
+   "lens": "deploy",
+   "overall": "The game deploys cleanly on both paths. GitHub Pages: no absolute URLs anywhere (index.html, manifest.webmanifest, src, all six asset manifests). The repo root was served under /nurient/ and /nurient/frost-village was opened, including the 301 to the trailing slash. The full loop ran with 0 page or console errors, 0 failed requests, and progress persisted across a reload. The repo is public and Pages is already on, but main only contains privacy.html, so the game appears at https://hyun800115-create.github.io/nurient/frost-village/ only after the branch is merged.\n\nArtifact: I wrote tools/build/build_artifact.mjs. It produces dist/artifact/: a body-only index.html, one esbuild IIFE/ES2019 game.js (32 modules, 0.14 MB), lib/ and assets/. That is 168 files and 14.8 MB. In host emulation it PASSES in four setups: an opaque-origin sandbox iframe with CSP plus CORS, an allow-same-origin frame, standalone, and raw. It boots, renders real art, unlocks audio on the tap, plays the fish→grill→counter→coins loop, has no console errors, and copes with localStorage throwing.\n\nWorst case: an opaque-origin frame whose files come without CORS. There every Phaser XHR is blocked, and then a src bug crashes the Title (finding 1). For that case I added a tested fallback, --inline. It embeds all assets in script packs: 7 files, 12 requests, no XHR, and it PASSES in the strictest emulation. It also runs by double-click from file://.\n\nPayload: a first visit downloads about 11.9 MB, 64% of it PNG. The optional --webp build is tested and looks the same in side-by-side shots, and it cuts this to 8.8 MB. Deferring the in-game music and ambience would take about 2 MB more off the time to the title screen.\n\nI wrote a short Korean README for the designer. No src/, assets/ or index.html was edited. dist/ is still gitignored by frost-village/.gitignore (commit 3b95bba); that is the lead's call.",
+   "n": 8
+  }
+ ],
+ "findings": [
+  {
+   "lens": "gameplay",
+   "id": "GP-01",
+   "title": "hire_miner pad is unreachable: it sits inside the mine_entrance obstacle, so the village can never be completed",
+   "severity": "critical",
+   "area": "progression / world layout",
+   "repro": "node frost-village/tools/test/review_gameplay_pads.mjs: it walks the unlock order with Progression.completeStep, then tries to joystick onto each pad. Honest play: node tools/test/review_gameplay_sim.mjs --name smart --policy smart --upg greedy --minutes 60 (the bot reaches hire_miner with 516 coins at t≈600 s and stands still for the rest of the run).",
+   "evidence": "pads check: hire_miner {x:430,y:1791,triggerR:69,centreBlocked:true,standableFrac:0,reachedByWalking:false,closestApproach:232,overlaps:[mine_entrance@430,1782 r120]}. Every other main pad is reachable (standableFrac 0.67–1.0). In the honest run, coins stayed at 516 from 600 s to 3480 s with task=pay:hire_miner. Screenshot /tmp/fv_review/gameplay/pad_hire_miner_area.jpg: the '광부 고용' label floats over the tunnel and the pad diamond is hidden under the art. hire2_miner (530,1805) is only 20% standable. workerHome.miner (421,1832) and the index-1 miner home (461,1852) are also inside the obstacle, so an idle miner presses into the cliff.",
+   "suggested_fix": "world.js pads.hire_miner: move to P('mine', 3.6, 4.1) ≈ (778,1889). That spot is 100% standable, and every later run in this review used it as a runtime override. Alternatively move the mine_entrance decor (Z('mine',-2.6,2.6)) or shrink DECOR_R.mine_entrance (120) in Game.js. Also move workerHome.miner and hire2_miner out of that radius.",
+   "files": [
+    "frost-village/src/data/world.js",
+    "frost-village/src/scenes/Game.js"
+   ]
+  },
+  {
+   "lens": "gameplay",
+   "id": "GP-02",
+   "title": "Departing customers never despawn: the market stops selling after ~9 min, and CPU cost and object count grow without limit",
+   "severity": "critical",
+   "area": "customers / performance",
+   "repro": "node frost-village/tools/test/review_gameplay_market.mjs 15 (keeps 30 grilled fish on the shelf as test setup and lets customers run). Compare: node tools/test/review_gameplay_market.mjs 8 '{\"market\":{\"entry\":[[990,2570],[990,1260],[1080,1080]],\"exit\":[[1080,1080],[990,1260],[990,2570]]}}' _fixed",
+   "evidence": "Cause: the last exit waypoint (990,2660) is below Collision.resolve's clamp y ≤ H-40 = 2580, and the 'leave' state needs to come within 30 px of it, so a departing customer never despawns. New customers spawn at entry[0] (990,2660→2580), right inside the crowd. Per minute: served 17,19,18,19,17,20,17,11,9,0,0,0,3,7,0. Leaving customers 17→157, agents 22→163, display objects 602→1172, ms/frame 0.28→2.87 (desktop CPU, headless). After ~9 min the front customer is stuck at the spawn point (dSlot≈1776 px). Screenshot /tmp/fv_review/gameplay/market_leaving_crowd.jpg shows ~150 villagers in front of the chief lodge. In the honest smart2 run the shelf stayed frozen at 80 items from 600 s onward. With a reachable exit (y=2570), leaving stays ≤6, ms/frame ~0.1, and 17–19 customers/min are served steadily (market_leaving_crowd_fixed.jpg). The phone frame-time impact is my extrapolation, not measured.",
+   "suggested_fix": "Set world.js market.entry[0] and exit[last] to y ≤ 2570. In Seller.js Customer 'leave', also despawn when the path is empty or the customer is below y≈2450 and off-camera, or after a stuck timeout. Consider spawning customers off-screen but closer (e.g. (990,1700)) to cut the ~13 s walk.",
+   "files": [
+    "frost-village/src/data/world.js",
+    "frost-village/src/entities/Seller.js",
+    "frost-village/src/systems/Collision.js"
+   ]
+  },
+  {
+   "lens": "gameplay",
+   "id": "GP-03",
+   "title": "Partly served customer blocks the queue forever; with a bag of unsellable food this becomes a hard softlock",
+   "severity": "high",
+   "area": "customers / softlock",
+   "repro": "Happened naturally in both honest full runs (bugs GP-01/02 worked around): node tools/test/review_gameplay_sim.mjs --name smart3 --upg greedy --minutes 45 --after 8 --world '{\"pads\":{\"hire_miner\":{\"x\":778,\"y\":1889}},\"market\":{\"entry\":[[990,2570],[990,1260],[1080,1080]],\"exit\":[[1080,1080],[990,1260],[990,2570]]}}' ; and the same with --name noupg --upg none. Market.update only lets the front customer switch food when got===0 && need===want.count.",
+   "evidence": "smart3 (just after village complete, ~15.5 min): front customer wants meat x4, got 3, need 1; shelf fish 40 / bread 40 / meat 0 (maxPerType=40 is hard-coded); smokehouse full at 30/36 meat; the player's bag (cap 20) holds 11 fish + 9 bread, so no meat can be picked up. Coins frozen at 636 for the rest of the run. noupg (~9 min): front customer wants fish x2, got 1; shelf bread 40, fish 0; bag holds 6 bread at cap 6; coins frozen at 476 for 36 simulated minutes. Screenshot /tmp/fv_review/gameplay/smart3_999_end.jpg. Recoverable only by reloading the page, because the queue isn't saved.",
+   "suggested_fix": "In Seller.js Market.update, let the front customer switch to any stocked food whenever theirs runs out (drop the got===0 condition), or complete them with partial payment after ~3 s. Make maxPerType a balance.js value and raise it. Add a universal sink (see GP-04). I applied the first fix in memory (--fixmarket) for all pacing runs, and no further stalls occurred.",
+   "files": [
+    "frost-village/src/entities/Seller.js"
+   ]
+  },
+  {
+   "lens": "gameplay",
+   "id": "GP-04",
+   "title": "Raw-item softlock: a bag full of raw items while that station's input AND output are full; persists after reload",
+   "severity": "high",
+   "area": "stations / softlock",
+   "repro": "node frost-village/tools/test/review_gameplay_softlock.mjs: hire the fisherman (30 coins via give), walk off for 150 s (the grill fills to 30 in / 36 out), stand at the net (auto-gather fills the bag with 6 raw fish), go to the grill input pad ('가득 찼어요!'), go to the output pad ('가방이 가득 찼어요!'), wait 60 s, save, reload.",
+   "evidence": "After reload: bag = 6× item_fish_raw, grill {in:30,out:36,working:false} → 'SOFTLOCK REPRODUCED (persists across reload)'. A station with a full output stops processing, so its input never frees, and nothing else accepts raw items (market = foods, trade = goods, no discard). All 5 chains share this structure. Auto-gather fires whenever the chief stands still within 78 px of a resource, and the net sits right next to the grill input, so it's easy to trigger by accident. Screenshots /tmp/fv_review/gameplay/softlock_2_grill_output_full_bag_full.jpg, softlock_3_after_reload.jpg.",
+   "suggested_fix": "Add a universal sink: the trade-post merchant buys anything (raw items for 1 coin, food at half price), or add a trash pad near the plaza. Also skip auto-gathering a resource when its station's input and output are both full.",
+   "files": [
+    "frost-village/src/entities/Station.js",
+    "frost-village/src/entities/Seller.js",
+    "frost-village/src/entities/Player.js"
+   ]
+  },
+  {
+   "lens": "gameplay",
+   "id": "GP-05",
+   "title": "The player must carry every finished good forever; no idle income, ~85% of playtime is courier work",
+   "severity": "high",
+   "area": "core loop / genre fit",
+   "repro": "Any honest run, e.g. node tools/test/review_gameplay_sim.mjs --name e1 --upg greedy --minutes 40 --after 10 --fixmarket --world '<GP-01/02 override>'. Look at fin.taskTime in /tmp/fv_review/gameplay/e1_greedy.json.",
+   "evidence": "e1_greedy (24 min): collect 550 s + sell 666 s out of 1440 s (85%); hand-gathering 31 s in total. smart3 before completion: collect+sell 780 of 840 s. Workers only carry raw → station input (Worker.js 'deliver' → station.inPad). With the player away, every chain stalls within ~1.5–2 min (smart2 at 600 s: grill/sawmill/bakery/smelter all 30/36). The trip from market shelf (1404,835) to smelter output (723,1934) is ~1100 px, about 5–6 s one way at base speed. My Mini Mart and Idle Lumber Inc hand selling and carrying to hired helpers mid-game, and that's the 'idle' payoff. Here the village never earns on its own, so late-game play is a long courier loop.",
+   "suggested_fix": "Add a porter/cart hire per zone (after its first worker) that moves station output to its seller, plus a cashier at the market. The hire2_* pads could become these porters. Offline earnings can come later. Without code changes, balance.js can only soften this, e.g. faster upgrades.speed.",
+   "files": [
+    "frost-village/src/entities/Worker.js",
+    "frost-village/src/systems/Progression.js"
+   ]
+  },
+  {
+   "lens": "visual",
+   "id": "V1",
+   "title": "Carried item tower covers the chief's (and workers') face in S/SE/SW; first carry trip is SE-facing",
+   "severity": "high",
+   "area": "characters / carry tower",
+   "repro": "node tools/test/review_visual_run.mjs /tmp/fv_review/visual/scen/dirs.mjs --vp 430x932 --dpr 3 --fresh (FV_PRINT=1 prints bounds). It renders still Characters in all 8 dirs, empty / 6 items / 12 items. Variants are runtime-patched carryPoints via FV_VARIANTS JSON: A_side, B_back, C_overhead, C_all, A2_side.",
+   "evidence": "Measured stack bounds relative to the anchor, 6x item_fish_cooked at carryScale 0.62. S: x -22..+23, y -92..-20 (drawn in FRONT). SE: x -10..+35, y -95..-23. Head top is -81..-83. So in S the head and face are 100% covered and in SE the face is covered. With 12 items the tower rises above the head but still covers the face. Workers share identical carryPoints, so fishermen and farmers are hidden the same way (wk_fisher_4.jpg, 11_fisherman_working.jpg). Screens: /tmp/fv_review/visual/dirs_player_current.jpg, carry_compare.jpg (current | A_side | B_back | C_overhead), rows_C_all.jpg, rows_A2_side.jpg.",
+   "suggested_fix": "Recommended (C_all): balance the tower on the head in every direction. carryPoint ~ S [0,-78,false], SE [4,-79,false], E [6,-80,false], NE [4,-80,false], N [0,-80,false]; better, derive dy from each character's headTop (+3 px) so hats (farmer -86, villager_b -90) also work. The face then stays visible, the count is readable at any size, turning never jumps, and it echoes the reference's tall salmon tower. In Character.sync, lerp the carry offset over ~100 ms on direction changes. Follow-up: re-render carry_idle/carry_walk with arms raised to touch the bottom item (Blender pipeline is re-runnable). Alternative if the chest pose must stay (A2): S [25,-24,false], SE [-24,-30,false] (far side), E [-14,-46,true]. Avoid pure back-carry (B): 1–4 items vanish behind the head."
+  },
+  {
+   "lens": "visual",
+   "id": "V2",
+   "title": "Canvas renders at 720 px wide regardless of devicePixelRatio, so everything is soft on modern phones",
+   "severity": "high",
+   "area": "rendering / scaling",
+   "repro": "node tools/test/review_visual_run.mjs /tmp/fv_review/visual/scen/crisp.mjs --vp 430x932 --dpr 3 --fresh; compare 1:1 crops crisp_3_hud.jpg / crisp_3_char.jpg",
+   "evidence": "canvas.width/height = 720x1561 while the device has 1290x2796 px (430x932 CSS @3x), so the browser upscales 1.79x. Text resolution:2 doesn't help because the canvas itself is low-res. HUD digits, Korean objective text and sprite edges are visibly blurry at 1:1. A typical Android phone (412 CSS @2.625 = 1080 px) gets a 1.5x upscale; only DPR-2 iPhones (1.08x) look sharp.",
+   "suggested_fix": "Render at device resolution. Set the game size to round(720*k) x round(H*k), with k = clamp(cssWidth*dpr/720, 1, 2). Multiply the Game camera zoom by k and give the UI and Title cameras setZoom(k) with origin (0,0), so all layout code keeps its 720-wide logical coordinates (UI.layout divides gameSize by k). Recompute k on resize. Cap k at ~2 for fill-rate."
+  },
+  {
+   "lens": "visual",
+   "id": "V3",
+   "title": "Opening frame is weak: camera clamped to the top, half the screen is empty floor, counter and queue cut off",
+   "severity": "high",
+   "area": "camera / first impression / layout",
+   "repro": "Fresh start at 390x844 (vp_390x844_2start.jpg, frame_current.jpg). Prototype: /tmp/fv_review/visual/scen/framing.mjs (frame_A_center_loop_z12.jpg, frame_B_center_loop_z135.jpg).",
+   "evidence": "Visible world height is 1558/1.2 = 1298 px and the camera target is player y 500, so the view clamps to world y=0. The chief sits at ~40% of screen height, the sea fills the top ~29%, and the bottom ~45% is bare plaza floor plus road. The market counter (x=1298) is outside the 635–1235 view: only its awning and the bubbles show at the right edge. The '어부 고용' hire label is clipped at the left edge. Centering the camera on the loop (≈1090,660) shows net, grill, counter, queue and cash pad together.",
+   "suggested_fix": "While the tutorial runs, frame the core loop instead of the player: add a camera lead or offset toward the counter, or focus on the net/grill/counter centroid until the first sale. Move market_counter inward (e.g. Z('plaza', 1.8, 3.8)) and the hire pad right, so the loop fits in one portrait screen. Put early decor on the empty plaza (crates/barrels, lamp posts, a central brazier or well). Consider zoom 1.3: characters are ~13% of screen width vs ~15% in the reference."
+  },
+  {
+   "lens": "robust",
+   "id": "R1",
+   "title": "Customers who bought food never despawn (exit waypoint is outside the world) → unbounded object/agent growth, O(n²) slowdown",
+   "severity": "high",
+   "area": "performance / unbounded growth (Seller.js Customer, world.js market.exit, Collision.js)",
+   "files": [
+    "/home/user/nurient/frost-village/src/data/world.js",
+    "/home/user/nurient/frost-village/src/entities/Seller.js",
+    "/home/user/nurient/frost-village/src/systems/Collision.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_soak.mjs",
+    "/home/user/nurient/frost-village/tools/test/review_robust_crowd.mjs"
+   ],
+   "repro": "node tools/test/review_robust_soak.mjs 720 --norender: unlockAll, then an in-page bot sells and collects for 12 min of game time. Sample __FV.scene.market.leaving every 30 s. Projection: node tools/test/review_robust_crowd.mjs injects 100/300/600 leaving customers and times the Game update. Root cause: world.js:68 exit ends at [990, 2660], but Collision.resolve clamps y ≤ H−40 = 2580 (Collision.js:74). Customer 'leave' (Seller.js:320-323) needs to get within 30 px of that point, so path.shift()/despawn() never happens.",
+   "evidence": "Soak (soak_norender_samples.json), 0→739 s of game time: market.leaving 0→132 (~11/min, linear). Every one was at y=2560–2580 with path.length 1. agents 16→148, children 676→1576 (Sprites 42→175; Images 611→1371 because each keeps its carried stack). Game scene update avg 0.57→3.87 ms; whole logic step 1.39→4.53 ms; heap after GC 9.98→11.51 MB. Injection (crowd.json), Game update avg/p95: 0 stuck 0.55/1.2 ms; 100: 2.76/6.7; 300: 10.57/17.3; 600: 35.2/58.6 ms. After 600 more frames all 600 were still stuck at y=2580. Screenshot: /tmp/fv_review/robust/crowd_600_stuck_customers.jpg (wall of customers at the south edge). The rendered soak shows the same trend (leaving 0→11 in ~80 s of game time).",
+   "suggested_fix": "Put the exit endpoint inside the walkable area (e.g. [990, 2560]). Also despawn when y > H−80, or after a leave timeout (e.g. 8 s) as a safety net. Optionally cap market.leaving and skip agent separation for agents that are off-screen."
+  },
+  {
+   "lens": "robust",
+   "id": "R2",
+   "title": "Save data is not validated: some corrupt fields brick the game permanently (blank screen on every reload), others silently break the session (NaN coins, immobile chief)",
+   "severity": "high",
+   "area": "save/load (Game.restore, Economy, Progression constructor, Placeholders)",
+   "files": [
+    "/home/user/nurient/frost-village/src/scenes/Game.js",
+    "/home/user/nurient/frost-village/src/systems/Economy.js",
+    "/home/user/nurient/frost-village/src/systems/Progression.js",
+    "/home/user/nurient/frost-village/src/core/Save.js",
+    "/home/user/nurient/frost-village/src/core/Placeholders.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_save_fast.mjs"
+   ],
+   "repro": "Set localStorage['frostVillage.save.v1'] and reload. Run all variants: node tools/test/review_robust_save_fast.mjs. (a) {\"v\":1,...,\"player\":{\"x\":900,\"y\":1150,\"stack\":{}}} → tap start. (b) stack: [\"item_fish_raw\",5,null]. (c) coins: \"abc\". (d) progress.up: {capacity:-1,speed:-1}, or \"x\", or 1.5. (e) market.cash: \"NaN\". (f) player.x: \"abc\".",
+   "evidence": "(a) pageerror 'TypeError: sv.player.stack.slice is not a function' at Game.restore (Game.js:721). The Game scene is stuck in CREATING (status 4), the UI never launches and the frame counter stops. After a full reload with the save still present it crashes the same way: a blank pale-blue screen forever (savefast_stackObject_after_reload.jpg). (b) 'TypeError: key.startsWith is not a function' at guessKind (Placeholders.js:397) → same permanent freeze. (c) Economy does Math.max(0, Math.floor('abc')) = NaN. The HUD shows 'NaN', collecting cash leaves coins NaN, and the save writes coins:null, so all coins are lost on the next load. (d) BALANCE values[-1 | 'x' | 1.5] is undefined, so player.speed is NaN, the position becomes NaN/NaN and the chief cannot move or gather (0 items in 240 frames). The bad 'up' values are saved back unchanged, so every session is broken. (e) CashPad.value stays NaN, so every customer payment vanishes for the session. (f) player.x becomes a string that grows by concatenation every frame ('abc1.13378…') and camera scrollX is NaN. Variants that are handled fine: invalid JSON, '', null, an array, v:0/v:2 (fresh start), negative coins, '250', null/off-world position, oversized stacks, stations.i 'abc'/1e9.",
+   "suggested_fix": "Add a sanitize step in Save.load. Use Number.isFinite and Math.floor for coins, cash and positions. Clamp upgrade levels to integers in 0..len-1. Require Array.isArray(stack), filter it to known item keys and cap it to capacity. Check typeof object for done/paid/up/stations/market, and keep only known item types in shelf stock. Wrap Game.create's restore in try/catch: on any exception, copy the raw save to 'frostVillage.save.v1.bad' and start fresh."
+  },
+  {
+   "lens": "robust",
+   "id": "R4",
+   "title": "While the window is blurred (game still visible and running), sfx pile up in a suspended AudioContext and play all at once when focus returns",
+   "severity": "high",
+   "area": "audio / platform (desktop window switching, any iframe embed)",
+   "files": [
+    "/home/user/nurient/frost-village/src/core/Audio.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_audio.mjs"
+   ],
+   "repro": "node tools/test/review_robust_audio.mjs only=blur: unlockAll, stand at the plaza, window.dispatchEvent(new Event('blur')), run 900 frames, then dispatch 'focus'. In real use this is clicking another window on desktop, or clicking the host page outside an embedded game iframe.",
+   "evidence": "Phaser keeps the loop running on blur (TimeStep.blur only changes delta smoothing) but suspends WebAudio (WebAudioSoundManager.onBlur → context.suspend()). Audio.play (Audio.js:36-56) keeps calling sound.play(); each WebAudioSound waits for 'complete', which never fires while suspended. Measured: before blur 3 sounds; after 900 blurred frames 189 sound objects, all isPlaying, ctx 'suspended'. 400 ms after focus, 46 were playing at once (a burst); it settled to 9 after 3 s. Growth is ~12 sound objects/s, i.e. ~7,000 after 10 minutes in a background window.",
+   "suggested_fix": "In Audio.play (and updateAmbience creation), return early when `this.sm.context && this.sm.context.state !== 'running'` or when `!this.game.hasFocus`. Alternatively set `audio: { … }` and pause the game loop on blur if that fits the design."
+  },
+  {
+   "lens": "gameplay",
+   "id": "GP-06",
+   "title": "Zone hint points at impossible actions when the bag is full (an arrow-following player is stuck for 27+ min)",
+   "severity": "medium",
+   "area": "tutorial / guidance",
+   "repro": "node frost-village/tools/test/review_gameplay_hintlock.mjs: open the forest, put a few logs in the sawmill, grab 6 grilled fish (bag full), follow the arrow. Or the pure arrow-follower: node tools/test/review_gameplay_sim.mjs --name arrow --policy arrow --minutes 30",
+   "evidence": "hintlock: bag '6/6 item_fish_cooked', objective obj_forest_3 '판자를 가져가세요', arrow at (750,1273) = sawmill output. The chief stands on it and only gets the '가방이 가득 찼어요!' toast. Screenshot /tmp/fv_review/gameplay/hintlock_sawmill_bag_full.jpg. In the arrow-follower run, `earned` froze at 240 from t=180 s to t=1800 s on obj_forest_3. Tutorial.zoneHint never checks p.room, and the *_1 'stand by the tree/rock/wheat' steps have the same problem.",
+   "suggested_fix": "In Tutorial.zoneHint, when p.room ≤ 0, point at where the carried items can go (market shelf, trade shelf or matching station input) with text like '먼저 구운 생선을 파세요'. Only show the *_1 / *_3 steps when room > 0.",
+   "files": [
+    "frost-village/src/systems/Tutorial.js",
+    "frost-village/src/data/strings.js"
+   ]
+  },
+  {
+   "lens": "gameplay",
+   "id": "GP-07",
+   "title": "Guidance gaps: no arrow after the tutorial, stale zone hints, upgrades never hinted, arrow over an unreachable pad",
+   "severity": "medium",
+   "area": "tutorial / first-time experience",
+   "repro": "Casual-model run: node tools/test/review_gameplay_sim.mjs --name e3 --upg greedy --think 1.2 --mag 0.85 --fixmarket --world '<GP-01/02 override>'. Inspect fin.noGuideRuns and the samples' obj/arrow fields in e3_casual.json.",
+   "evidence": "The first loop is well guided: first coin at 0:27–0:28, fisherman hired at 0:32–0:35. Then there's no arrow until coins ≥ 80: 46 s in the casual run, 20 s for the optimal bot. Only the text '다음 목표: 벌목장 (80 코인)' shows, without saying how to earn (keep emptying the grill the fisherman now fills). The arrow is visible 78–85% of the time. Zone hints last until the player personally sells that product once, so obj_hunt_1 '사슴이나 멧돼지 곁에 서서 잡으세요' stayed up ~150 s and obj_farm_1 ~130 s while the hired worker was already doing it. The strings obj_upgrade, obj_wait and newCustomer are never used, so the bench is never pointed out. When hire_miner is affordable, the arrow bounces over the unreachable pad (GP-01).",
+   "suggested_fix": "After the tutorial, when no pad is affordable, keep pointing at the next best action (station output with items → shelf → cash pile). End a zone hint after ~60 s or once that zone's worker is hired. Show obj_upgrade once when the first upgrade becomes affordable.",
+   "files": [
+    "frost-village/src/systems/Tutorial.js"
+   ]
+  },
+  {
+   "lens": "gameplay",
+   "id": "GP-08",
+   "title": "Pacing measured; backpack/boots upgrades are a net loss (finishing is faster without them)",
+   "severity": "medium",
+   "area": "balance / pacing",
+   "repro": "node tools/test/review_gameplay_sim.mjs --name e1_greedy --upg greedy --minutes 40 --fixmarket --world '{\"pads\":{\"hire_miner\":{\"x\":778,\"y\":1889}},\"market\":{\"entry\":[[990,2570],[990,1260],[1080,1080]],\"exit\":[[1080,1080],[990,1260],[990,2570]]}}' ; repeat with --upg none, and with --think 1.2 --mag 0.85 (casual). Add --bal '<json>' to test numbers live: the harness mutates BALANCE/WORLD in memory before the Game scene starts.",
+   "evidence": "Optimal bot, current balance: first coin 0:27, fisherman 0:32, forest 1:07, lumberjack 1:57, farm 3:46, farmer 4:49, mine 6:25, miner 7:22, hunt 11:49, hunter / village complete 13:54. Gaps between beats: 5–107 s (late ones 77–125 s). Income 200–600 coins/min (avg 344). Without upgrades: complete at 12:08 (faster!); greedy had spent 1890 coins on upgrades by then. Casual model: complete at 22:07, max gap 160 s, about 0–24 s idle before completion (no dead moments). Hand-hunting works well with the joystick: one catch per ~3.2 s (review_gameplay_hunt.mjs 3 55). As shipped (no workarounds), the village can't be completed (GP-01), and customer income stops at ~9–10 min (GP-02).",
+   "suggested_fix": "Proposed balance.js v1 (tested): costs hire_fisherman 30, zone_forest 100, hire_lumberjack 150, zone_farm 300, hire_farmer 380, zone_mine 600, hire_miner 700, zone_hunt 1000, hire_hunter 1200; upgrades.capacity values [6,10,14,18,22,26] costs [50,120,240,420,700]; upgrades.speed values [1.0,1.12,1.24,1.36,1.5] costs [70,160,320,560]; customers spawnEvery 2.0, maxQueue 10; stations bakery 1.1, smelter 1.2, smokehouse 1.2. Result: optimal 14.4 min (no-upgrade 14.7, so upgrades now pay back), casual 19.8 min, max gap 104 s optimal / 155 s casual, avg income 492/min. For a longer session (v2): costs 100/150/300/400/650/750/1100/1300; capacity [6,10,14,18,22,26,30] costs [50,120,240,420,700,1000]; speed [1.0,1.12,1.24,1.36,1.5,1.6] costs [70,160,320,560,850]; bakery/smelter/smokehouse 0.9/1.0/1.0. Result: optimal 18.3 min, casual 23.3 min, max gap 119 s optimal. Caveat: in v2 the last 1000/850 upgrades don't pay back (no-upgrade 13.6 min).",
+   "files": [
+    "frost-village/src/data/balance.js"
+   ]
+  },
+  {
+   "lens": "gameplay",
+   "id": "GP-09",
+   "title": "Market demand is capped at ~18 customers/min because the queue limit counts customers still walking a ~13 s path",
+   "severity": "medium",
+   "area": "balance / customers",
+   "repro": "node frost-village/tools/test/review_gameplay_market.mjs 8 '<exit-fix world json>' _fixed ; then the same plus 5th arg '{\"customers\":{\"maxQueue\":10,\"spawnEvery\":2.0}}'",
+   "evidence": "With unlimited stock (exit fixed): 17–19 customers/min, and 'atCounter' is usually 0 (the front customer is still walking from y≈2570). That's ≈36–54 food/min of demand, while 3 food workers produce ~119/min (34+46+39), so food shelves sit at the hard 40/type cap for long stretches (smart2: fish 40 / bread 40 from 600 s), and extra bread or meat only piles up. With maxQueue 10 and spawnEvery 2.0: 25–31 customers/min (+60%). The trade post has no cap (one buy every 0.28 s), so planks and ingots carry the late economy.",
+   "suggested_fix": "balance.js customers.maxQueue 10, spawnEvery 2.0 (included in v1). Code: spawn closer to the plaza, count only customers waiting at the counter toward maxQueue, and make the market maxPerType tunable.",
+   "files": [
+    "frost-village/src/data/balance.js",
+    "frost-village/src/entities/Seller.js",
+    "frost-village/src/data/world.js"
+   ]
+  },
+  {
+   "lens": "gameplay",
+   "id": "GP-10",
+   "title": "Second farmer, miner and hunter (1300/1500/1800 coins) add zero production",
+   "severity": "medium",
+   "area": "balance / post-game",
+   "repro": "node frost-village/tools/test/review_gameplay_workers.mjs 8 (one worker each) vs node tools/test/review_gameplay_workers.mjs 4 1 (with hire2 workers); optional 3rd arg balance JSON, e.g. '{\"stations\":{\"bakery\":{\"time\":0.8},\"smelter\":{\"time\":0.8},\"smokehouse\":{\"time\":0.8}}}'",
+   "evidence": "Every chain works end-to-end (fisher→grill, lumberjack→sawmill, farmer→bakery, miner→smelter, hunter→smokehouse) with 0 stuck episodes in 8 min. Output per minute, 1 worker: grill 34, sawmill 52, bakery 46, smelter 39, smokehouse 39. With 2nd workers: grill 60, sawmill 60 (station cap), bakery/smelter/smokehouse identical. Their inputs stay pinned at 29–30/30, and those workers spend 62–70% of their time waiting in 'drop'. At v1 station times (1.1/1.2/1.2) the numbers are still identical (53/48/49 either way). Even at 0.8 s per item the 2nd worker adds only ~20%, because one worker already supplies ~60/min.",
+   "suggested_fix": "Replace hire2_farmer/miner/hunter with station-speed upgrade pads (e.g. time ×0.6), or bundle a station upgrade with the 2nd hire, or turn them into porter hires (GP-05). Keep hire2_fisherman, which doubles fish (34→60/min).",
+   "files": [
+    "frost-village/src/systems/Progression.js",
+    "frost-village/src/data/balance.js"
+   ]
+  },
+  {
+   "lens": "visual",
+   "id": "V4",
+   "title": "Fishermen fish on dry land: splash FX lands on snow and on the worker hut roof",
+   "severity": "medium",
+   "area": "workers / FX integration",
+   "repro": "node tools/test/review_visual_run.mjs /tmp/fv_review/visual/scen/workers.mjs --vp 390x844 --fresh (__FV.unlockAll(); camera 760,420 zoom 2.4)",
+   "evidence": "wk_fisher_2.jpg / wb2_tradepost_1.jpg: fisherman 1 stands at ~(746,433) and fisherman 2 at ~(679,441). The shoreline is at y≈372–390, so the rod-tip fx_splash ring and droplets appear on white snow in front of them, and one appears on the hut's roof edge. Visible in the smoke screenshot 11_fisherman_working.jpg too.",
+   "suggested_fix": "Move WORLD.net.fisherSpot and the hire2 spot to the water's edge, or onto dock_pier (1460,300), which is idle decor today. Alternatively clamp the work impactPoint/splash y to shoreY(x)-12 so the splash is always on water."
+  },
+  {
+   "lens": "visual",
+   "id": "V5",
+   "title": "Customer speech bubbles overlap; the back customer's bubble hides the front customer's request",
+   "severity": "medium",
+   "area": "UI-in-world / bubbles",
+   "repro": "Fresh start, or __FV.unlockAll() then wait ~14 s near the market. gp_market_queue_z18.jpg, 02_start.jpg, 05_carry_tower.jpg.",
+   "evidence": "All bubbles use the same depth (DEPTH.BUBBLE 40000), so draw order is creation order and the newest (back of queue) is on top. The queue step is YOFF(-0.9) ≈ 41 px x / 20 px y, but a bubble is ~82 px wide (96*0.85). In screenshots the front customer's icon is half covered by the 2nd bubble, which is covered by the 3rd. The bubble also shows 'x0' after the order is filled (07_customers_pay.jpg).",
+   "suggested_fix": "Set bubble depth = DEPTH.BUBBLE + (maxQueue - slot), so the front bubble is on top. Show the full bubble only for slot 0 (or 0–1) and a small icon-only pip for the others, or alternate bubble heights by slot. Widen queueStep to ~1.3 m. Replace 'x0' with a check or heart and hide immediately."
+  },
+  {
+   "lens": "visual",
+   "id": "V6",
+   "title": "Customer variety: 3 random variants, identical clusters, Santa-looking red villager; merchant reuses a customer model",
+   "severity": "medium",
+   "area": "characters / crowd",
+   "repro": "Seller.js spawnCustomer picks keys[random 3]. 17_village.jpg shows 3 identical red villagers leaving in lockstep with identical towers. gp_market_queue_* shows repeats; char_lineup.png.",
+   "evidence": "Variants: villager_a (yellow parka, chief's bowl haircut), villager_b (red coat with white trim + white pom-pom hat, reads as Mrs. Claus/Santa), villager_c (blue + brown hat). There is no per-instance tint, scale or path jitter on exit, so leaving customers clump and overlap. The trade-post merchant is villager_c, identical to the blue customers.",
+   "suggested_fix": "Make 3–5 more colorways (re-render with different parka/hat colors, or a Python pass that hue-shifts only parka-hue pixels of the existing atlases). Never spawn the same key twice in a row. Add ±4% scale and random exit-path offsets/speeds so they don't walk in lockstep. Give the merchant a distinct look (apron/scarf/different hat). Consider replacing villager_b's pom hat with a beanie or earflap hat to drop the Santa read."
+  },
+  {
+   "lens": "visual",
+   "id": "V7",
+   "title": "Market, trade post and stations never fade when the chief is behind them; chief disappears; forest west corner buries him under decor pines",
+   "severity": "medium",
+   "area": "depth sorting / occlusion",
+   "repro": "/tmp/fv_review/visual/scen/walkbehind2.mjs (walk from behind toward the market and trade post); gameplay.mjs chop at where('tree') → (169,1264)",
+   "evidence": "addOccluder() is only called from staticImage() and for trees. Market (Seller.js:95), TradePost (Seller.js:349) and Station (Station.js:18) create their images directly, so the 'market|trade_post|station_' part of the regex in Game.js:177 never runs. wb2_market_1/end.jpg and wb2_tradepost_0/1.jpg: chief fully or mostly hidden, no fade. gp_fx_chop_*.jpg: when chopping the forest's west-corner tree, the chief is behind 2–3 overlapping 0.45-alpha pines and shows only as a faint ghost. Lodge, huts and the grill behave correctly.",
+   "suggested_fix": "Call gs.addOccluder(this.img) in Market/TradePost/Station constructors. Keep decor pines (buildTrees/extraTrees) at least ~1.5 m outside zone front edges, or don't spawn gameplay trees in the zone's west/south corners. Optionally lower the fade alpha to 0.3, or draw a translucent silhouette of the player above occluders when hidden."
+  },
+  {
+   "lens": "visual",
+   "id": "V8",
+   "title": "Trodden-snow paths look like translucent glass tubes with hard stepped edges",
+   "severity": "medium",
+   "area": "ground baking",
+   "repro": "ground.mjs: gr_road_cross.jpg, gr_seam_fv_ground_1024_c.jpg; visible at default zoom at the bottom of 02_start.jpg and in 17_village.jpg / 20_overview.jpg",
+   "evidence": "Ground.bakePaths strokes 4 concentric semi-transparent bands (86/70/54/36 px), a 26 px dirt stroke and two 3 px white 'lip' lines at ±40 px. Each band edge is hard, so the road shows parallel stripes, and the branch ends have rounded 'capsule' caps. It reads like a frosted glass pipe, not packed snow. The main road is also straight vertical, not on an iso axis. No chunk seams were found at y=1024/2048.",
+   "suggested_fix": "Bake the path with ctx.filter='blur(10px)' (or shadowBlur) on a single wider band, then a soft dirt core. Drop the white lip lines or blur them too. Break up the edge with decal_snow_drift stamps. Longer term, route paths along the iso axes using decal_path_a/b, which were built for that."
+  },
+  {
+   "lens": "visual",
+   "id": "V9",
+   "title": "Title key art: chief floats mid-air over distant mountains; workers lineup is small and fights the side pines",
+   "severity": "medium",
+   "area": "title screen",
+   "repro": "node tools/test/review_visual_run.mjs /tmp/fv_review/visual/scen/vpsurvey.mjs --vp 390x844 --fresh --title (vp_*_1title.jpg)",
+   "evidence": "portrait_player_512 is centered at H*0.5 with its shadow at artY+200, so the feet land over the distant forest and mountain backdrop and the shadow sits on the 'sky'. The hero reads as giant or floating inside a pale halo disc. On 360x640 the crew (H*0.83, 1.25x) overlaps the foreground pines at both edges, and '탭하여 시작' sits on a pine and snow with only a stroke for contrast.",
+   "suggested_fix": "Ground the hero: put the feet on the snow field (~H*0.70–0.74) with the shadow on snow, and flank him with the crew on the same ground line (slightly behind, scale ~1.5). Drop or shrink the halo disc. Put 'tap to start' on a soft pill or panel. Keep the logo as is."
+  },
+  {
+   "lens": "robust",
+   "id": "R3",
+   "title": "Any exception inside Phaser's game loop freezes the game permanently with no error shown",
+   "severity": "medium",
+   "area": "error handling / platform (Phaser RAF loop, index.html error box)",
+   "files": [
+    "/home/user/nurient/frost-village/index.html",
+    "/home/user/nurient/frost-village/src/main.js",
+    "/home/user/nurient/frost-village/lib/phaser.min.js"
+   ],
+   "repro": "Throw from any update or create (for example save variants R2a/R2b), then watch __FV.game.loop.frame. review_robust_save_fast.mjs reports 'LOOP DEAD: frame counter stuck … for 20 s'.",
+   "evidence": "In Phaser 3.90, RequestAnimationFrame.step is `function e(i){t.callback(i), t.isRunning && (t.timeOutID = requestAnimationFrame(e))}`. The callback runs before the next frame is requested, so a single throw stops the loop for good. index.html:54 returns early once window.__FV_BOOTED is set (main.js:39 sets it right after `new Phaser.Game`), so no error box is ever shown after boot. Observed: a blank or frozen canvas, no message, and nothing for a non-coder to act on.",
+   "suggested_fix": "Keep a window 'error'/'unhandledrejection' handler active after boot. It should show an in-game or DOM overlay ('문제가 생겼어요 — 새로고침') with a reload button, and optionally a 'start fresh' button that moves the save aside. Optionally wrap Game.update/UI.update bodies in try/catch that logs once and keeps running."
+  },
+  {
+   "lens": "robust",
+   "id": "R5",
+   "title": "Upgrade pads save the previous level's full price as 'paid' → after any reload the next level is discounted by that amount",
+   "severity": "medium",
+   "area": "save/load race around pads (Progression.upgrade / collectPaid)",
+   "files": [
+    "/home/user/nurient/frost-village/src/systems/Progression.js",
+    "/home/user/nurient/frost-village/src/entities/UnlockPad.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_pads.mjs"
+   ],
+   "repro": "node tools/test/review_robust_pads.mjs (section A): unlockAll, give coins to exactly 60, stand on up_capacity until level 1, step off, then reload and tap start.",
+   "evidence": "Progression.upgrade deletes paid['up_capacity'] (line 135) and immediately calls gs.save (line 143). serialize → collectPaid (line 149) re-reads pad.paid, which still equals the full old cost because pad.rearm only runs after delayedCall(500) (line 142). collectPaid never removes entries, so the stale value stays in memory too. Measured: savedPaidRightAfterUpgrade {up_capacity: 60}, and still 60 after stepping off. After reload the level-2 pad has cost 150, paid 60, label '90', with 0 coins. This repeats for every non-final level, so up to 60+150+320+600 (bag) + 90+220+450 (boots) = 1,890 coins of unintended discount for players who close and reopen between upgrades.",
+   "suggested_fix": "In upgrade(), set pad.paid = 0 (or call pad.rearm synchronously) before gs.save. In collectPaid, delete this.paid[id] when p.paid === 0 and also for maxed pads."
+  },
+  {
+   "lens": "robust",
+   "id": "R6",
+   "title": "Designer balance.js edits can softlock progression: cost 0, a missing cost key, or lowering a cost below a saved partial payment makes a pad that never completes",
+   "severity": "medium",
+   "area": "designer-facing robustness (UnlockPad.update, balance.js)",
+   "files": [
+    "/home/user/nurient/frost-village/src/entities/UnlockPad.js",
+    "/home/user/nurient/frost-village/src/data/balance.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_save.mjs",
+    "/home/user/nurient/frost-village/tools/test/review_robust_platform.mjs"
+   ],
+   "repro": "Serve a modified balance.js via page.route. node tools/test/review_robust_save.mjs only=costZero: hire_fisherman: 0, fresh start, stand on the pad with 50 coins. only=costLowered: zone_farm 200→100 with a save that has progress.paid.zone_farm = 150 and 500 coins; stand on the pad for 300 frames. node tools/test/review_robust_platform.mjs: payDuration 0, a fractional price, autosaveEvery 0.",
+   "evidence": "costZero: label '0', never completes (doneAfter300FramesOnPad false), so the very first step is blocked. costLowered: paid = min(150,100) = 100, remaining 0, label '0', still not done after 300 frames on the pad with 500 coins. Cause: the only complete() call sits inside `if (this.remaining > 0 && eco.coins > 0)` (UnlockPad.js:133). A missing cost key gives paid = Math.min(0, undefined) = NaN (UnlockPad.js:20), so the label reads 'NaN' and the pad never completes (code inspection). Other edge values: payDuration 0 makes acc NaN after the first chunk (it only completes if coins ≥ remaining in that one frame). A fractional price of 4.5 loses 0.5 coin per collection (31.5 → 31). autosaveEvery 0 writes localStorage every frame (1.0 setItem/frame).",
+   "suggested_fix": "At the top of UnlockPad.update (and in the constructor), call complete() when `!(this.remaining > 0)` and the pad is active and not maxed. Sanitize balance values on load: cost = Math.max(1, Math.floor(cost) || 1), payDuration ≥ 0.1, autosaveEvery ≥ 1, prices as integers. Add a Korean comment in balance.js that costs must be ≥ 1."
+  },
+  {
+   "lens": "robust",
+   "id": "R7",
+   "title": "Worker work sounds (chop/mine/harvest/net/animal hit/arrow) play at full rate regardless of distance → constant 10–12 sfx/s, 14–15 at once, even with nothing on screen",
+   "severity": "medium",
+   "area": "audio overlap",
+   "files": [
+    "/home/user/nurient/frost-village/src/entities/ResourceNode.js",
+    "/home/user/nurient/frost-village/src/entities/Animal.js",
+    "/home/user/nurient/frost-village/src/entities/Worker.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_audio.mjs"
+   ],
+   "repro": "node tools/test/review_robust_audio.mjs only=busy: unlockAll, set station input max to 1e6 so all 10 workers keep working, count game.sound.play calls and concurrent playing sounds for 600 frames at the plaza and then in the far south-east corner (1700, 2540).",
+   "evidence": "Plaza: 9.7 plays/s, max 14 concurrent, avg 7. Far corner, where the forest, mine, farm and sea are all off-screen: 11.9 plays/s, max 15 concurrent, avg 7.9. Per-key rates are the same near and far (sfx_chop_* ~0.4–0.6/s each, mine ~0.5–0.7/s, harvest ~0.8–0.9/s, hit_animal 1.0–1.4/s, bow 0.9–1.3/s, reel 0.6–0.8/s). Tree/Rock/Wheat/Net.hit (ResourceNode.js:63/117/172/225) and Animal.hit (Animal.js:63) have no distance check. Worker.shoot (Worker.js:189) plays at volume 0 when far, which still creates a sound object. Only Station.process and moveItem check isNear/isOnScreen.",
+   "suggested_fix": "Gate or attenuate by distance to the camera view, as Station.process does: skip when !gs.isNear(x, y, ~600) and scale volume by distance otherwise. Never call play with volume 0."
+  },
+  {
+   "lens": "robust",
+   "id": "R8",
+   "title": "In a sandboxed iframe without allow-same-origin the game hangs on 'Loading…' forever (ES module blocked by CORS); with CORS it runs but progress is silently never saved",
+   "severity": "medium",
+   "area": "platform / embedding",
+   "files": [
+    "/home/user/nurient/frost-village/index.html",
+    "/home/user/nurient/frost-village/src/core/Save.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_iframe.mjs"
+   ],
+   "repro": "node tools/test/review_robust_iframe.mjs. The host page on http://localhost:P1 embeds <iframe sandbox=\"allow-scripts\" src=\"http://127.0.0.1:P2/fv/index.html\">. Case 1: plain static server. Case 2: server adds Access-Control-Allow-Origin: *. Case 3: sandbox=\"allow-scripts allow-same-origin\". Case 4: no sandbox.",
+   "evidence": "Case 1: console.error \"Access to script at …/src/main.js from origin 'null' has been blocked by CORS policy\". window.__FV is undefined, #fv-loading stays at opacity 1 and #fv-error is never shown (a module fetch failure fires no window 'error'), so it says 'Loading…' forever (iframe_sandbox_scripts_noCORS.jpg). Case 2: boots, plays and hires, audio runs (41 keys, ctx running). localStorage throws SecurityError and is handled, but saving is impossible and the player is not told. Cases 3 and 4 (itch.io-style): fully working, save OK.",
+   "suggested_fix": "Document the hosting requirement (embed with allow-same-origin, or serve with ACAO). In index.html add a timeout check, e.g. after 15 s if !window.__FV_BOOTED or __FV is undefined, show the existing #fv-error text. When Save.write fails on first use, show a one-time toast ('이 환경에서는 저장되지 않아요')."
+  },
+  {
+   "lens": "robust",
+   "id": "R9",
+   "title": "Arrow keys / Space scroll the host page when the game is embedded (keyboard capture disabled)",
+   "severity": "medium",
+   "area": "input / embedding",
+   "files": [
+    "/home/user/nurient/frost-village/src/core/Input.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_iframe.mjs"
+   ],
+   "repro": "Same iframe harness, with the host body 3000 px tall. Click into the game iframe, press ArrowDown ×6 and then Space, and read the host page's scrollY.",
+   "evidence": "Host scrollY went 0→160 (sandbox allow-scripts allow-same-origin) and 0→240 (cross-origin, no sandbox) while the player was steering. Input.attachKeyboard calls kb.addKeys({...}, enableCapture=false, …) (Input.js:18), so Phaser never calls preventDefault on arrow/space keydown, and the scroll chains to the parent page. The PC hint advertises 방향키 (arrow keys) as a control.",
+   "suggested_fix": "Pass enableCapture = true to addKeys, or call scene.input.keyboard.addCapture('UP,DOWN,LEFT,RIGHT,SPACE')."
+  },
+  {
+   "lens": "robust",
+   "id": "R10",
+   "title": "Canvas-renderer fallback (WebGL unavailable or blocklisted, iOS Lockdown Mode) renders no nine-slice UI: coin bar, settings panel and buttons are missing; render ~55 ms/frame",
+   "severity": "medium",
+   "area": "platform / renderer fallback",
+   "files": [
+    "/home/user/nurient/frost-village/src/main.js",
+    "/home/user/nurient/frost-village/src/scenes/UI.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_platform.mjs"
+   ],
+   "repro": "node tools/test/review_robust_platform.mjs only=canvas launches Chromium with --disable-webgl --disable-3d-apis. Phaser.AUTO (main.js:23) falls back to CANVAS.",
+   "evidence": "renderer.type = 1 (CANVAS). canvas_game.jpg: the HUD shows only the coin icon and '500', with no coin-bar pill. canvas_settings.jpg: the settings panel has no panel background and no button backgrounds, just floating labels ('효과음 켜짐', '음악 켜짐', '한국어', '처음부터 하기', '닫기') over the dimmed world. Phaser registers NineSlice only in its WebGL build block. Perf in canvas mode (headless): 16.5 FPS, logic 1.47 ms, render 55 ms avg (p95 93 ms).",
+   "suggested_fix": "Either force type: Phaser.WEBGL and show a friendly 'WebGL이 필요해요' message when it fails, or, when renderer.type === Phaser.CANVAS, draw panels and buttons with Graphics.fillRoundedRect plus images instead of add.nineslice."
+  },
+  {
+   "lens": "robust",
+   "id": "R11",
+   "title": "Memory footprint: 60.8 MB decoded audio + ~110 MB of textures (34 MB of them canvas-backed, so also held in CPU memory); TileSprites allocate ~7 MB of unused canvases",
+   "severity": "medium",
+   "area": "performance / mobile memory",
+   "files": [
+    "/home/user/nurient/frost-village/src/systems/Ground.js",
+    "/home/user/nurient/frost-village/assets/audio/manifest.json",
+    "/home/user/nurient/frost-village/tools/test/review_robust_platform.mjs",
+    "/home/user/nurient/frost-village/tools/test/review_robust_soak.mjs"
+   ],
+   "repro": "node tools/test/review_robust_platform.mjs only=memory. It sums AudioBuffer length×channels×4 over g.cache.audio and texture source w×h×4 over g.textures. The texture inventory is in soak_norender_samples.json → textures.",
+   "evidence": "Decoded audio is 60.8 MB: bgm_village 25.8 MB (stereo, 44.1 kHz, 77 s), amb_wind 8.1, amb_sea 8.1, bgm_title 7.7, amb_fire 6.7. Textures: 84–88 sources, 28.8 MPx ≈ 110 MB GPU estimate. Canvas textures are 34 MB: fv_ground_0/1024/2048 at 1800×1024, 1800×1024 and 1800×572 (all below 2048 px, OK), fv_floor_* up to 1316×682, and TileSprite canvases 1800×635 + 2×1800×200 that WebGL never uses (Ground.js:45-49). Max texture dimension is 3072 (fx_levelup, 3072×192); GL MAX_TEXTURE_SIZE here is 8192, but 2048-limit devices would reject it. JS heap stays small (~9–12 MB). On 2–3 GB phones and iOS Safari's per-tab limit this is the main crash/reload risk.",
+   "suggested_fix": "Encode the ambience loops as mono (halves ~23 MB) and bgm as mono or 22 kHz (25.8 → ~6–13 MB). Split fx_levelup and fx_unlock into rows of ≤ 2048 px. Optionally replace the sea and fish TileSprites with tiled images or a shader to avoid the canvases, and drop the baked canvases' CPU copies (convert to image textures after baking)."
+  },
+  {
+   "lens": "deploy",
+   "id": "DEP-1",
+   "title": "Title screen crashes when character atlases fail to load (placeholder anim has 2 frames, startFrame i%4)",
+   "severity": "medium",
+   "area": "src robustness / hosting failure path",
+   "repro": "node frost-village/tools/build/build_artifact.mjs && node frost-village/tools/build/test_deploy.mjs sandbox  (opaque-origin iframe, files served without CORS -> all manifests fail -> placeholders). Also: open file:///.../frost-village/dist/artifact/index.html",
+   "evidence": "Uncaught TypeError: Cannot read properties of undefined (reading 'duration') at getFirstTick (phaser.min.js) <- startAnimation <- play <- Title.create (game.js, = src/scenes/Title.js:40). The game sits on the Preload 'Loading' screen forever, so the documented 'never crash on missing art' fallback fails. Screenshot: frost-village/dist/deploy_test/sandbox_9_error.jpg",
+   "suggested_fix": "src/scenes/Title.js:40 -> `const key = Assets.charAnim(k, 'idle', DIR_BASE[2]); const an = this.anims.get(key); s.play({ key, startFrame: an ? i % an.frames.length : 0 });`. src/systems/Effects.js:120 has the same pattern: `startFrame: Math.floor(Math.random() * 4)` -> clamp to the animation's frames.length. Character.js:60 already clamps correctly.",
+   "files": [
+    "frost-village/src/scenes/Title.js",
+    "frost-village/src/systems/Effects.js"
+   ]
+  },
+  {
+   "lens": "deploy",
+   "id": "DEP-2",
+   "title": "Opaque-origin artifact frame without CORS headers: the normal build cannot load any asset (Phaser loads everything via XHR)",
+   "severity": "medium",
+   "area": "claude.ai Artifact hosting",
+   "repro": "test_deploy.mjs sandbox: wrapper on origin A, <iframe sandbox=\"allow-scripts\"> on origin B, CSP default-src 'self'; connect-src 'self'; img-src 'self' data: blob: ..., no Access-Control-Allow-Origin",
+   "evidence": "Access to XMLHttpRequest at 'http://127.0.0.1:PORT/assets/characters/manifest.json' from origin 'null' has been blocked by CORS policy (x6 manifests, retried). With ACAO:* (mode sandbox-cors) or allow-same-origin (mode sameorigin) everything PASSES. The host docs say fetch() of files published alongside the page works, so the real host most likely behaves like those passing modes. Verify on first publish anyway.",
+   "suggested_fix": "No src change needed. If the published artifact shows grey placeholder boxes or hangs on loading, rebuild with `node frost-village/tools/build/build_artifact.mjs --inline --webp`. That writes dist/artifact_inline/: 7 files, 11.5 MB. All assets are embedded in packs/assets_N.js (images as data: URIs, JSON as objects, audio as base64 mp3 decoded with the game's AudioContext), and inline_loader.js re-registers Phaser's json/image/atlas/spritesheet/audio loaders, so there are zero XHRs. Republish it to the same artifact URL. Tested PASS in the strictest emulation (mode sandbox-inline: origin null, localStorage throws, 12 requests, 0 errors, audio unlocked, full loop).",
+   "files": [
+    "frost-village/tools/build/build_artifact.mjs",
+    "frost-village/dist/artifact_inline/index.html",
+    "frost-village/dist/artifact_inline_files.json"
+   ]
+  },
+  {
+   "lens": "deploy",
+   "id": "DEP-3",
+   "title": "First-visit payload ~11.9 MB (64% PNG) - WebP for the big truecolor images saves ~3.1 MB with no visible loss",
+   "severity": "medium",
+   "area": "payload / load time",
+   "repro": "node frost-village/tools/build/build_artifact.mjs (prints the size table); node frost-village/tools/build/build_artifact.mjs --webp; node frost-village/tools/build/test_deploy.mjs sameorigin",
+   "evidence": "Biggest files: props/props_buildings.png 1.79 MB (RGBA 1980x1460), audio/bgm_village.mp3 1.17 MB / .ogg 0.98 MB, lib/phaser.min.js 1.14 MB (0.31 MB gzipped), characters/char_player.png 0.43, audio/amb_sea 0.39, amb_wind 0.37, bgm_title 0.35, char_farmer 0.34. By type: PNG 7.64 MB, one audio set about 2.7 MB, JS 1.28 MB, JSON 0.33 MB.\n\nWebP q90 with lossless alpha, applied only where it saves more than 40%, converts 32 images, 4.29 MB down to 1.18 MB. Examples: props_buildings 1828K to 474K (RMS error 2.5/255), ui_title_bg 349K to 93K, props_nature 284K to 75K, ui_icons 282K to 109K, ground_* about 240K to 70K. The first visit drops from 11.94 to 8.83 MB.\n\nSide-by-side PNG and WebP renders of the title and plaza look identical. The WebP build passed full host emulation with 0 errors. The 11 character atlases are already palette PNGs, and WebP does not help them, so they stay PNG. Decoded memory is about 76 MB of RGBA textures plus about 61 MB of decoded PCM audio.",
+   "suggested_fix": "For the artifact, publish the output of `build_artifact.mjs --webp`. It needs python3 and Pillow, and only the dist copy is converted, so assets/ is untouched. For GitHub Pages, the same gain needs the props/ui/ground generators to emit .webp and their manifests to point at it; Phaser loads WebP like PNG, and Safari has supported it since version 14. Lower priority: a custom Phaser build without Matter, Spine and similar modules would roughly halve phaser.min.js.\n\nNote: Pages serves the 32 src modules unbundled, an import waterfall of a few round trips. That is acceptable, or the bundled game.js could be used there too.",
+   "files": [
+    "frost-village/tools/build/webp_assets.py",
+    "frost-village/tools/build/build_artifact.mjs",
+    "frost-village/assets/props/props_buildings.png"
+   ]
+  },
+  {
+   "lens": "gameplay",
+   "id": "GP-11",
+   "title": "Walking or pausing over the bench pads drains coins into upgrades the player didn't choose",
+   "severity": "low",
+   "area": "pads / UX",
+   "repro": "node tools/test/review_gameplay_sim.mjs --name p1_casual --upg greedy --think 1.2 --mag 0.85 --fixmarket --world '<override>' --bal '<v1>' ; then check fin.accidental / fin.accList. Or --upg cap (never chooses boots) to see coins going into up_speed.",
+   "evidence": "Draining starts after padDelay 0.25 s, at up to cost/1.6 coins per second. up_speed (1044,1029) and up_capacity (845,943) sit on the routes between the plaza and the south zones. Casual run: 519 coins went into pads the bot wasn't targeting (mostly up_speed / up_capacity). The cap-only run: 74 coins, including 11 into hire_lumberjack while chopping a nearby tree. That's ~4% of income, delaying the zone the player is saving for.",
+   "suggested_fix": "Move the bench pads off the main walking lines, or use a longer stand delay (0.5–0.6 s) for upgrade and hire pads. The latter is a code change, since padDelay is shared with station pads.",
+   "files": [
+    "frost-village/src/data/world.js",
+    "frost-village/src/entities/UnlockPad.js"
+   ]
+  },
+  {
+   "lens": "visual",
+   "id": "V10",
+   "title": "Several particles vanish on white snow (footstep dust, snowhit, white glow/ring, additive sparks)",
+   "severity": "low",
+   "area": "FX",
+   "repro": "/tmp/fv_review/visual/scen/fxtest.mjs bursts every preset on snow and on the plaza (fx_burst_a.jpg, fx_burst_b.jpg)",
+   "evidence": "On the plaza: dust, snowhit, glow, ring and sparks are visible. On snow (#F4F7FB): 'dust' (white tints, the footstep FX) and 'snowhit' are invisible. 'glow' (ADD) is a faint disc and 'ring' is barely visible. 'spark' (ADD) saturates to white and disappears. Stars, wood chips, hearts and all NORMAL-blend sheets (poof, hit, unlock, sparkle, levelup, splash) read fine.",
+   "suggested_fix": "Tint dust and snowhit with snow-shadow blues (#C9D6E8 / #AFC3DC) and give white particles a slightly darker rim in the atlas. Use NORMAL blend with saturated tints for spark/glow when the emitter is over snow, or always. Over snow, footsteps could stamp decal_footprints instead of dust."
+  },
+  {
+   "lens": "visual",
+   "id": "V11",
+   "title": "Landscape phones get a 219 CSS-px-wide portrait strip with no rotate hint",
+   "severity": "low",
+   "area": "layout / orientation",
+   "repro": "vpsurvey.mjs --vp 844x390 (vp_844x390_2start.jpg)",
+   "evidence": "logicalHeight clamps to 1280, so FIT gives 219x390 CSS. HUD numbers and objective text come out ~10 px tall, and the chief is ~30 px. Desktop 1280x800 shows a 450x800 strip with plain gradient side bars (acceptable).",
+   "suggested_fix": "Add a CSS overlay '세로로 돌려 주세요' for (orientation: landscape) and (max-height: 500px) on touch devices, and pause input while it shows. Optionally use a blurred title backdrop for the desktop side bars."
+  },
+  {
+   "lens": "visual",
+   "id": "V12",
+   "title": "No safe-area handling although viewport-fit=cover is set; HUD will sit under the notch in the planned Capacitor build",
+   "severity": "low",
+   "area": "UI / safe area",
+   "repro": "grep -rn 'safe-area\\|env(' index.html src → no matches; UI.layout uses top = 62 logical px",
+   "evidence": "The coin bar top edge is at ~14 CSS px and the settings button center at ~34 CSS px (390-wide phone). That's fine in Safari and in a standalone PWA with status-bar-style 'default'. In a Capacitor iOS webview (full-screen by default) or with 'black-translucent', both sit under the Dynamic Island/notch (47–59 px). Bottom: nothing critical within the 34 px home-indicator band.",
+   "suggested_fix": "Expose env(safe-area-inset-top/bottom) via CSS custom properties on :root, read them in main.js (getComputedStyle), and add the inset (converted to logical px) to UI.layout's top and to the toast's bottom offset."
+  },
+  {
+   "lens": "visual",
+   "id": "V13",
+   "title": "Locked zones read as empty frosted voids",
+   "severity": "low",
+   "area": "zone visuals",
+   "repro": "reveal.mjs → rv_locked_farm.jpg, rv_overview_partial.jpg",
+   "evidence": "A locked zone is a 28%-alpha diamond with a white dashed edge, a 54 px lock and a 26 px name (~14 CSS px on phone). Nothing hints at what's inside or what it costs. A stray dirt-patch decal sits inside the locked mine area, and the path branches run into the void.",
+   "suggested_fix": "Show a ghosted preview inside locked zones (station/building silhouettes at ~20% alpha, desaturated), plus a signpost or banner with the zone icon and price. Raise the name to ~34 px on a small panel. Hide decals inside locked outlines."
+  },
+  {
+   "lens": "visual",
+   "id": "V14",
+   "title": "Small polish items: clipped labels, coin overlapping cost digits, duplicate fence posts, props hidden behind lodge, banner subtitle legibility",
+   "severity": "low",
+   "area": "misc polish",
+   "repro": "vp_390x844_2start.jpg, ui_en_360x640_start.jpg, sheet_ui_ko.jpg, 17_village.jpg, dump.mjs output",
+   "evidence": "(a) The hire label is clipped at the left screen edge at start, and 'Hire Fisher' in EN at 360 px. (b) The coin icon touches or overlaps the first digit on unlock/upgrade pads ('30', '60', '90'). (c) 6 fence_post pairs are duplicated at shared zone corners (e.g. (63,1250), (1772,1270), (1400,2152)), which doubles the baked shadow. (d) The campfire (990,2290) and bench (1090,2300) sit inside the lodge's roof silhouette: invisible normally, then 'on the roof' when the lodge fades. (e) The 'village complete' subtitle has no backing panel over a busy scene and overlaps the tutorial arrow. (f) In Settings, the '언어' row lacks an icon, and the gray reset button's white label is low-contrast. (g) Deer atlas body centroid is +3..+5 px off the anchor, so it shifts ~8–10 px sideways on E↔W turns. (h) Output overflow stacks form an 'L' (tall column + stub) instead of the reference's twin towers.",
+   "suggested_fix": "(a) Clamp floating labels inside the camera view, or move the pad. (b) Lay out the cost as [coin][gap][text] by measured width. (c) Dedupe corner posts in buildFences. (d) Move the campfire/bench south of the lodge or into the tent area. (e) Give the banner subtitle a translucent dark pill. (f) Add a globe icon and darken the gray button's text stroke. (g) Re-center deer frames on the body or accept. (h) Fill twin columns evenly (alternate items between cols)."
+  },
+  {
+   "lens": "visual",
+   "id": "V15",
+   "title": "Positives verified: 8-dir mirroring, feet/shadow anchoring, depth vs fences/grill/trees/huts, zone reveal",
+   "severity": "low",
+   "area": "verification (no action)",
+   "repro": "python3 tools/test/review_visual_atlas.py player villager_a deer; dirs.mjs; depth.mjs (sheet_depth1.jpg, sheet_depth2.jpg)",
+   "evidence": "For all human anims, per-direction body centroids are within ±3.2 px of anchor x=64 and feet centroids within ±3 px. Mirrored SW/W/NW land within 1–3 px of their SE/E/NE sources, so no sideways jump. The bottom pixel is 4–7 px below the anchor, consistent with iso toes over the 53x23 shadow. Correct sorting confirmed for: chief behind/in front of grill; inside/outside zone fences; behind lodge and huts (fade works); mine entrance; trees (fade works). Hire/unlock pay ring, poofs and pop-in reveal render correctly. Scale is coherent: items on output pads at 1.0 are about character-width like the reference; trees ~2.5 character heights.",
+   "suggested_fix": "None. Keep these as regression checks."
+  },
+  {
+   "lens": "robust",
+   "id": "R12",
+   "title": "Resize/rotation gaps: the title screen is not re-laid out ('탭하여 시작' disappears), landscape shrinks the game to 219×390 CSS px with no rotate hint, and the settings panel is not re-centred",
+   "severity": "low",
+   "area": "resize / orientation",
+   "files": [
+    "/home/user/nurient/frost-village/src/scenes/Title.js",
+    "/home/user/nurient/frost-village/src/scenes/UI.js",
+    "/home/user/nurient/frost-village/src/main.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_resize.mjs"
+   ],
+   "repro": "node tools/test/review_robust_resize.mjs: open at 390×844, setViewportSize on the title (844×390, 1280×800), then in game through 7 sizes, then with the settings panel open (430×932 → 360×640), then a 40-resize storm.",
+   "evidence": "Title: the game height changes 1558→1280 but the title elements keep positions computed from 1558 (tap text at H*0.92 = 1433). resize_title_1280x800.jpg shows no tap/click prompt and the crew cut off at the bottom. In landscape 844×390 the canvas is 219×390 CSS px (resize_game_844x390.jpg) with unreadably small HUD text and no rotate overlay; the manifest's orientation lock only applies to the installed PWA. Panel: the centre stays at y=779 after the game height drops to 1280 (layoutPanel is a no-op, UI.js:290). In-game HUD re-layout, the camera sizes and the 40-resize storm were all correct, with 0 errors.",
+   "suggested_fix": "Re-layout or restart Title on scale 'resize'. Add a CSS or DOM 'please rotate' overlay for landscape phones (matchMedia('(orientation: landscape) and (max-height: 500px)')). Re-centre panel children in layoutPanel, or close and rebuild the panel on resize."
+  },
+  {
+   "lens": "robust",
+   "id": "R13",
+   "title": "Turning sound OFF in settings leaves wind/sea ambience playing until the panel is closed",
+   "severity": "low",
+   "area": "audio / settings",
+   "files": [
+    "/home/user/nurient/frost-village/src/core/Audio.js",
+    "/home/user/nurient/frost-village/src/scenes/UI.js",
+    "/home/user/nurient/frost-village/src/scenes/Game.js"
+   ],
+   "repro": "node tools/test/review_robust_audio.mjs only=mute: open settings, press sound OFF, then music OFF, wait 1.5 s with the panel open, close it, then reload.",
+   "evidence": "With the panel open, amb_wind stays at 0.422 and amb_sea at 0.453 (unchanged). Ambience volume is only lerped in Audio.updateAmbience, called from Game.update (Game.js:651), and the Game scene is paused while the panel is open (UI.js:255). After closing it starts fading (0.264/0.284 measured shortly after). Music stops immediately. The settings persist across reload ({sound:false, music:false}, nothing playing after reload) — OK.",
+   "suggested_fix": "In setSoundEnabled(false), immediately set every Audio.amb sound to volume 0 (or stop it). Alternatively call Audio.updateAmbience from UI.update."
+  },
+  {
+   "lens": "robust",
+   "id": "R14",
+   "title": "Items in mid-flight are lost on reload (stack.incoming is not saved)",
+   "severity": "low",
+   "area": "save/load",
+   "files": [
+    "/home/user/nurient/frost-village/src/scenes/Game.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_save.mjs"
+   ],
+   "repro": "node tools/test/review_robust_save.mjs only=reloadMidTransfer: save with 6 raw fish carried and workers frozen, step on grillIn, reload after 60/150/400 ms, then count player stack + grill in + grill out in the save.",
+   "evidence": "Lost 1 of 6 at 60 ms (incoming=1) and 1 of 6 at 400 ms; 0 lost at 150 ms. Customer purchases in flight and Station.process outputs (260 ms delay + 300 ms flight) are lost the same way. Coins themselves are conserved: CashPad.value is incremented immediately, and the reload-during-payment test showed coins+paid = 1000 at both 150 and 400 paid.",
+   "suggested_fix": "Optional: in serialize(), add each stack's .incoming to the saved counts (they will land), or count flying items per destination."
+  },
+  {
+   "lens": "robust",
+   "id": "R15",
+   "title": "Lifting the steering finger while another finger is down stops the chief; the second finger never takes over",
+   "severity": "low",
+   "area": "input / multi-touch",
+   "files": [
+    "/home/user/nurient/frost-village/src/core/Input.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_multitouch.mjs"
+   ],
+   "repro": "node tools/test/review_robust_multitouch.mjs dispatches synthetic TouchEvents on the canvas (CDP cannot lift one finger of several): finger 1 drags right, finger 2 lands and drags up, finger 1 lifts, finger 2 keeps moving.",
+   "evidence": "The joystick correctly stays with finger 1 while finger 2 lands (vx 254, vy 0). After finger 1 lifts: knob hidden, vx 0; after finger 2 moves: still 0. A finger-2 tap while finger 1 steers keeps steering (OK). touchcancel releases correctly. Release outside the canvas (mouse and touch), window blur with a mouse or key held, 40 rapid settings taps (1 panel), 20 rapid language taps and 150 random field taps all behaved, and repeated title taps created the Game once.",
+   "suggested_fix": "Optional UX: in Input.pointerUp, if another UI pointer is still down, hand the joystick to it (re-base at its current position)."
+  },
+  {
+   "lens": "robust",
+   "id": "R16",
+   "title": "If the .ogg files fail to load (host blocks or mis-serves them), all 41 sounds are missing; Phaser does not fall back to the .mp3",
+   "severity": "low",
+   "area": "audio / deployment",
+   "files": [
+    "/home/user/nurient/frost-village/src/core/Assets.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_audio.mjs"
+   ],
+   "repro": "node tools/test/review_robust_audio.mjs only=oggBlockedNoFallback: page.route('**/*.ogg', abort).",
+   "evidence": "cache.audio has 0 keys, missingAudio lists all 41, nothing plays and the only errors are net::ERR_FAILED. The Safari-like path is fine: with canPlayType returning '' for ogg/opus (mp3only), 41/41 load as mp3, 0 ogg requests, and loop buffers decode to exactly the manifest length in Chromium (bgm_village 3,386,816 samples). Untested risk: Safari's decoder may keep the LAME encoder delay (manifest mp3StartPad=1105 samples), which the code ignores, so a ~25 ms gap or click per loop is possible on Safari only.",
+   "suggested_fix": "In the loader 'loaderror' handler, re-queue the failed audio key with only its .mp3 URL. Optionally apply mp3StartPad as a loop offset when the mp3 variant is in use."
+  },
+  {
+   "lens": "robust",
+   "id": "R17",
+   "title": "iOS: audio can stay silent after an interruption (call, Siri, app switch); the only resume path is the title tap or window focus",
+   "severity": "low",
+   "area": "audio / iOS platform (code inspection; not reproducible in Chromium)",
+   "files": [
+    "/home/user/nurient/frost-village/src/core/Audio.js",
+    "/home/user/nurient/frost-village/src/scenes/Title.js"
+   ],
+   "repro": "Code inspection. Phaser 3.90 WebAudioSoundManager.unlock removes its body touch/mouse listeners after the first successful resume. Audio.start() (only called on the title tap) resumes only when state === 'suspended', not 'interrupted'. After an iOS interruption, recovery depends on context.resume() from a window focus event, which iOS may refuse outside a user gesture.",
+   "evidence": "Needs on-device verification. In Chromium the blur→focus path resumed fine (ctx running after focus).",
+   "suggested_fix": "In the UI scene's pointerdown handler, `const c = game.sound.context; if (c && c.state !== 'running') c.resume();` on every tap."
+  },
+  {
+   "lens": "robust",
+   "id": "R18",
+   "title": "No frame-rate cap: 120 Hz phones run update + render at 120 fps; below 20 fps the game runs in slow motion (dt clamp)",
+   "severity": "low",
+   "area": "performance / battery",
+   "files": [
+    "/home/user/nurient/frost-village/src/main.js",
+    "/home/user/nurient/frost-village/src/scenes/Game.js"
+   ],
+   "repro": "Code: main.js:32 sets `fps: { target: 60, smoothStep: true }` with no limit. Game.update clamps dt to 0.05.",
+   "evidence": "Headless rendered runs at 2–4 FPS were visibly slow motion: the 12-min rendered soak covered only ~80 s of effective simulation. Logic cost is small (Game update 0.55 ms; full scene-manager update ~1.4 ms on this contended CPU), so 120 Hz mainly costs battery and GPU fill.",
+   "suggested_fix": "Add `fps: { target: 60, limit: 60 }` (Phaser 3.60+ supports fps.limit)."
+  },
+  {
+   "lens": "robust",
+   "id": "R19",
+   "title": "Old or future save versions are silently discarded and then overwritten by the next autosave (no backup or migration)",
+   "severity": "low",
+   "area": "save/load future-proofing",
+   "files": [
+    "/home/user/nurient/frost-village/src/core/Save.js"
+   ],
+   "repro": "localStorage save {v:0, coins:999, …} → reload → start.",
+   "evidence": "Save.load returns null when s.v !== 1 (Save.js:37). The game starts fresh (coins 0, done []), and Save.write always writes v:1 over the same key on the next autosave or pagehide. Any future version bump will wipe every player's progress without warning.",
+   "suggested_fix": "Before overwriting an unreadable or other-version save, copy it to a backup key once. Add a small migrate(v) hook."
+  },
+  {
+   "lens": "robust",
+   "id": "R20",
+   "title": "Standing on an upgrade pad buys level after level with no pause (standT is not reset on rearm)",
+   "severity": "low",
+   "area": "pads UX / economy",
+   "files": [
+    "/home/user/nurient/frost-village/src/entities/UnlockPad.js",
+    "/home/user/nurient/frost-village/tools/test/review_robust_pads.mjs"
+   ],
+   "repro": "node tools/test/review_robust_pads.mjs (section C): unlockAll, give 5000, stand on up_speed.",
+   "evidence": "Without leaving the pad: level 1 at frame 92, 2 at 165, 3 at 234, 4 at 296. 1,560 coins spent in ~5 s of standing. rearm() resets done/cost/paid/acc but not standT, so draining resumes immediately.",
+   "suggested_fix": "If the design wants one level per visit, reset this.standT = 0 in rearm(), or require the player to step off first (set a 'needsLeave' flag)."
+  },
+  {
+   "lens": "robust",
+   "id": "R21",
+   "title": "touchcancel logs a console.error from Phaser (preventDefault on a non-cancelable event)",
+   "severity": "low",
+   "area": "console noise",
+   "files": [
+    "/home/user/nurient/frost-village/lib/phaser.min.js"
+   ],
+   "repro": "During a joystick drag, dispatch CDP Input.dispatchTouchEvent type 'touchCancel' (review_robust_input.mjs touch section).",
+   "evidence": "console.error: \"Ignored attempt to cancel a touchcancel event with cancelable=false, for example because scrolling is in progress and cannot be interrupted.\" No other console errors or warnings appeared in normal boot, the 12-min soaks, resize storms, or the audio and input tests (the only boot request failures were ERR_ABORTED caused by the test harness reloading).",
+   "suggested_fix": "Harmless. Filter it in any error reporting, or ignore it."
+  },
+  {
+   "lens": "robust",
+   "id": "R22",
+   "title": "Per-frame setDepth on every stacked item triggers a full display-list depth sort every frame (perf headroom)",
+   "severity": "low",
+   "area": "performance",
+   "files": [
+    "/home/user/nurient/frost-village/src/entities/ItemStack.js",
+    "/home/user/nurient/frost-village/src/entities/Character.js"
+   ],
+   "repro": "Code: ItemStack.layout calls it.spr.setDepth(...) for every item each frame. Phaser 3.90's depth setter always calls displayList.queueDepthSort(). Measured with review_robust_soak.mjs and review_robust_drawcalls.mjs.",
+   "evidence": "There are ~480–900 children with everything unlocked (before the R1 leak). Render-side CPU averaged 3.4–5.9 ms per frame under SwiftShader. Draw calls are only 4–6 per frame and texture uploads are 0 per frame (except ~1.4/frame, 25 kpx, while a pad's cost text changes), so the GPU batching itself is efficient.",
+   "suggested_fix": "Only call setDepth when the value changes (compare to spr.depth), or give static pad stacks a single depth and use a Container."
+  },
+  {
+   "lens": "deploy",
+   "id": "DEP-4",
+   "title": "All audio, including in-game music and ambience (~2.1 MB), is downloaded and decoded before the title screen",
+   "severity": "low",
+   "area": "load time",
+   "repro": "src/scenes/Preload.js create(): Assets.queueAssets(this.load) queues all 41 audio files. The title only needs bgm_title and the UI sfx.",
+   "evidence": "bgm_village.ogg 1.03 MB plus amb_sea/wind/fire.ogg 1.12 MB are 18% of the first-visit bytes, and each is decoded to PCM up front. Assets.queueAssets already accepts opts.musicFilter.",
+   "suggested_fix": "Preload.create: `Assets.queueAssets(this.load, { musicFilter: (k) => !/^(bgm_village|amb_)/.test(k) })`.\n\nTitle.create (after the UI is up): `Assets.queueAudio(this.load, (k) => /^(bgm_village|amb_)/.test(k)); this.load.once('complete', () => { if (Audio.musicKey) Audio.playMusic(Audio.musicKey); }); this.load.start();`.\n\nAmbience needs no change, because Audio.updateAmbience starts loops as soon as exists(key) is true. Optional: re-encode the ambience as mono Vorbis q2 in tools/audio. Measured: amb_sea 406K to 205K, amb_wind 357K to 205K, amb_fire 355K to 190K. Music at Vorbis q2: bgm_village 1026K to 711K. That saves about 0.95 MB (ogg), pending a listening check.",
+   "files": [
+    "frost-village/src/scenes/Preload.js",
+    "frost-village/src/scenes/Title.js",
+    "frost-village/tools/audio"
+   ]
+  },
+  {
+   "lens": "deploy",
+   "id": "DEP-5",
+   "title": "Double-clicking frost-village/index.html (file://) hangs on 'Loading...' with no message",
+   "severity": "low",
+   "area": "designer experience / index.html",
+   "repro": "Open file:///home/user/nurient/frost-village/index.html in Chromium (scratch script fileproto/file_test.mjs)",
+   "evidence": "Console: Access to script at 'file:///.../src/main.js' from origin 'null' has been blocked by CORS policy. #fv-error stays display:none and __FV_BOOTED stays false. The window error listener is registered without capture, and a failed script or module load fires only on the <script> element, so the friendly message never shows.",
+   "suggested_fix": "In index.html, move the error <script> above `<script src=\"lib/phaser.min.js\">` and register it with capture (`window.addEventListener('error', fn, true)`), reading `e.target.src` when e.message is empty. Also add `if (location.protocol === 'file:') show('이 게임은 파일 더블클릭으로는 열리지 않아요. tools/build/README.md의 \"내 컴퓨터에서 실행하기\"를 따라 주세요.')`.\n\nThe artifact page generated by build_artifact.mjs already registers its handler first and with capture. The README explains the local-server way to run the game. The --inline build is the one version that does run by double-click (verified).",
+   "files": [
+    "frost-village/index.html"
+   ]
+  },
+  {
+   "lens": "deploy",
+   "id": "DEP-6",
+   "title": "GitHub Pages: add an empty .nojekyll at the repo root; game goes live only after merge to main",
+   "severity": "low",
+   "area": "GitHub Pages",
+   "repro": "node frost-village/tools/build/test_deploy.mjs pages  (serves /home/user/nurient under /nurient/, opens /nurient/frost-village)",
+   "evidence": "pages mode PASS: 301 to the trailing slash, title in 2.7 s, full loop played, 0 errors, 0 failed requests, coins persisted after reload.\n\ngh api shows the repo is public with has_pages=true and default branch main. origin/main contains only privacy.html.\n\nJekyll currently has nothing to break: no front matter under frost-village, and the `_cache` folder and node_modules are gitignored. It still runs a needless build on every push and would hide any future `_`-prefixed path.",
+   "suggested_fix": "Commit an empty /home/user/nurient/.nojekyll (outside my writable area). After merging, check Settings → Pages: Source 'Deploy from a branch', Branch main, folder / (root). URL: https://hyun800115-create.github.io/nurient/frost-village/. The URL is case-sensitive. The README explains these steps in Korean.",
+   "files": [
+    ".nojekyll",
+    "frost-village/tools/build/README.md"
+   ]
+  },
+  {
+   "lens": "deploy",
+   "id": "DEP-7",
+   "title": "Artifact republish: no hot-update snapshot, so viewers without storage lose progress when the page is updated",
+   "severity": "low",
+   "area": "claude.ai Artifact runtime",
+   "repro": "Republish the artifact while a viewer plays in a private window or preview (localStorage throws). The host reloads the page with the new version.",
+   "evidence": "In the opaque sandbox, localStorage throws SecurityError: the reload step shows coins 12 before and 0 after, which is expected without storage. With storage, autosave every 5 s keeps progress (sameorigin: 12 before, 12 after).",
+   "suggested_fix": "Optional, in src/main.js: `const hot = window.claude && window.claude.hot; if (hot && hot.snapshot) hot.snapshot(() => (window.__FV && window.__FV.scene ? window.__FV.scene.serialize?.() : null));`. Then, before Save.load(), restore from `hot.data` when it is present. This needs a small serialize() or restore path in Game.js that reuses the Save format. Low priority, because autosave already covers normal viewers.",
+   "files": [
+    "frost-village/src/main.js",
+    "frost-village/src/core/Save.js"
+   ]
+  },
+  {
+   "lens": "deploy",
+   "id": "DEP-8",
+   "title": "mp3 loops are gapless in Chromium; Safari/iOS (which picks .mp3) unverified and mp3StartPad is unused",
+   "severity": "low",
+   "area": "audio packaging (mp3-only / inline builds)",
+   "repro": "Scratch script fileproto/mp3len.mjs: decode both formats with OfflineAudioContext and compare lengths with the manifest's loopSamples",
+   "evidence": "Chromium decodes each mp3 to exactly loopSamples, for example bgm_village 3386816 and amb_sea 1058432, because it honours the LAME gapless header. So the mp3-only --inline build loops seamlessly in Chrome. mp3StartPad=1105 is in the manifest, but nothing in src reads it. Safari's decoder was not testable here.",
+   "suggested_fix": "Listen to a loop on an iPhone. If a click or gap is heard, add this to Audio.js after load: for each audio entry with loopSamples where the decoded buffer is longer than loopSamples, copy the frames [mp3StartPad, mp3StartPad + loopSamples) into a new AudioBuffer and replace the cache entry with game.cache.audio.add(key, trimmed).",
+   "files": [
+    "frost-village/src/core/Audio.js",
+    "frost-village/assets/audio/manifest.json"
+   ]
+  }
+ ],
+ "fix": {
+  "summary": "Quality pass on Frost Village is done. I reproduced every critical, high and medium finding (or confirmed it in the code) before fixing it.\n\nThe village can now be finished by honest play. I ran about 30 bot simulations that steer only through setInput, using the final balance.js. Every run reached hire_hunter with 0 stuck episodes and 0 errors. smoke.mjs passes 23/23 steps with 0 errors.\n\n**Critical gameplay**\n- **Miner pad:** hire_miner moved out of the mine-entrance obstacle (now 68% standable and reachable on foot). The miner's home spot moved out too.\n- **Customers:** paths now end inside the walkable area. Customers appear at the nearest off-screen point of the entry path, and leaving customers disappear once off-screen. There is a 30 s safety timeout.\n- **Partly served customers:** the front customer switches to any stocked food even after a partial order, and pays per item actually received.\n- **Raw-item softlock:** a new '버리기' (discard) pad next to the beach campfire throws carried items into the fire. It appears after the first hire and needs a 0.6 s stand. Auto-gather is also skipped while the matching station is full both ways.\n\n**New features**\n- **Couriers:** the five post-completion 2nd-worker pads (save IDs unchanged) are now couriers. Each carries its station's output to the counter or trade post, so the village earns on its own.\n- **Hints:** a full bag points to where the items can go, or to the discard pad. The backpack upgrade is shown once. Zone lessons end when that zone's worker is hired or after 90 s. Standing still for 3 s shows the next useful action.\n\n**Balance (balance.js and 기획서 §4 table updated)**\n- Costs: 30/100/150/350/450/750/850/1250/1500.\n- Upgrades are cheaper and stronger: backpack 6→26, costs 40–480; boots up to ×1.6, costs 50–400.\n- Customers: spawn every 2.0 s, queue of 10 that turns into the plaza. Shelf limits are now tunable. Bakery 1.1 s, smelter and smokehouse 1.2 s.\n\n**Robustness**\n- Corrupted saves are sanitized; a save that still fails is moved aside and the game starts fresh. Saves from other versions are backed up.\n- After boot, a crash overlay offers 'Reload' and 'Start over'. Game and UI update loops are guarded.\n- balance.js values are checked at start-up; unusable ones are replaced with safe values and a console warning.\n- No sounds pile up while the window is blurred. Worker sounds play only when on screen.\n- Item flights in progress at reload are no longer lost. Upgrade pads keep no leftover partial payment and need a step-off between levels.\n- Arrow and space keys no longer scroll an embedding page. A second finger takes over the joystick.\n- Canvas-renderer fallback panels. ogg→mp3 retry. Audio resumes on any tap. Fps capped on 120 Hz screens. Depth set only on change.\n\n**Visual**\n- The carried tower sits on the head; it can be switched back with balance `carryOnHead`.\n- Canvas renders at device resolution (up to 2x), with a fallback to 1x on weak GPUs.\n- The first-loop camera frames net, grill and counter. The market moved inward and the fisherman pad moved right.\n- Splash lands on water. Front customer bubble is on top, with a check mark instead of 'x0'.\n- Market, trade post and tall stations fade only when the chief is actually behind them (pixel-accurate).\n- Soft blurred paths, grounded title art, particle tints that show on snow, frosted previews inside locked zones.\n- Rotate overlay for landscape phones, safe-area insets, and small polish (labels, coin spacing, fence posts, banner subtitle, settings icons).\n\n**Deploy**\n- Title start frame clamped. Placeholder art now triggers impacts, so the no-CORS sandbox is playable.\n- Village music and ambience load after the title. index.html and the artifact page handle script-load failures.\n- The artifact build packages only asset folders the game loads: 168 files / 14 MB, versus 242 / 26 MB when it swept in the in-progress villager and emote folders.\n- Two fixes touched asset files: fx_levelup/fx_unlock re-packed into grids under 2048 px, and ambience loops re-encoded as mono.\n\n**Not done in this pass:** carrying before the village is complete (GP-05 is only partly addressed), more customer looks (V6), the Pages WebP conversion (DEP-3), and repo-root .nojekyll (DEP-6).",
+  "results": [
+   {
+    "id": "GP-01",
+    "status": "fixed",
+    "note": "Reproduced: the pad was inside mine_entrance (standable 0). world.js: hire_miner and hire2_miner moved to P('mine',-0.4,3.6) = (575,1809), now 68% standable and reached on foot. workerHome.miner moved to Z('mine',-0.2,2.2), which is not blocked. All bot sims finish the village."
+   },
+   {
+    "id": "GP-02",
+    "status": "fixed",
+    "note": "Reproduced: exit point at y 2660 was below the walkable limit. Market entry/exit paths now end at (990,2200). New customers appear at the off-screen point of the path nearest the plaza. Leaving customers despawn once off-screen after 1.2 s, at the path end (fading if visible), or after a 30 s / bottom-edge safety. 8-min market soak: 29–31 served per minute every minute, at most 3 leaving, at most 6 agents, 0.1 ms/frame."
+   },
+   {
+    "id": "R1",
+    "status": "fixed",
+    "note": "Same root cause as GP-02, same fix (world.js exit path plus despawn safety nets in Customer 'leave' in Seller.js). Soak stays flat: about 560 display objects and 5–6 agents throughout."
+   },
+   {
+    "id": "GP-03",
+    "status": "fixed",
+    "note": "Market.update lets the front customer switch to any stocked food whenever theirs runs out, including after a partial order (the got===0 condition is gone). Customers pay the price of each item actually received (c.value) and carry home what they bought. maxPerType is now balance customers.shelfMax and trade.shelfMax. No stalls in any sim."
+   },
+   {
+    "id": "GP-04",
+    "status": "fixed",
+    "note": "Reproduced the full-bag softlock. New TrashPad entity ('버리기', next to the beach campfire, visible after hire_fisherman, 0.6 s stand via balance player.trashDelay): items fly into the fire. Player.update skips auto-gather when that station's input and output are both full (Game.stationBlocked), with a toast instead. The hint arrow points at the discard pad when nothing accepts the carried items. Verified: a bag of 6 raw fish was emptied in 2.6 s, and standing at the net with a full grill no longer fills the bag."
+   },
+   {
+    "id": "GP-05",
+    "status": "partially_fixed",
+    "note": "After the village is complete, the hire2_* pads are now couriers (Worker role 'porter', capacity balance workers.porterCapacity 8). They pick up a station's output and stock the counter or trade post. With the player parked away the village earns about 1,170 coins per minute into the cash piles. Carrying before completion is unchanged: it is the core loop in 기획서 §2, and adding porters earlier would change the designer's progression."
+   },
+   {
+    "id": "V1",
+    "status": "fixed",
+    "note": "Character.carryOffset places the tower on the head (headTop+4) in every direction, with a small per-direction x lean and a ~60 ms glide on turns. This applies to the chief, workers and customers. balance.js player.carryOnHead: false switches back to the chest pose. Verified in S, SE and W screenshots: the face is never covered."
+   },
+   {
+    "id": "V2",
+    "status": "fixed",
+    "note": "New core/View.js. The canvas is 720k × Hk with k = device px / 720, capped at 2. The Game camera zoom is multiplied by k; UI, Title and Preload cameras use zoom k from the top-left, so layout stays in 720 logical px. Pointer coordinates are divided by k and k is recomputed on resize. At 430×932@3 the canvas is 1296×2810 and HUD text is sharp. A weak-GPU guard drops to 1x if the village runs below 30 fps."
+   },
+   {
+    "id": "V3",
+    "status": "fixed",
+    "note": "During the first loop the camera frames WORLD.tutorialView (1095,670): net, grill, counter, queue and cash pad together, following the chief only near the edges. The market moved inward to Z(2.0,2.8) with its shelf, cash and queue. hire_fisherman moved to (900,700), so its label is no longer clipped. The 10-person queue turns into the empty plaza."
+   },
+   {
+    "id": "V4",
+    "status": "fixed",
+    "note": "In Worker.impact, the fisherman's splash point is clamped to shoreY−16, so it always lands on water. The second fisherman (who splashed on the hut roof) is now a courier. Verified in 11_fisherman_working.jpg."
+   },
+   {
+    "id": "V5",
+    "status": "fixed",
+    "note": "Bubble depth is DEPTH.BUBBLE + 50 − slot, so the front bubble is on top. Bubble scale is 0.9 / 0.72 / 0.62 for slots 0, 1 and 2, with pops done through a per-frame scale. 'x0' is replaced by ui_icon_check."
+   },
+   {
+    "id": "V6",
+    "status": "partially_fixed",
+    "note": "The same villager model is never spawned twice in a row. Each customer gets ±4% scale, a speed spread and a random side offset on the exit path, so they no longer move in lockstep. New colorways, a distinct merchant and the villager_b hat need new art; the villager expansion (assets/villagers, being built by another agent) will provide them."
+   },
+   {
+    "id": "V7",
+    "status": "fixed",
+    "note": "The market and trade post, plus the tall stations (oven, smelter, smokehouse), are now occluders. The grill and sawmill are low and are left out on purpose. The fade test now checks the sprite's actual pixels at the chief's chest and head (textures.getPixelAlpha, rechecked every 0.12 s), so standing at the grill output no longer fades the market. Fade alpha lowered to 0.32. Forest trees are no longer placed in the zone's west corner (world.js trees.cornerCut)."
+   },
+   {
+    "id": "V8",
+    "status": "fixed",
+    "note": "Ground.bakePaths now draws one soft blurred band (shadowBlur, which works in every browser) plus a soft earth core, as a single shape so junctions are not darker. The white edge lines are gone and snow-drift decals break up the edges. No glass-tube or stepped look."
+   },
+   {
+    "id": "V9",
+    "status": "fixed",
+    "note": "Title: the hero's feet stand on the snow field at H*0.765 with a contact shadow. The crew flanks him on the same ground, kept away from the pines at the edges. The halo disc is removed. '탭하여 시작' sits on a soft pill."
+   },
+   {
+    "id": "V10",
+    "status": "fixed",
+    "note": "dust and snowhit use snow-shadow blues. spark uses NORMAL blend with saturated tints. glow is NORMAL and warm yellow; ring is light blue."
+   },
+   {
+    "id": "V11",
+    "status": "fixed",
+    "note": "index.html and the artifact page show a CSS '휴대폰을 세로로 돌려 주세요' overlay for (orientation: landscape) and (max-height:500px) and (pointer:coarse). The overlay sits over the canvas, so it also blocks input."
+   },
+   {
+    "id": "V12",
+    "status": "fixed",
+    "note": "index.html exposes --sat/--sab from env(safe-area-inset-*). main.js converts them to logical px (View.safeTop/safeBottom). UI.layout's top and toast position and the title's logo and tap prompt use them. Simulated 47/34 px insets moved the coin bar from y 62 to 149 and the toast up by 63."
+   },
+   {
+    "id": "V13",
+    "status": "fixed",
+    "note": "Locked zones show frosted, tinted ghosts of their station and a few resources (trees, wheat, rocks, bales). The zone name is 34 px with a stronger stroke and the lock is larger. The stray dirt decal inside the mine moved out."
+   },
+   {
+    "id": "V14",
+    "status": "fixed",
+    "note": "(a) Pad labels clamp inside the camera view. (b) Cost layout is [coin] gap [digits]. (c) Fence posts are deduplicated. (d) Campfire, bench, flag and lamp moved out of the lodge silhouette. (e) The banner subtitle has a dark pill. (f) Settings language row has a drawn globe icon and the gray button text has a darker stroke. (h) Station stacks fill twin towers side by side. (g) Deer centroid offset is art, accepted as is."
+   },
+   {
+    "id": "V15",
+    "status": "wont_fix",
+    "note": "Not a defect: the reviewer listed things that already work. The regression checks (mirroring, depth, reveal) still hold in the new screenshots."
+   },
+   {
+    "id": "R2",
+    "status": "fixed",
+    "note": "New sanitizeSave in Save.load: finite clamped numbers, flag objects, item-key filtered stack array, known shelf types, sane positions. Settings are sanitized too. Progression clamps upgrade levels to whole numbers. Game.create wraps building in try/catch: on failure the save is moved to frostVillage.save.v1.bad and the game restarts fresh. review_robust_save_fast.mjs: all 27 variants boot to RUNNING with the UI up and no NaN."
+   },
+   {
+    "id": "R3",
+    "status": "fixed",
+    "note": "index.html (and the artifact page) keep a capture-phase error and unhandledrejection handler after boot. If the game loop's frame counter stops for 1.5 s, a '문제가 생겨서 게임이 멈췄어요' card offers Reload and Start over (which moves the save aside). Game.update and UI.update run their body in try/catch and log once."
+   },
+   {
+    "id": "R4",
+    "status": "fixed",
+    "note": "Audio.play and ambience creation return early unless the AudioContext is running and unlocked (Audio.live). Blur test: 3 sound objects before, during and after 902 blurred frames (was 189)."
+   },
+   {
+    "id": "R5",
+    "status": "fixed",
+    "note": "Progression.upgrade sets pad.paid = 0 before saving. collectPaid deletes entries for pads that are unpaid, done or maxed. review_robust_pads: no saved 'paid' after an upgrade or a reload."
+   },
+   {
+    "id": "R6",
+    "status": "fixed",
+    "note": "New data/balanceCheck.js runs at start-up and repairs every value the code relies on (cost 0 or missing → 1 or default, fractional prices rounded, payDuration ≥ 0.1, autosaveEvery ≥ 1, missing upgrade costs, …), with a '[balance.js] …' console warning. UnlockPad prices go through sanePrice, and a pad completes when it is already fully paid. Tests: costZero completes; costLowered completes and refunds nothing extra."
+   },
+   {
+    "id": "R7",
+    "status": "fixed",
+    "note": "New Game.sfxAt: sound only on or near the screen, half volume just outside it. Used for tree, rock, wheat and net hits, animal hits and deaths, worker splash and reel, and the bow (no more volume-0 plays). Busy test near the loop: 6.1 plays/s, chop/mine/bow/hit gone when off-screen."
+   },
+   {
+    "id": "R8",
+    "status": "fixed",
+    "note": "index.html registers its error handler first, in the capture phase: a blocked or failed module shows 'failed to load …/src/main.js'. A 20 s timeout covers modules that never report. The first failed save shows the toast '이 환경에서는 진행 상황이 저장되지 않아요'. tools/build/README.md documents iframe embedding (allow-same-origin). Verified in review_robust_iframe: the error card appears in the no-CORS sandbox."
+   },
+   {
+    "id": "R9",
+    "status": "fixed",
+    "note": "Input.attachKeyboard passes enableCapture=true and adds SPACE to captures. iframe test: host scrollY stayed 0 in all cases while steering with the arrow keys."
+   },
+   {
+    "id": "R10",
+    "status": "fixed",
+    "note": "New core/Panel.js: every nine-slice goes through panel(), which falls back to a rounded-rect Graphics with the same API (setSize, setOrigin, setTint, width/height) under the Canvas renderer. --disable-webgl test: coin bar, settings panel and buttons all draw."
+   },
+   {
+    "id": "R11",
+    "status": "partially_fixed",
+    "note": "fx_levelup (3072 px) and fx_unlock (2688 px) re-packed into grids of 1536×384 and 1344×384, frames byte-identical; gen_fx.py now wraps sheets at 2048 px. Ambience loops re-encoded mono through tools/audio/build_audio.py (CHANNELS map, mp3 at 80 kbps): about −11.5 MB decoded PCM and −0.7 MB download, with manifest volumes re-measured. The stereo village music and the sea/fish TileSprite canvases are unchanged."
+   },
+   {
+    "id": "R12",
+    "status": "fixed",
+    "note": "Title restarts on scale resize (while not yet tapped). UI.layoutPanel rebuilds an open settings panel around the new centre, keeping the confirm view and the pause. A landscape overlay was added (see V11). Resize test: panel centre at 781 for 430×932 and 640 for 360×640; storm of 40 resizes with 0 errors."
+   },
+   {
+    "id": "R13",
+    "status": "fixed",
+    "note": "Audio.setSoundEnabled(false) sets every ambience loop to volume 0 immediately. Test: wind and sea at 0.000 while the panel is still open."
+   },
+   {
+    "id": "R14",
+    "status": "fixed",
+    "note": "ItemStack tracks the types of items in flight (reserve/arrive). serialize adds them, the station in/out items in flight, a waiting customer's received-but-unpaid food (back to the shelf), and goods on their way to the merchant. reloadMidTransfer: 0 lost at 60, 150 and 400 ms."
+   },
+   {
+    "id": "R15",
+    "status": "fixed",
+    "note": "UI pointerup: when the joystick finger lifts and another pointer is down, that pointer takes over the joystick, re-based at its position. Test: after finger 1 lifts, finger 2 steers (vy −182)."
+   },
+   {
+    "id": "R16",
+    "status": "fixed",
+    "note": "Assets.onLoadError(file, loader) re-queues a failed audio file once with its remaining URLs (the mp3). Used by Preload and the deferred Game load. With .ogg blocked, 41/41 sounds load and play."
+   },
+   {
+    "id": "R17",
+    "status": "fixed",
+    "note": "Audio.resume() resumes any non-running context; the UI scene calls it on every pointerdown (a user gesture)."
+   },
+   {
+    "id": "R18",
+    "status": "fixed",
+    "note": "main.js: 4 s after boot, if the loop runs above 100 fps it switches to the fps limit at 80 (120 Hz → 60, 144 Hz → 72). 60 Hz and 90 Hz screens are left untouched, because a fixed limit would make 90 Hz judder at 45 fps."
+   },
+   {
+    "id": "R19",
+    "status": "fixed",
+    "note": "Save.load keeps a one-time copy of an unknown or other-version save in frostVillage.save.backup before the next autosave overwrites it. Added a MIGRATE[v] hook. A save that crashed restore goes to frostVillage.save.v1.bad."
+   },
+   {
+    "id": "R20",
+    "status": "fixed",
+    "note": "UnlockPad.rearm sets needsLeave, so the next level only drains after the player steps off. Combined with padDelay 0.5. Test: exactly one level bought while standing still."
+   },
+   {
+    "id": "R21",
+    "status": "wont_fix",
+    "note": "Harmless browser log from Phaser's internal touchcancel preventDefault, inside lib/phaser.min.js. Nothing breaks."
+   },
+   {
+    "id": "R22",
+    "status": "fixed",
+    "note": "ItemStack.layout and Character.sync call setDepth only when the value changes, so there is no full display-list sort every frame from stacks."
+   },
+   {
+    "id": "GP-06",
+    "status": "fixed",
+    "note": "New Tutorial.unloadHint: with a full bag the arrow goes to the nearest place that can take a carried item (shelf, trade post or station input, with matching text), or to the discard pad. The zone '_1' and '_3' steps are only shown when the bag has room. Hint-lock repro: the arrow now points at the market shelf with 'obj_sell', then returns to the forest lesson."
+   },
+   {
+    "id": "GP-07",
+    "status": "fixed",
+    "note": "Tutorial rework: the obj_upgrade hint shows once when the first backpack upgrade is affordable (25 s max, saved in progress.seen). Zone lessons end when that zone's worker is hired or after 90 s. After 3 s standing idle, the arrow shows the next useful action (sell what you carry, collect coins, empty the fullest station that has no courier) with the next goal as text. The courier hint obj_courier is also used. Unreachable-pad bounce fixed by GP-01."
+   },
+   {
+    "id": "GP-08",
+    "status": "fixed",
+    "note": "Final balance (bot sims, 2 runs each, current code). Optimal play completes in 14.2–14.3 min (14.8 without upgrades); casual model 17.8–18.0 min (24.5–25.8 without upgrades), so upgrades now pay back. Longest gap between beats: 88–91 s optimal, 156–163 s casual. Average income: 510 coins/min optimal, 415 casual. 기획서 §4 table updated with the new costs, upgrade ladders and couriers."
+   },
+   {
+    "id": "GP-09",
+    "status": "fixed",
+    "note": "Customers now appear just off-screen near the plaza, so the walk is about 7 s instead of 19 s. spawnEvery 2.0, maxQueue 10, and the queue turns after 6 slots (queueTurn/queueStep2 in world.js). Soak with a stocked shelf: about 30 customers/min, limited only by the spawn rate. Shelf limits are tunable in balance.js."
+   },
+   {
+    "id": "GP-10",
+    "status": "fixed",
+    "note": "hire2_* pads are now couriers (see GP-05), each adding real throughput by moving finished goods to sellers. The step IDs are unchanged, so existing saves stay valid. Labels: '생선/판자/빵/주괴/고기 배달꾼'."
+   },
+   {
+    "id": "GP-11",
+    "status": "fixed",
+    "note": "padDelay raised to 0.5 s (used only by unlock, hire and upgrade pads), plus the upgrade step-off rule (R20). Casual sims: 0–4 accidental coins, down from 519."
+   },
+   {
+    "id": "DEP-1",
+    "status": "fixed",
+    "note": "Title.js and Effects.loop clamp startFrame to the animation's frame count. Character._onFrame also fires impacts on placeholder animations. The worst-case sandbox (no CORS, all art missing) now reaches the village and completes the fish → grill → customers → coins loop with placeholder art."
+   },
+   {
+    "id": "DEP-2",
+    "status": "wont_fix",
+    "note": "Host limitation, not a source bug. The --inline fallback still builds (8 files, 15.2 MB) and passes the strictest host emulation ('sandbox-inline'); the normal build passes 'sameorigin' and 'sandbox-cors'."
+   },
+   {
+    "id": "DEP-3",
+    "status": "partially_fixed",
+    "note": "Payload cut in other ways: deferred audio (DEP-4), mono ambience (R11), and packaging only the asset folders the game loads (artifact now 168 files / 14.0 MB / about 11.5 MB first visit, instead of 242 files / 26 MB when in-progress villager assets were swept in). The build's --webp option is untouched. Converting the Pages assets/ to WebP needs the art generators changed, which I left for later."
+   },
+   {
+    "id": "DEP-4",
+    "status": "fixed",
+    "note": "Preload skips bgm_village and amb_* (Assets.isDeferredAudio). Game.loadDeferredAudio loads them after the title and starts the music when ready; ambience starts automatically. test_deploy now checks 'village music + ambience loaded after the title' (passes)."
+   },
+   {
+    "id": "DEP-5",
+    "status": "fixed",
+    "note": "index.html registers the error script before phaser.min.js, in the capture phase (it catches failed <script> or module loads). Opened from file:// it shows a Korean 'run through a local server (README)' message."
+   },
+   {
+    "id": "DEP-6",
+    "status": "wont_fix",
+    "note": "A .nojekyll file belongs at the repository root, outside frost-village/ where I may edit, so that is for the lead. The README already explains the step."
+   },
+   {
+    "id": "DEP-7",
+    "status": "wont_fix",
+    "note": "Optional and low priority, and the window.claude.hot API cannot be verified here. Autosave every 5 s already preserves progress across republishes whenever storage is available."
+   },
+   {
+    "id": "DEP-8",
+    "status": "fixed",
+    "note": "Audio.trimLoops runs after each load. When a decoded loop is more than 10 ms longer than its manifest duration (a decoder that ignored the LAME gapless header), it is cut to [mp3StartPad, +duration). In Chromium the lengths are already exact, so it does nothing there. Safari behaviour still needs a check on a real device."
+   }
+  ],
+  "tests": "- **smoke.mjs:** PASS 23/23 steps, 0 page/console errors, 0 placeholder keys. It now also checks that couriers pick up goods, and pays the forest pad from its remaining cost. The 25 screenshots in docs/previews/screens/*.jpg were regenerated, and I checked 02, 05, 11, 20 and 23 by eye.\n- **test_deploy.mjs (final dist build):** PASS for pages, standalone, sameorigin, sandbox-cors, sandbox-inline and raw.\n  - raw failed at first because the high-resolution canvas made SwiftShader too slow. It passed after adding the weak-GPU fallback to 1x.\n  - sandbox (worst case, no CORS) is still expected to fail its asset checks. It no longer crashes, and its full first loop passes with placeholder art.\n- **build_artifact.mjs:** OK, 168 files / 14.0 MB. The --inline build is OK, 8 files / 15.2 MB.\n- **Pacing sims:** about 30 runs of review_gameplay_sim.mjs (bot steering only through setInput), all with 0 stuck episodes and 0 errors. Optimal 14.2–14.3 min (14.8 without upgrades); casual 17.8–18.0 min (24.5–25.8 without upgrades). I fixed a quirk in review_gameplay_bot.js where the bot picked the wrong shelf and kept 25 ingots in its bag.\n- **Reviewer repros re-run:**\n  - review_gameplay_pads: hire_miner reachable.\n  - review_gameplay_market (8 min): 29–31 served/min, at most 3 leaving, 0.1 ms/frame.\n  - Softlock: gather skipped, discard pad empties the bag.\n  - Hint-lock: arrow goes to the shelf.\n  - review_robust_save_fast: all 27 variants run.\n  - review_robust_save costZero / costLowered / reloadMidTransfer: pass, 0 items lost.\n  - review_robust_pads: no stale paid, one level per visit, coins conserved.\n  - review_robust_audio blur / mute / oggBlocked / busy: as reported per finding.\n  - review_robust_iframe: error card shown; host scroll stays 0.\n  - review_robust_multitouch: second finger takes over.\n  - review_robust_resize: panel re-centred, 0 errors.\n  - review_robust_platform canvas: panels draw.\n- **Extra checks I wrote:** 3x-DPR sharpness (canvas 1296×2810), weak-GPU fallback, safe-area insets, couriers earning about 1,170 coins/min idle, and the market/trade-post fade using the art's pixels.",
+  "changed_files": [
+   "/home/user/nurient/frost-village/index.html",
+   "/home/user/nurient/frost-village/src/main.js",
+   "/home/user/nurient/frost-village/src/core/View.js",
+   "/home/user/nurient/frost-village/src/core/Panel.js",
+   "/home/user/nurient/frost-village/src/core/Save.js",
+   "/home/user/nurient/frost-village/src/core/Assets.js",
+   "/home/user/nurient/frost-village/src/core/Audio.js",
+   "/home/user/nurient/frost-village/src/core/Input.js",
+   "/home/user/nurient/frost-village/src/data/balance.js",
+   "/home/user/nurient/frost-village/src/data/balanceCheck.js",
+   "/home/user/nurient/frost-village/src/data/strings.js",
+   "/home/user/nurient/frost-village/src/data/world.js",
+   "/home/user/nurient/frost-village/src/entities/Animal.js",
+   "/home/user/nurient/frost-village/src/entities/Character.js",
+   "/home/user/nurient/frost-village/src/entities/ItemStack.js",
+   "/home/user/nurient/frost-village/src/entities/Player.js",
+   "/home/user/nurient/frost-village/src/entities/ResourceNode.js",
+   "/home/user/nurient/frost-village/src/entities/Seller.js",
+   "/home/user/nurient/frost-village/src/entities/Station.js",
+   "/home/user/nurient/frost-village/src/entities/TrashPad.js",
+   "/home/user/nurient/frost-village/src/entities/UnlockPad.js",
+   "/home/user/nurient/frost-village/src/entities/Worker.js",
+   "/home/user/nurient/frost-village/src/scenes/Game.js",
+   "/home/user/nurient/frost-village/src/scenes/Preload.js",
+   "/home/user/nurient/frost-village/src/scenes/Title.js",
+   "/home/user/nurient/frost-village/src/scenes/UI.js",
+   "/home/user/nurient/frost-village/src/systems/Effects.js",
+   "/home/user/nurient/frost-village/src/systems/Ground.js",
+   "/home/user/nurient/frost-village/src/systems/Progression.js",
+   "/home/user/nurient/frost-village/src/systems/Tutorial.js",
+   "/home/user/nurient/frost-village/assets/fx/fx_levelup.png",
+   "/home/user/nurient/frost-village/assets/fx/fx_unlock.png",
+   "/home/user/nurient/frost-village/assets/fx/manifest.json",
+   "/home/user/nurient/frost-village/assets/audio/amb_wind.ogg",
+   "/home/user/nurient/frost-village/assets/audio/amb_wind.mp3",
+   "/home/user/nurient/frost-village/assets/audio/amb_sea.ogg",
+   "/home/user/nurient/frost-village/assets/audio/amb_sea.mp3",
+   "/home/user/nurient/frost-village/assets/audio/amb_fire.ogg",
+   "/home/user/nurient/frost-village/assets/audio/amb_fire.mp3",
+   "/home/user/nurient/frost-village/assets/audio/manifest.json",
+   "/home/user/nurient/frost-village/docs/기획서.md",
+   "/home/user/nurient/frost-village/docs/previews/audio_preview.html",
+   "/home/user/nurient/frost-village/docs/previews/screens/*.jpg (25 regenerated by smoke.mjs)",
+   "/home/user/nurient/frost-village/tools/audio/build_audio.py",
+   "/home/user/nurient/frost-village/tools/fx/gen_fx.py",
+   "/home/user/nurient/frost-village/tools/build/build_artifact.mjs",
+   "/home/user/nurient/frost-village/tools/build/test_deploy.mjs",
+   "/home/user/nurient/frost-village/tools/build/README.md",
+   "/home/user/nurient/frost-village/tools/test/smoke.mjs",
+   "/home/user/nurient/frost-village/tools/test/review_gameplay_bot.js"
+  ]
+ },
+ "verify": {
+  "verdict": "ship-with-known-issues",
+  "verified": [
+   "Smoke test: passes 23/23 with 0 page/console errors, 0 placeholder keys and 0 failed requests. That run used an identical copy writing screenshots to scratchpad. Two earlier runs failed one step each: 'backpack upgrade' (the upgrade was about 85% paid when the 8 s wall-clock wait ran out at 9 fps in SwiftShader; the screenshot shows the ring) and 'catching an animal' (5 s wait). Both waits are now longer; see small fixes.",
+   "GP-01: review_gameplay_pads.mjs shows all 16 pads reachable on foot. hire_miner at (575,1809) is 68% standable and reached by joystick.",
+   "GP-01/03/08/11, honest play: review_gameplay_sim.mjs with the smart policy and greedy upgrades, steering only through setInput, completed the village at 864 s (14.4 min), with 0 stuck episodes, 0 accidental payments and 0 errors. The market kept serving all game. Timeline: fisherman 29 s, forest 71 s, farm 350 s, mine 605 s, hunt 768 s, hunter 864 s.",
+   "GP-06/07: the pure arrow-follower bot (--policy arrow) completes the village in 21 min with 0 stuck and 0 errors (the original finding had it stuck for 27+ min). The patched hintlock repro (setup coin gift raised from 80 to 100 to match the new forest cost) shows: with a full bag of fish the arrow goes to the shelf ('obj_sell'); after following it the bag is empty and the arrow returns to the forest lesson.",
+   "GP-02/R1/GP-09: review_gameplay_market.mjs 8 serves 29-31 customers per minute every minute, with at most 3 leaving, at most 6 agents, a flat 573-577 display objects and 0.06-0.17 ms per frame.",
+   "GP-04: the softlock repro no longer reproduces; standing at the net while the grill is full both ways leaves the bag empty. My extra check: walking straight across the discard pad keeps all 6 items; standing on it empties the bag (6 to 0); with raw fish and a full grill the arrow points at the pad (585,680) with 'obj_trash'.",
+   "GP-05: couriers. With the village complete and the chief parked far away, 2,324 coins (2,129 on a second run) landed on the cash piles in 2 minutes, about 1,100 per minute.",
+   "R2: review_robust_save_fast.mjs, all 27 corrupt-save variants boot to RUNNING with no NaN and no errors.",
+   "R5/R6/R14/R20: costZero is repaired to 1 and completes, with a console warning. costLowered completes with no extra refund. reloadMidTransfer loses 0 items at 60/150/400 ms. No stale 'paid' remains after an upgrade. Reloading mid-payment conserves coins. Standing still buys exactly one level per visit.",
+   "R3: a real loop-killing exception (an un-guarded sprite preUpdate that throws) shows the '문제가 생겨서 게임이 멈췄어요' card with Reload and Start over. Start over was broken; I fixed it (see small fixes).",
+   "R4/R13/R16 (review_robust_audio.mjs). Blur: 3 sounds before, during and after 902 blurred frames, no pile-up. Mute: ambience at 0.000 while the panel is still open, and it persists after reload. With .ogg blocked, all 41 sounds load from mp3.",
+   "R8/R9 (review_robust_iframe.mjs): the no-CORS sandbox shows the Korean error card instead of hanging; the CORS, same-origin and no-sandbox frames play; host scrollY stays 0 while steering with arrow keys.",
+   "R10 (review_robust_platform.mjs only=canvas): the Canvas renderer draws the coin bar, settings panel and buttons (checked the screenshot) with 0 errors. R12: the settings panel re-centres (y 781 at 430x932, 640 at 360x640); a 40-resize storm logs 0 errors. R15: after finger 1 lifts, finger 2 steers (vy -180).",
+   "R11: fx_levelup is 1536x384 and fx_unlock 1344x384; ambience loops are mono (ffprobe). R18: Phaser's wake() re-binds to stepLimitFPS when hasFpsLimit is set, so the 120 Hz cap takes effect. R22: setDepth is only called on change.",
+   "V1/V3/V4/V5/V8/V9/V13, by eye in fresh screenshots. The tower sits on the head with the face visible. The opening frame shows net, grill, counter and queue. The fisherman's splash lands on water. The front bubble is on top, with a check mark. Paths are soft. The title hero stands on the snow. Locked zones show frosted previews.",
+   "V2: at 430x932 with 3x DPR the canvas is 1296x2810. It dropped to 720 after about 15 s because SwiftShader ran at 2.9 fps; that is the intended weak-GPU fallback. V11: the rotate overlay shows (display:flex) at 844x390. DEP-5: file:// shows the Korean 'run through a local server' message.",
+   "V7: I checked a suspected depth bug (the chief behind the lodge in 17_village.jpg). Only his legs are behind the roof ridge, the head/chest pixel probes really are uncovered, and at (960,2250), where the roof covers his body, the lodge fades to 0.51 and falling. Works as designed.",
+   "First minutes with real input: a real CDP touch drag moved the chief by (-208,-93) and he stopped on release; arrow keys moved him; page scrollY stayed 0. The 3-minute real-time run hired the fisherman with 0 errors and 0 warnings. Hand hunting by joystick (review_gameplay_hunt.mjs): 57 catches and 114 meat in 3 minutes.",
+   "Deploy: build_artifact.mjs builds 168 files / 14.02 MB; --inline builds 8 files / 15.15 MB. test_deploy.mjs passes all six default modes (pages, standalone, sandbox-cors, sameorigin, raw, sandbox-inline; 84 checks ok) on the final rebuilt artifacts. The worst-case 'sandbox' mode (no CORS) fails only its asset checks, as documented, and still completes the first loop on placeholder art (DEP-1).",
+   "Strings: Korean and English each have 91 keys with none missing, including every objective key, the discard pad and the courier labels. 기획서 §4 matches balance.js."
+  ],
+  "remaining_issues": [
+   "Forest occlusion (visual, medium-low): characters chopping inside the pine grid are often hidden. The fade only tests two pixel points on the chief (chest and head), and workers never trigger a fade, so the lumberjack is frequently invisible and the chief only half visible. My first forest screenshot showed this; the final one is framed around it.",
+   "V6, partly fixed: many customers are the same red 'Santa-like' villager. More looks are waiting on the villager expansion.",
+   "GP-05, partly fixed by design: before the village is complete the chief still carries every finished good.",
+   "DEP-3, partly fixed: assets/ is not converted to WebP (about 3 MB possible saving); a first visit downloads about 11.5 MB.",
+   "DEP-6: an empty .nojekyll at the repo root is still for the lead to add.",
+   "R7: only partly re-verified. The busy-audio harness steps the game headless, and Phaser only updates camera follow during render, so its 'far' sample never left the plaza view. Off-screen chop/mine/bow sounds were absent, which is consistent with the fix.",
+   "Not checkable here: iOS audio resume (R17), Safari mp3 loop trimming (DEP-8), and real-device frame rate. SwiftShader runs at 5-9 fps, so the weak-GPU fallback always triggers in headless tests; the 2x canvas should be confirmed on a phone.",
+   "In-progress villager assets (not loaded by the game yet): assets/villagers/vil_npc_kid_boy.png, vil_npc_kid_prankster.png and vil_npc_teen_girl.png are 2052 px wide, just over the 2048 guideline.",
+   "Test tooling only: review_gameplay_hintlock.mjs still gives 80 coins for the forest (now 100) and crashes in setup. The smoke test uses wall-clock waits that are tight on a loaded machine; running it alongside other Chromium jobs caused a false failure.",
+   "frost-village/tools/fx/check_assets.py has an uncommitted change that is not mine (another agent)."
+  ],
+  "screenshots": [
+   "/home/user/nurient/frost-village/docs/previews/screens/01_title.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/05_carry_tower.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/07_customers_pay.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/09_paying_unlock.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/10_fisherman_hired.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/12_forest_reveal.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/11_fisherman_working.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/13_forest_chop.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/14_farm.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/15_mine.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/16_hunt.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/20_overview.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/21_settings.jpg",
+   "/home/user/nurient/frost-village/docs/previews/screens/ (the other 12 files, 02-04, 06, 08, 17-19 and 22-25, are from today's smoke run)"
+  ],
+  "small_fixes_made": [
+   "Crash card '처음부터 하기 · Start over' did not start over. The button removed the save and reloaded, but the crashed page's pagehide autosave wrote the old game straight back: with 500 coins and 14 steps done, the game came back at 500 coins and 14 steps. Fix: the button now sets window.__FV_NO_SAVE = true (in /home/user/nurient/frost-village/index.html and in the page built by /home/user/nurient/frost-village/tools/build/build_artifact.mjs), and Save.write in /home/user/nurient/frost-village/src/core/Save.js does nothing while it is set. Re-tested on both the source page and dist/artifact: Start over now gives 0 coins, 0 steps and no save, and the old save is still kept as frostVillage.save.v1.bad.",
+   "The discard pad's '버리기' label was cut off at the left screen edge in most beach views. /home/user/nurient/frost-village/src/entities/TrashPad.js now keeps it inside the view, the same way the unlock-pad labels already work. Re-checked: the label is fully visible, and the discard checks behave the same.",
+   "/home/user/nurient/frost-village/tools/test/smoke.mjs: two wall-clock waits that were too short at 8-9 fps were lengthened (backpack upgrade 8 s to 16 s, animal catch 5 s to 9 s). With them the smoke test passes 23/23.",
+   "Designer screenshots in /home/user/nurient/frost-village/docs/previews/screens/ are regenerated and each was checked by eye: 01, 09-16, 20 and 21 are from a new run that played the first loop through setInput; 05 and 07 are from the smoke run because they were the better frames.",
+   "The lead has already committed all of these changes (HEAD b943a07)."
+  ],
+  "summary": "Verdict: ship with known issues. Every critical and high finding is really fixed, and no regressions turned up. I found one new bug, the crash card's \"Start over\" not resetting progress, and fixed it.\n\nThe game can now be finished by honest play. A bot steering only through setInput completed the village in 14.4 min, and a bot that only follows the arrow finished in 21 min. Both had 0 stuck episodes and 0 errors.\n\nFix by fix:\n- **Market (GP-02/GP-09):** stays flat over 8 minutes at about 30 customers per minute.\n- **Bag softlock (GP-04):** gathering is skipped while the station is full both ways, and the discard pad empties the bag; walking across it keeps the items.\n- **Couriers (GP-05):** they earn about 1,100 coins per minute with nobody playing.\n- **Saves:** all 27 corrupt-save variants boot.\n- **Robustness:** the audio, iframe, Canvas-renderer, resize, multi-touch and pad repros all pass.\n- **Deploy:** the artifact builds at 168 files / 14 MB, and all six default deploy modes pass.\n- **Smoke test:** passes 23/23 with 0 errors after I lengthened two waits that were too short for the slow software renderer.\n\n**What I fixed myself:**\n- **Start over:** it did nothing, because the crashed page's autosave wrote the old game back while the page reloaded. It now starts fresh on both the source page and the artifact. The old save is still kept as `frostVillage.save.v1.bad`.\n- **Discard label:** the \"버리기\" label no longer gets cut off at the screen edge.\n\n**Known issues:**\n- In the forest, chopping characters are often hidden behind the pines. The lumberjack in particular is frequently invisible.\n- Many customers are the same red villager; this waits on the villager expansion.\n- No WebP conversion yet; a first visit downloads about 11.5 MB.\n- `.nojekyll` at the repo root is still for the lead.\n- The far-camera sound gating (R7) is only partly re-checked: the test harness never moves the camera in headless mode.\n- These need a real phone: iOS audio resume, Safari mp3 loops, and whether the sharper 2x canvas holds up. In headless tests the weak-GPU fallback always triggers.\n\nThe designer screenshots are in `docs/previews/screens/`. I looked at each one. They cover the title, the fish tower on the head, customers paying, an unlock (payment ring, banner, forest reveal), each zone with its worker, the full overview, and settings."
+ }
+}

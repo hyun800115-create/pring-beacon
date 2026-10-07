@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#cfdcec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="description" content="서리마을 개척기 — 눈 덮인 개척지에서 자원을 모으고, 가공하고, 팔아서 마을을 키우는 캐주얼 게임">
+<title>서리마을 개척기 · Frost Village</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/characters/portrait_player.png">
+<link rel="apple-touch-icon" href="assets/characters/portrait_player_512.png">
+<style>
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; overscroll-behavior: none;
+    background: #dbe6f2;
+    background: linear-gradient(180deg, #e9f0f8 0%, #cfdcec 100%);
+    touch-action: none; -webkit-touch-callout: none;
+    -webkit-user-select: none; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #game { position: fixed; inset: 0; }
+  #game canvas { display: block; touch-action: none; outline: none; }
+  #fv-loading {
+    position: fixed; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px;
+    font-family: Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    color: #2b2f3a; font-weight: 800; font-size: 20px; letter-spacing: 0.02em;
+    pointer-events: none; transition: opacity .35s ease;
+  }
+  #fv-loading .flake { font-size: 40px; color: #3d8be0; animation: fvspin 2.4s linear infinite; }
+  #fv-loading small { font-weight: 600; font-size: 13px; color: #5d6b80; }
+  @keyframes fvspin { to { transform: rotate(360deg); } }
+  #fv-loading.hide { opacity: 0; }
+  :root { --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px); }
+  #fv-error {
+    display: none; position: fixed; left: 16px; right: 16px; bottom: calc(16px + var(--sab)); padding: 14px 16px;
+    border-radius: 14px; background: #fff8ec; color: #2b2f3a; font: 600 15px/1.45 sans-serif;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15); z-index: 20;
+  }
+  #fv-error small { display: block; margin-top: 4px; font-weight: 500; font-size: 12px; color: #5d6b80; word-break: break-all; }
+  #fv-error button {
+    margin: 10px 8px 0 0; padding: 9px 14px; border: 0; border-radius: 10px; font: 800 14px sans-serif;
+    color: #fff; background: #3d8be0; cursor: pointer;
+  }
+  #fv-error button.gray { background: #8e99a8; }
+  /* landscape phone: ask to rotate (the game is portrait) */
+  #fv-rotate {
+    display: none; position: fixed; inset: 0; z-index: 10; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; background: linear-gradient(180deg, #e9f0f8 0%, #cfdcec 100%); color: #2b2f3a;
+    font-family: Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; font-weight: 800; font-size: 20px; text-align: center;
+  }
+  #fv-rotate .phone { font-size: 46px; animation: fvrot 1.8s ease-in-out infinite; }
+  #fv-rotate small { font-weight: 600; font-size: 13px; color: #5d6b80; }
+  @keyframes fvrot { 0%, 30% { transform: rotate(-90deg); } 60%, 100% { transform: rotate(0deg); } }
+  @media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) { #fv-rotate { display: flex; } }
+</style>
+</head>
+<body>
+<div id="game"></div>
+<div id="fv-loading"><div class="flake">❄</div><div>서리마을 개척기</div><small>Loading…</small></div>
+<div id="fv-rotate"><div class="phone">📱</div><div>휴대폰을 세로로 돌려 주세요</div><small>Please rotate your phone to portrait</small></div>
+<div id="fv-error"></div>
+<script>
+  // Friendly messages for a non-coder. Registered first and in the capture phase, so it also sees a
+  // failed <script> / module load (those fire 'error' on the element only, with no message).
+  (function () {
+    var box = document.getElementById('fv-error'), shown = false;
+    function show(msg, detail, crash) {
+      if (shown || !box) return;
+      shown = true;
+      box.innerHTML = '';
+      var p = document.createElement('div'); p.textContent = msg; box.appendChild(p);
+      if (detail) { var d = document.createElement('small'); d.textContent = detail; box.appendChild(d); }
+      var b = document.createElement('button'); b.textContent = '새로고침 · Reload'; b.onclick = function () { location.reload(); }; box.appendChild(b);
+      if (crash) {
+        var f = document.createElement('button'); f.className = 'gray'; f.textContent = '처음부터 하기 · Start over';
+        f.onclick = function () {
+          window.__FV_NO_SAVE = true;   // the crashed game must not write its state back while the page unloads
+          try { var k = 'frostVillage.save.v1', v = localStorage.getItem(k); if (v) localStorage.setItem(k + '.bad', v); localStorage.removeItem(k); } catch (e) { /* */ }
+          location.reload();
+        };
+        box.appendChild(f);
+      }
+      box.style.display = 'block';
+    }
+    window.__FV_SHOW_ERROR = show;
+    if (location.protocol === 'file:') {
+      show('이 게임은 파일을 더블클릭해서는 열리지 않아요. tools/build/README.md 의 "내 컴퓨터에서 실행하기"를 따라 주세요.', 'Open it through a local web server (see tools/build/README.md).');
+    }
+    // after boot: only report errors that actually stopped the game loop
+    function checkAlive(detail) {
+      var g = window.__FV && window.__FV.game;
+      if (!g || !g.loop) return;
+      var f = g.loop.frame;
+      setTimeout(function () {
+        if (g.loop.frame === f && g.loop.running && document.visibilityState === 'visible') show('문제가 생겨서 게임이 멈췄어요. 새로고침 해 주세요.', detail, true);
+      }, 1500);
+    }
+    window.addEventListener('error', function (e) {
+      var el = e && e.target, isScript = el && el.tagName === 'SCRIPT';
+      if (!isScript && !(e && e.message)) return;            // e.g. an image: not fatal
+      var detail = (e && e.message) || ('failed to load ' + (el && el.src));
+      if (!window.__FV_BOOTED) show('게임을 불러오지 못했어요. 새로고침 해 주세요.', detail);
+      else checkAlive(detail);
+    }, true);
+    window.addEventListener('unhandledrejection', function (e) { if (window.__FV_BOOTED) checkAlive(String(e && e.reason)); });
+    // a module blocked by the host (e.g. a sandboxed frame without CORS) never runs and never reports
+    setTimeout(function () {
+      if (!window.__FV_BOOTED) show('게임을 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침 해 주세요.', 'The game files could not be loaded (blocked or offline).');
+    }, 20000);
+  })();
+</script>
+<script src="lib/phaser.min.js"></script>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

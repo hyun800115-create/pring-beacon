@@ -1,0 +1,55 @@
+{
+ "summary": "Props (CONTRACT §4) are finished and verified. All 53 required sprites are present in /home/user/nurient/frost-village/assets/props/manifest.json. There are 4 atlases (props_nature, props_buildings, props_decor, props_items), none larger than 2048 px, and the payload is 2.21 MB unquantized. Quantizing was not needed, so the shadows do not band. prop_check.py passes: every key is present and every frame, anchor, footprint, stackStep (8-13), carryScale and 4-frame work anim is valid, and work frames share the idle frame's size. The earlier polish render (render3: wider shadow margin, border_fade, eave strip on the roofs, plank tweak) finished. A contrast-boosted check of the scene shows no hard frame edges on the baked shadows. A scan of every frame found no opaque object within 3 px of the frame edge, so nothing is clipped.\n\nNew this run: the station work loops were nearly static. Bakery and smokehouse changed only 14-34 px between frames, and idle looked the same as work. I rebuilt them so they now change 700-2,500 px per frame:\n- grill: flames lick up through the grate, fish and steaks hop, light smoke rises.\n- sawmill: a bigger blade spins (seamless 22.5 degrees per frame) and a sawdust stream sprays onto the heap.\n- bakery: flames burn in the oven mouth, smoke comes out of the chimney (the chimney is now open, no snow cap).\n- smelter: flames at the furnace door, grey smoke from the stack.\n- smokehouse: the meat sways on its strings, small flames burn in the pit, smoke comes out of the roof vent.\n- Idle frames now show the station cold or dim.\n\nThe frame for each station is fitted to the idle state and all work states together, so the smoke never clips. The anchor is shared across all frames. The manifest also gets fxPoints (spawn offsets for extra particles) and a per-item carryScale. Previews were regenerated and inspected.",
+ "generator_scripts": [
+  "/home/user/nurient/frost-village/tools/blender/prop_lib.py",
+  "/home/user/nurient/frost-village/tools/blender/prop_assets.py",
+  "/home/user/nurient/frost-village/tools/blender/prop_render.py",
+  "/home/user/nurient/frost-village/tools/blender/prop_pack.py",
+  "/home/user/nurient/frost-village/tools/blender/prop_check.py"
+ ],
+ "output_dirs": [
+  "/home/user/nurient/frost-village/assets/props",
+  "/home/user/nurient/frost-village/docs/previews (props_* files)",
+  "/tmp/fv_cache/props (raw render cache, not shipped)"
+ ],
+ "previews": [
+  "/home/user/nurient/frost-village/docs/previews/props_all.png",
+  "/home/user/nurient/frost-village/docs/previews/props_scene.png",
+  "/home/user/nurient/frost-village/docs/previews/props_items.png",
+  "/home/user/nurient/frost-village/docs/previews/props_stations_work.png",
+  "/home/user/nurient/frost-village/docs/previews/props_stations_work.gif",
+  "/home/user/nurient/frost-village/docs/previews/props_carry.png"
+ ],
+ "contract_gaps": [
+  "None for CONTRACT §4: all 53 keys are present with valid frames, anchors and footprints; items have stackStep; the 5 stations have anims.work with 4 frames and repeat -1.",
+  "carryScale is per item and the game must apply it itself: carried copy i is drawn at scale carryScale and y = -i*stackStep*carryScale. stackStep stays at native scale. There is no precomputed carryStackStep field.",
+  "In the S view, a stack held at chest height (characters' carryPoint S dy = -31) still overlaps the lower face even at carryScale. This comes from the carryPoint and pose, not from the item size. If it matters, the game can raise or offset carried stacks in the S direction."
+ ],
+ "regenerate": "cd /home/user/nurient/frost-village && /tmp/bvenv/bin/python tools/blender/prop_render.py -- --force && python3 tools/blender/prop_pack.py && python3 tools/blender/prop_check.py\n# The full render takes about 6-10 min on 4 cores and is resumable (without --force it skips cached sprites).\n# Re-render a subset with: prop_render.py -- station_* --force (also takes atlas names such as props_items).\n# On a user PC: blender -b -P tools/blender/prop_render.py -- [args]. prop_pack.py and prop_check.py need only python3 + numpy + Pillow.",
+ "notes_for_integrator": "Manifest: assets/props/manifest.json (version 1). atlases[] has props_nature, props_buildings, props_decor and props_items, each a PNG plus a Phaser JSON-hash. Every sprite entry has atlas, frame, anchor (normalised to the untrimmed frame), kind, footprint (non-items), frameSize, topPx (visual height above the anchor, measured on the idle state, for bubbles and progress rings) and notes. Some entries also have front, footprintM, tileAxis, thicknessM or icon. The manifest's conventions block documents every field.\n\nSTATIONS (kind 'station'):\n- Use the idle frame (sprite.frame) when the station is not processing. Play anims.work when it is. All 5 frames share frameSize and anchor, so frames can be swapped in place.\n- fps: grill 8, sawmill 10, bakery 6, smelter 8, smokehouse 6.\n- Flames and a smoke column are baked into the work frames. Do not add a second chimney smoke FX.\n- fxPoints gives px offsets [dx, dy] from the anchor for extra particles:\n  - grill: fire [0,-34], smoke [-11,-98]\n  - sawmill: blade [11,-44], dust [-36,18] (fx_chip_wood)\n  - bakery: fire [0,-3], smoke [0,-167]\n  - smelter: fire [-41,-29], crucible [17,-30] (fx_spark), smoke [-9,-167]\n  - smokehouse: fire [-34,6], smoke [-2,-161]\n- Station frames are taller than before because the smoke column is included (e.g. bakery 264x348, anchor [0.447,0.710]). Always use the manifest anchor.\n\nITEMS (kind 'item', icon:true, 72x72 frame, anchor [0.5,0.75]):\n- stackStep is native: fish_raw 11, fish_cooked 9, log 13, plank 8, wheat 11, bread 13, ore 12, ingot 9, meat_raw 11, meat_cooked 11, coin 8.\n- Ground and pad towers and UI icons: scale 1.\n- Hand-carried stacks: scale = carryScale (fish/plank/wheat 0.6; log/bread/ore/ingot/coin 0.65; meat 0.55), with step stackStep*carryScale.\n\nOTHER:\n- fence_log_x and fence_log_y are 1 m segments whose baked shadows tile seamlessly. Place x segments every (+45.25, +22.63) px and y segments every (+45.25, -22.63) px, and put fence_post at ends and corners.\n- campfire has no flames; spawn fx_fire at the anchor, about 20 px up.\n- fish_net (kind 'building') opens toward screen-up (the sea). dock_pier runs screen up-right into the sea.\n- market_counter and trade_post face screen down-left (world -Y); mine_entrance and the bakery mouth face the camera.\n- Baked shadows are cool blue-violet and fall screen down-right; items have none.\n\nCOORDINATION WARNING: while I was working, a second props writer, not one of the listed subagents, edited files I own. It changed prop_pack.py (scene layout, its own carryScale implementation, props_carry.png and props_stations_work.gif) and prop_check.py (frame-rect, carryScale and work-size checks). It also re-ran `prop_render.py -- station_*` (/tmp/fv_cache/props/render4.log). I kept its changes: they match this design and give identical deterministic output. The final pack (04:08) and check (OK) were run after all renders finished. If a second props report arrives, it should describe the same files. The lead may want to make sure no stray props process keeps running.",
+ "manifests": [
+  "/home/user/nurient/frost-village/assets/props/manifest.json"
+ ],
+ "payload_mb": 2.21,
+ "test_command": "cd /home/user/nurient/frost-village && python3 tools/blender/prop_check.py",
+ "asset_keys_used_by_code": [
+  "props_nature",
+  "props_buildings",
+  "props_decor",
+  "props_items",
+  "all 53 CONTRACT §4 sprite keys (tree_pine_a..item_coin) under sprites{}"
+ ],
+ "extra_keys": [
+  "sprites[*].frameSize",
+  "sprites[*].topPx",
+  "sprites[*].notes",
+  "sprites[*].front",
+  "sprites[*].footprintM",
+  "sprites[item].icon",
+  "sprites[item].thicknessM",
+  "sprites[item].carryScale",
+  "sprites[fence_log_x|fence_log_y].tileAxis",
+  "sprites[station_*].fxPoints",
+  "manifest.conventions"
+ ]
+}

@@ -1,0 +1,61 @@
+{
+ "summary": "All 11 characters from CONTRACT §3 are built, rendered and packed: player, fisherman, lumberjack, farmer, miner, hunter, villager_a/b/c, deer and boar. In total that is 1540 frames, each 128x128 with the anchor at (64,104), in the directions S/SE/E/NE/N. The style is soft, toy-like 3D chibi: about 2.5 heads tall and about 80 px on screen, with big round heads, dark dot eyes with a highlight, rosy cheeks and puffy fur trims. Every frame gets a soft 1px coloured ink outline, matching the outlined look of the reference and keeping the white parka readable on snow.\n- The player is the chief from the reference: white parka, a huge puffy fur collar, hood down, brown belt, satchel strap and dark hair.\n- Workers: the fisherman has a yellow raincoat, sou'wester and orange gloves. The lumberjack has red plaid, a beanie, a big brown beard and suspenders. The farmer is a girl with a straw hat, braids and green overalls. The miner has an orange hard hat with a glowing lamp, a moustache and a vest. The hunter wears a brown fur cloak with a bear-ear hood, a green tunic and a quiver.\n- Customers wear the yellow, red and blue parkas: villager_a has the black bowl cut from the reference crowd, villager_b a cream beanie with a pompom and pigtails, villager_c an ushanka and a striped scarf.\n- The deer is fawn-like with spots and small antlers. The boar is round with tusks and a bristle ridge.\nAnimations:\n- Walk is a bouncy chibi waddle; carry holds both forearms out at chest height.\n- Chop and mine have a wind-up behind the head, a fast hit and a recoil. Harvest is a squat-and-grab.\n- Fishing is a cast with a live line and bobber that lands on the water, then reeling.\n- The sickle cut is a low right-to-left sweep. The bow is drawn with a visible string and arrow, then released.\n- Happy is a hop with arms up and ^^ eyes. The animals trot with diagonal leg pairs and have idles with breathing, a tail wag and an ear twitch.\nAll loops were checked numerically to wrap without a jump. Atlases are palette PNGs made with libimagequant at 256 colours, which looks the same as the originals at 3x zoom; character assets total 3.45 MB against an 8 MB budget. char_check.py reports 0 errors and 0 warnings across 1540 frame names (no frame touches the 128px edge). In a headless Chromium Phaser 3.90 test, every frame resolves and every animation plays in all 8 directions through flipX (docs/previews/char_phaser_smoke.png). Also produced: 9 portraits at 128x128, a 512x512 key art of the chief waving, and a flying-arrow sprite for the hunter.",
+ "generator_scripts": [
+  "/home/user/nurient/frost-village/tools/blender/char_render.py",
+  "/home/user/nurient/frost-village/tools/blender/char_build.py",
+  "/home/user/nurient/frost-village/tools/blender/char_geo.py",
+  "/home/user/nurient/frost-village/tools/blender/char_anim.py",
+  "/home/user/nurient/frost-village/tools/blender/char_animals.py",
+  "/home/user/nurient/frost-village/tools/blender/char_extras.py",
+  "/home/user/nurient/frost-village/tools/blender/char_pack.py",
+  "/home/user/nurient/frost-village/tools/blender/char_check.py"
+ ],
+ "output_dirs": [
+  "/home/user/nurient/frost-village/assets/characters",
+  "/home/user/nurient/frost-village/docs/previews",
+  "/tmp/fv_cache/characters"
+ ],
+ "manifests": [
+  "/home/user/nurient/frost-village/assets/characters/manifest.json"
+ ],
+ "previews": [
+  "/home/user/nurient/frost-village/docs/previews/char_lineup.png",
+  "/home/user/nurient/frost-village/docs/previews/char_carry_check.png",
+  "/home/user/nurient/frost-village/docs/previews/char_phaser_smoke.png",
+  "/home/user/nurient/frost-village/docs/previews/char_player.png",
+  "/home/user/nurient/frost-village/docs/previews/char_player_walk.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_player_chop.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_player_mine.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_player_harvest.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_player_carry_walk.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_fisherman.png",
+  "/home/user/nurient/frost-village/docs/previews/char_fisherman_work.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_lumberjack_work.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_farmer_work.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_miner_work.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_hunter_work.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_villager_b_happy.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_deer_walk.gif",
+  "/home/user/nurient/frost-village/docs/previews/char_boar_walk.gif",
+  "/home/user/nurient/frost-village/assets/characters/portrait_player_512.png"
+ ],
+ "contract_gaps": [
+  "happy: the contract gives no repeat value. It is written as repeat -1 and is seamlessly loopable; its last frame is a neutral stand, so playing it once (repeat 0) also works.",
+  "Animals (deer, boar) use the same 128x128 frame and anchor [0.5,0.8125] as humans. The contract allowed a larger frame, but they fit.",
+  "Portraits and the 512 key art use a 15-degree UI camera instead of the 30-degree world camera, so faces read better. They are UI images; every world sprite uses bl_common's camera, PPU and lighting unchanged.",
+  "The hunter holds the bow in the RIGHT hand and draws with the left, so the bow faces the camera in E/SE/NE. Because the game mirrors SW/W/NW, handedness never shows.",
+  "Atlas PNGs are 8-bit palette images with alpha (libimagequant), while pack_utils writes 'format':'RGBA8888' into the JSON meta. Phaser ignores that field.",
+  "carryPoint is constant per direction, taken from carry_idle frame 0. carry_walk bobs the hands about 1-2 px, so the game may add a small matching bob. Villagers have no carry_idle but still get carryPoint (same arm pose)."
+ ],
+ "extra_keys": [
+  "characters.<key>.kind: 'human' | 'animal'",
+  "characters.<key>.headTop: px offset from the anchor (negative = up) to the top of the head or hat in idle_S_0, for speech bubbles and emotes. Range is -81 to -90 for humans; deer -56, boar -43.",
+  "characters.<key>.anims.<anim>.impactPoint: {dir: [dx, dy]}, px offset from the anchor where the tool hits on impactFrame: axe blade, pick tip, sickle blade, bobber splash on the water (fisherman), arrow launch point (hunter), hands (harvest). Negate dx for SW/W/NW. Present on player chop/mine/harvest and every worker's work.",
+  "sprites.projectile_arrow: {atlas:'char_hunter', frame:'projectile_arrow', anchor:[0.5,0.5], kind:'fx'}. A 64x32 flying arrow pointing screen-right, about 45 px long. Rotate it to the flight angle and spawn it at hunter work impactPoint on impactFrame 5; the in-hand arrow disappears on that frame.",
+  "sprites.portrait_<key> and portrait_player_512 carry a 'notes' field",
+  "Frame 'projectile_arrow' is an extra frame inside char_hunter.json"
+ ],
+ "regenerate": "cd /home/user/nurient/frost-village && /tmp/bvenv/bin/python tools/blender/char_render.py -- --chars all --samples 28 --portraits --keyart --force && python3 -m pip install imagequant && python3 tools/blender/char_pack.py && python3 tools/blender/char_check.py\n# Takes about 12 minutes on 4 cores; roughly 0.2-0.5 s per frame. Without --force it resumes and skips frames already in /tmp/fv_cache/characters. Use '--meta-only' to recompute carryPoint/impactPoint without rendering. On a PC: blender -b -P tools/blender/char_render.py -- --chars player",
+ "notes_for_integrator": "Manifest: assets/characters/manifest.json follows CONTRACT §2/§3.\n- atlases: char_<key> for all 11 keys.\n- images and sprites: portrait_<key> for the 9 humans, plus portrait_player_512 and projectile_arrow.\n- characters{}: each entry has atlas, frameSize [128,128], anchor [0.5,0.8125], dirs S/SE/E/NE/N, mirror {SW:SE, W:E, NW:NE}, frameName '{anim}_{dir}_{i}', anims (frames/fps/repeat, plus impactFrame and impactPoint where they apply), carryPoint, shadow, portrait, kind and headTop.\n- fps follow the contract defaults: idle 6, walk 12, carry 12, work/chop/mine 14, harvest 10, happy 10.\n- impactFrame values: player chop 5, mine 5, harvest 3; work: fisherman 4 (bobber lands), lumberjack 5, farmer 4, miner 5, hunter 5 (arrow release).\n- carryPoint is the same for every human, as [dx, dy, behind]: S [0,-31,false], SE [12,-34,false], E [17,-40,false], NE [12,-46,true], N [0,-48,true]. Negate dx for the mirrored directions.\n- shadow: humans [46,18], deer [56,22], boar [62,26]. Characters have no baked shadow.\n\nRendering notes:\n- Frames already include a 1px soft ink outline, so do not add another. Portraits and key art have no outline and a transparent background.\n- Trimmed frames rely on Phaser's sourceSize, so setOrigin(anchor) works directly; this was verified in Chromium.\n- docs/previews/char_carry_check.png draws the props' item_fish_cooked stack at carryPoint in all 8 directions. The props items are big compared with a chibi body (a 4-item stack covers the face in S view), so I suggest scaling hand-carried stack sprites to about 0.55-0.65.\n- Tools are drawn only during work, chop and mine. Harvest uses empty hands; the hands' position on the grab frame is its impactPoint.\n\nPreviews and build environment:\n- docs/previews/char_* is 39 files, about 7.9 MB, mostly GIFs at 1.5x showing all 5 directions. Drop GIFs if repo size matters.\n- Raw frames are cached in /tmp/fv_cache/characters, outside the repo.\n- imagequant was pip-installed into the system python3. Without it, char_pack keeps RGBA atlases (about 10 MB total, over budget), because Pillow's own octree quantiser bands visibly on hair and parkas.\n- I did not touch bl_common.py or pack_utils.py, and made no git state changes. __pycache__ is already gitignored.",
+ "payload_mb": 3.45
+}

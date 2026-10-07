@@ -1,0 +1,59 @@
+{
+ "summary": "All FX, UI and ground art is generated, checked and running in the actual game. In a headless browser run with the game's current src/, the title screen and the fully unlocked map loaded with 0 errors and 0 missing files. Total payload is 2.34 MB (limit 4 MB): fx 456 KB, ui 678 KB, ground 1209 KB. All three generators were run twice in a row and produced identical files. check_assets.py reports 0 errors and 0 warnings.\n\nFX (assets/fx):\n- One atlas, `fx_particles` (512 px wide, untrimmed square frames), holds all 15 required particles, each listed in `sprites` with kind `fx` and a `tintable` flag.\n- Frame sizes: 128 px for `fx_glow`, `fx_smoke`, `fx_ring`; 96 px for `fx_dust`; 64 px for `fx_spark`, `fx_star`, `fx_snowflake`, `fx_heart`, `fx_flame`, `fx_coin`; 48 px for `fx_chip_wood`, `fx_chip_rock`, `fx_droplet`, `fx_wheat_bit`, `fx_leaf`.\n- Particles are white/greyscale for tinting, except `fx_heart` (pink), `fx_flame` (orange) and `fx_coin` (gold).\n- Nine animated strips, listed in `spritesheets` (frame size, frames, fps, repeat, anchor):\n\n| key | frame | frames | fps | repeat | anchor |\n|---|---|---|---|---|---|\n| fx_poof | 128 | 12 | 24 | 0 | [.5,.6] |\n| fx_splash | 128 | 12 | 24 | 0 | [.5,.74] (water surface) |\n| fx_hit | 128 | 8 | 30 | 0 | [.5,.5] |\n| fx_levelup | 192 | 16 | 20 | 0 | [.5,.8] (feet) |\n| fx_unlock | 192 | 14 | 24 | 0 | [.5,.5] |\n| fx_fire | 128 | 12 | 14 | -1 | [.5,.88] (flame base) |\n| fx_smoke_puff | 128 | 12 | 14 | 0 | [.5,.86] (chimney top) |\n| fx_coin_spin | 96 | 10 | 14 | -1 | [.5,.5] |\n| fx_sparkle | 128 | 12 | 12 | -1 | [.5,.5] |\n\n- Every strip is 256-colour PNG, all under 3100 px wide. All sheets use `blend: NORMAL` (see contract gaps).\n\nUI (assets/ui):\n- Atlas `ui_icons` (trimmed; sourceSize kept) holds the 12 icons (96 px), `ui_arrow` (anchor at the tip, [0.5,0.89]), `ui_bubble` (anchor at the tail tip, [0.5,0.975]), the extra `ui_bubble_tail`, `ui_badge_max`, `ui_joystick_base` (220 px), `ui_joystick_knob` (104 px), `ui_ring_bg`, `ui_ring_fill` (white, for tinting) and the six 192x96 iso pads.\n- Pads: `ui_pad_unlock` has the white dashed border and translucent navy fill. The others have engraved white symbols on colour-coded fills: input blue (arrow in), output green (arrow out), cash gold (coin), hire orange (hard hat + plus), upgrade purple (up arrow).\n- Plain images with margins in `nineSlice`: `ui_panel` (96x96, margins 22/22/22/30), `ui_button_blue/green/gray` (128x96, 32/32/32/36), `ui_coin_bar` (200x64, 34/34/30/30), and the extra `ui_bubble_body` (96x82, 34/34/32/36).\n- `ui_panel` was rebuilt because the game stretches it to 56–64 px tall labels. The old margins summed to 78 px vertically and would have broken at those sizes.\n- `ui_title_bg` (720x1280) is a new painterly snowy dawn: sun rising between two mountain ranges, a misty blue forest, a cabin village with warm windows and smoke, framing snowy pines, falling snow.\n\nGround (assets/ground):\n- Seven 512x512 seamless textures: `ground_snow`, `ground_plaza` (terracotta planks along screen (2,1), 0.51 m rows, joints and nails, exact wrap), `ground_dirt`, `ground_farm` (ridges along (2,1)), `ground_rock` (gravel with rare ore chips), `water_sea` (#1F5FA8 with soft caustics), `water_shallow`.\n- `shore_foam` is 512x64 and seamless horizontally.\n- Seven soft-edged decals and `fish_school` (256x128, 12 dark-blue fish).\n\nEarlier attempts: the existing fxlib.py and gen_ui.py were kept and extended. Their in-progress title backdrop (vector mountains with hard vertical splits, flat pines) was replaced by a new module, title_bg.py. Old scratch images in tools/fx/_cache were deleted; that folder is gitignored. No unexpected file changes from anyone else were seen. No git commands were run except `git status`.",
+ "generator_scripts": [
+  "/home/user/nurient/frost-village/tools/fx/gen_fx.py",
+  "/home/user/nurient/frost-village/tools/fx/gen_ui.py",
+  "/home/user/nurient/frost-village/tools/fx/gen_ground.py",
+  "/home/user/nurient/frost-village/tools/fx/title_bg.py",
+  "/home/user/nurient/frost-village/tools/fx/fxlib.py",
+  "/home/user/nurient/frost-village/tools/fx/check_assets.py"
+ ],
+ "output_dirs": [
+  "/home/user/nurient/frost-village/assets/fx",
+  "/home/user/nurient/frost-village/assets/ui",
+  "/home/user/nurient/frost-village/assets/ground"
+ ],
+ "manifests": [
+  "/home/user/nurient/frost-village/assets/fx/manifest.json",
+  "/home/user/nurient/frost-village/assets/ui/manifest.json",
+  "/home/user/nurient/frost-village/assets/ground/manifest.json"
+ ],
+ "previews": [
+  "/home/user/nurient/frost-village/docs/previews/fx_sheet.png",
+  "/home/user/nurient/frost-village/docs/previews/fx_poof.gif",
+  "/home/user/nurient/frost-village/docs/previews/fx_splash.gif",
+  "/home/user/nurient/frost-village/docs/previews/fx_hit.gif",
+  "/home/user/nurient/frost-village/docs/previews/fx_levelup.gif",
+  "/home/user/nurient/frost-village/docs/previews/fx_unlock.gif",
+  "/home/user/nurient/frost-village/docs/previews/fx_fire.gif",
+  "/home/user/nurient/frost-village/docs/previews/fx_smoke_puff.gif",
+  "/home/user/nurient/frost-village/docs/previews/fx_coin_spin.gif",
+  "/home/user/nurient/frost-village/docs/previews/fx_sparkle.gif",
+  "/home/user/nurient/frost-village/docs/previews/ui_sheet.png",
+  "/home/user/nurient/frost-village/docs/previews/ui_pads_scene.png",
+  "/home/user/nurient/frost-village/docs/previews/ui_title_bg.png",
+  "/home/user/nurient/frost-village/docs/previews/ground_sheet.png",
+  "/home/user/nurient/frost-village/docs/previews/ground_scene.png"
+ ],
+ "contract_gaps": [
+  "All 9 animated sheets use blend NORMAL, not the suggested ADD for glows, sparkles and fire. ADD on the near-white snow (#F4F7FB) turns them invisible, so they are painted with saturated cores and soft warm or cool rims that read on snow, plaza and sea. The game's own particle presets `spark`, `glow` and `flame` in src/systems/Effects.js use add:true and will vanish over snow; recommend NORMAL there, or ADD only over dark ground.",
+  "Seamless textures use sprites kind 'tile' plus a field tile:'xy' ('x' for shore_foam). 'tile' is a new kind value; decals, shore_foam and fish_school use kind 'decal'.",
+  "The particle atlas is untrimmed (square frames), so particle size maths uses the full frame width. Sizes are listed in each entry's frameSize.",
+  "Pads: the game maps the whole 192x96 frame to its pad size (setDisplaySize). The diamond spans about 170 px tip to tip (0.89 of the frame width); footprint [170,85] is recorded.",
+  "ui_panel is 96x96 with margins 22/22/22/30, so its minimum stretch height is about 52 px. Button vertical margins sum to 68 px, so keep buttons at least 70 px tall (the game uses 76–104).",
+  "fish_school: the fish face LEFT, slightly up. Scroll it left, or flipX it to swim right.",
+  "shore_foam (512x64): water side at the top, land at the bottom, foam lip centred at y=44 (anchor [0.5,0.69]). Tile it horizontally along the shoreline.",
+  "decal_path_a runs along the A axis (screen down-right); decal_path_b runs along the B axis (screen up-right).",
+  "fx_droplet points UP; rotate it along the velocity."
+ ],
+ "extra_keys": [
+  "ui_bubble_tail (atlas ui_icons; anchor top centre; pairs with ui_bubble_body for wide bubbles)",
+  "ui_bubble_body (image + nineSlice 34/34/32/36)",
+  "nineSlice.ui_coin_bar (34/34/30/30)",
+  "manifest 'conventions' object in each fragment (informational)",
+  "sprite fields: frameSize, notes, tintable, tile, footprint (on pads)"
+ ],
+ "payload_mb": 2.34,
+ "regenerate": "cd /home/user/nurient/frost-village && python3 tools/fx/gen_ui.py && python3 tools/fx/gen_fx.py && python3 tools/fx/gen_ground.py && python3 tools/fx/check_assets.py   (about 1.5 min total; deterministic. Add --only key1,key2 to gen_*.py for scratch previews in tools/fx/_cache, or --no-gif to gen_fx.py to skip the GIFs. check_assets.py exits 1 on any error.)",
+ "notes_for_integrator": "How the assets fit the current game code (src/):\n- The game loaded every key with no placeholder warnings, using tools/test/shot.mjs. Title and full-map screenshots looked coherent with the characters and props.\n- `ui_title_bg`: the calm sky band at y 160–460 holds the title text; the tap-to-start prompt sits on light snow around y 1060–1120 (use white text with a dark stroke). On tall phones the game crops the sides and the framing pines stay visible.\n- `ui_ring_fill` is white for tinting. UnlockPad.js currently draws the ring with Graphics and only uses `ui_ring_bg`.\n- Image PNGs are libimagequant 256-colour palettes with alpha. Atlases and the 9-slice images are full RGBA.\n\nKnown issues, all cosmetic:\n- `ground_rock` is fairly busy and high-contrast.\n- `ground_dirt` shows mild repetition when seen over large areas; it is used at 0.45–0.55 alpha.\n- `ui_title_bg` is dithered to 256 colours (358 KB). It could be saved as RGB if payload allows.\n- Last frames of the one-shot sheets fade to nearly empty by design.\n\nFiles and helpers:\n- tools/fx/fxlib.py gained `sd_teardrop`, `sd_implicit`, `sd_glint`, `sd_heart_iq`, `pillow_normals`, easing helpers, `toy`/`stroke` (moved from gen_ui) and `strip`/`save_gif`.\n- tools/fx/title_bg.py is imported by gen_ui.py; run it alone for a quick look.\n- Not modified: tools/blender/bl_common.py, tools/pack_utils.py (only imported), and anything in src/."
+}
