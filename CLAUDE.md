@@ -88,4 +88,5 @@ PLAYWRIGHT_BROWSERS_PATH=.cache/pw-browsers npx playwright install chromium
   Blender 팀 담당 `b3d_*.py`(실내 있는 건물·가구) → `game/assets3d/{chars,props,buildings,furniture}`.
   - 주의: Blender 에서 위치 읽기 전에 `bpy.context.view_layer.update()`, 합친 뒤 면 방향 다시 계산. 계산 무늬 재질은 굽지 않으면 하얗게 나옴.
 - 시험: `cd game && PLAYWRIGHT_BROWSERS_PATH=../.cache/pw-browsers node tools/test/g3d.mjs ../.cache/shots/g3d --play 120` (`--gpu` = 이 PC 그래픽카드, `--perf` = 주민 300명). 모델 보기: `viewer.html?k=npc_aunt&c=idle,walk&p=tree_pine_a`.
+- 3D 플레이 링크: `node tools/build/build_play3d.mjs` → `.cache/dist3d` 를 아티팩트로 (GLB 는 서버가 안 받아서 `.glb.wasm` 이름으로) https://claude.ai/artifact/5XuyygwQ1ZtQPPnm3DXM9C
 - 2D 판 플레이 링크(보관): https://claude.ai/artifact/8eXSM5tB3aDGm83kWFPWVF

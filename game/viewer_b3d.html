@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>건물 3D 보기</title>
+<style>
+html,body{margin:0;height:100%;background:#dfe8f2;overflow:hidden;font-family:sans-serif}
+#ui{position:fixed;left:8px;top:8px;background:#fffd;padding:8px 10px;border-radius:10px;font-size:13px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;max-width:calc(100vw - 32px)}
+#ui button,#ui select{font-size:13px;padding:4px 8px;border-radius:6px;border:1px solid #aab;background:#fff}
+#ui button.on{background:#3d7cc9;color:#fff;border-color:#3d7cc9}
+#info{position:fixed;left:8px;bottom:8px;background:#fffd;padding:6px 10px;border-radius:8px;font-size:12px;max-width:calc(100vw - 32px)}
+</style>
+<script type="importmap">{ "imports": { "three": "./node_modules/three/build/three.module.js", "three/addons/": "./node_modules/three/examples/jsm/" } }</script>
+</head>
+<body>
+<div id="ui">
+  <select id="sel"></select>
+  <button id="bCut">실내 보기</button>
+  <button id="bSlot">자리 표시</button>
+  <button id="bChar">주민</button>
+</div>
+<div id="info">불러오는 중…</div>
+<script type="module">
+// 사용법: viewer_b3d.html?b=hall&cut=1&slots=1   또는   viewer_b3d.html?f=chair,bed_single,sofa
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const q = new URLSearchParams(location.search);
+const state = { cut: q.get('cut') === '1', slots: q.get('slots') === '1', char: q.get('char') !== '0' };
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(2, devicePixelRatio));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xdfe8f2);
+const cam = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, 0.1, 300);
+const ctl = new OrbitControls(cam, renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xdfe9ff, 0x8a93a8, 1.7));
+const sun = new THREE.DirectionalLight(0xfff2de, 2.6); sun.position.set(-6, 12, 8); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03; Object.assign(sun.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9 });
+scene.add(sun);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.MeshStandardMaterial({ color: 0xeef3f8, roughness: 0.95 }));
+ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+const loader = new GLTFLoader();
+const root = new THREE.Group(); scene.add(root);
+let cur = null, meta = null, blades = null, slotGroup = null, charObj = null, charTpl = null;
+
+const ACT_COL = { sit: 0x3d7cc9, eat: 0xf2c230, sleep: 0x9a6fc0, cook: 0xe8893a, bake: 0xe8893a, warm: 0xd9483b, read: 0x5ca76a,
+  desk: 0x3fa39a, work: 0x8a5a33, toilet: 0x7fb2e5, wash: 0x7fb2e5, tea: 0xf29bb0, chat: 0xffffff, shop: 0xf2c14e, sell: 0x2b2f3a, play: 0xf29bb0 };
+const b2t = (p) => new THREE.Vector3(p[0], p[2] ?? 0, -p[1]);      // Blender (x,y,z) -> three (x,z,-y)
+
+function applyCut() {
+  if (!cur) return;
+  cur.traverse((o) => {
+    const n = o.name || '';
+    if (/^(roof|walls|iwalls)$/.test(n)) o.visible = !state.cut;
+    if (/^(walls_low|iwalls_low)$/.test(n)) o.visible = state.cut;
+  });
+  document.getElementById('bCut').classList.toggle('on', state.cut);
+}
+function applySlots() {
+  if (slotGroup) slotGroup.visible = state.slots;
+  document.getElementById('bSlot').classList.toggle('on', state.slots);
+}
+function makeSlots(list) {
+  const g = new THREE.Group();
+  for (const s of list) {
+    const c = ACT_COL[s.action] ?? 0xffffff;
+    const m = new THREE.MeshBasicMaterial({ color: c });
+    const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.03, 16), m);
+    const p = b2t(s.pos); disc.position.copy(p).add(new THREE.Vector3(0, 0.03, 0)); g.add(disc);
+    const a = THREE.MathUtils.degToRad(s.yaw);
+    const dir = new THREE.Vector3(Math.sin(a), 0, Math.cos(a));       // Blender (sin, -cos, 0) -> three
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.22, 8), m);
+    cone.position.copy(p).addScaledVector(dir, 0.2).add(new THREE.Vector3(0, 0.08, 0));
+    cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    g.add(cone);
+  }
+  return g;
+}
+async function loadChar() {
+  if (charTpl) return charTpl;
+  try { charTpl = (await loader.loadAsync('assets3d/chars/farmer.glb')).scene; } catch (e) { charTpl = null; }
+  return charTpl;
+}
+async function show(kind, key) {
+  root.clear(); blades = null; slotGroup = null;
+  const g = await loader.loadAsync(`assets3d/${kind}/${key}.glb`);
+  cur = g.scene;
+  cur.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } if (o.name === 'anim_blades') blades = o; });
+  root.add(cur);
+  meta = kind === 'buildings' ? await fetch(`assets3d/buildings/${key}.json`).then((r) => r.json()) : null;
+  const box = new THREE.Box3().setFromObject(cur); const size = box.getSize(new THREE.Vector3()); const c = box.getCenter(new THREE.Vector3());
+  const r = Math.max(size.x, size.z, size.y * 0.8);
+  cam.position.set(c.x - r * 0.9, r * 1.05 + 1, c.z + r * 1.25); ctl.target.set(c.x, size.y * 0.25, c.z);
+  if (meta) {
+    slotGroup = makeSlots(meta.slots); root.add(slotGroup);
+    const t = await loadChar();
+    if (t && state.char) {
+      charObj = t.clone(true); charObj.position.copy(b2t(meta.door.out)); charObj.position.x += 0.5; root.add(charObj);
+    }
+    document.getElementById('info').textContent = `${meta.name} (${key}) · ${meta.size.join('×')} m · 높이 ${meta.height} m · 삼각형 ${meta.tris} · 자리 ${meta.slots.length}개 · 방: ${meta.rooms.map((x) => x.name).join(', ')}`;
+  } else document.getElementById('info').textContent = key;
+  applyCut(); applySlots();
+}
+async function showFurniture(keys) {
+  root.clear();
+  let x = 0;
+  for (const k of keys) {
+    const g = await loader.loadAsync(`assets3d/furniture/${k}.glb`);
+    const box = new THREE.Box3().setFromObject(g.scene); const w = box.max.x - box.min.x;
+    x += w / 2 + 0.3; g.scene.position.set(x, 0, 0); x += w / 2 + 0.3;
+    g.scene.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+    root.add(g.scene);
+  }
+  root.position.x = -x / 2;
+  cam.position.set(0, x * 0.5 + 1.5, x * 0.7 + 2); ctl.target.set(0, 0.4, 0);
+  document.getElementById('info').textContent = keys.join(', ');
+}
+
+const sel = document.getElementById('sel');
+const index = await fetch('assets3d/buildings/index.json').then((r) => r.json()).catch(() => []);
+for (const e of index) { const o = document.createElement('option'); o.value = e.key; o.textContent = `${e.name} (${e.category})`; sel.appendChild(o); }
+sel.onchange = () => show('buildings', sel.value);
+document.getElementById('bCut').onclick = () => { state.cut = !state.cut; applyCut(); };
+document.getElementById('bSlot').onclick = () => { state.slots = !state.slots; applySlots(); };
+document.getElementById('bChar').onclick = () => { state.char = !state.char; if (charObj) charObj.visible = state.char; };
+if (q.get('f')) await showFurniture(q.get('f').split(','));
+else { const k = q.get('b') || (index[0] && index[0].key) || 'hall'; sel.value = k; await show('buildings', k); }
+if (q.get('view') === 'top' && meta) { cam.position.set(0.01, Math.max(...meta.size) * 1.5, 0.6); ctl.target.set(0, 0, 0); }
+window.__ready = true;
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = clock.getDelta();
+  if (blades) blades.rotation.z += dt * 0.8;      // Blender local Y = three local -Z
+  ctl.update(); renderer.render(scene, cam);
+});
+addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); });
+</script>
+</body>
+</html>

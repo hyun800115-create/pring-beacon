@@ -291,7 +291,7 @@ def b_hall():
     with grp('interior'):
         with room('사무실'):
             put(F.rug_long, -3.0, -1.3, 0, w=1.8, d=1.2, c='navy', stripe='mustard')
-            put(F.desk, -3.0, -0.48, 0, w=1.1, seat='red')
+            put(F.desk, -2.75, -0.48, 0, w=1.1, seat='red')
             place(F.bookshelf, sh.against('W', -0.75, 0.32), seed=11)
             put(F.armchair, -3.6, -2.75, 200, c='rose', act='read')
             F.table_lamp(-4.05, -3.05, K.FZ)
@@ -326,7 +326,7 @@ def b_hall():
             place(F.cupboard, sh.against('E', 1.0, 0.4), seed=2)
             put(F.dining_set, 2.6, 1.1, 0, w=1.6, d=0.75, n_side=2, seat='yellow', seed=3)
             put(F.round_set, 0.55, 2.45, 0, r=0.38, n=2, start=90, act='tea', tea=True, seat='pink')
-            put(F.barrel_in, 4.05, 2.2, 0, r=0.24, h=0.6)
+            put(F.barrel_in, 4.05, 1.8, 0, r=0.24, h=0.6)
             put(F.lamp_floor, -0.1, 0.3, 0)
             put(F.plant_pot, -0.1, 3.05, 0, seed=13, big=False)
     sh.hang('S', -2.0, 1.75, F.clock)
@@ -457,7 +457,7 @@ def b_house_3():
             put(F.rug_long, -2.5, 1.05, 0, w=1.5, d=0.7, c='pink', stripe='purple')
         with room('화장실'):
             put(F.bathtub, -0.5, Y1 - 0.34, 0)
-            put(F.toilet, 0.22, 2.35, 270)
+            put(F.toilet, 0.22, 1.5, 270)
             put(F.sink, -0.92, 1.05, 90)
             put(F.rug_round, -0.3, 1.3, 0, r=0.35, c='blue_l', border='white', inner='white')
             put(F.plant_pot, 0.35, 0.6, 0, seed=7, big=False)
@@ -870,7 +870,7 @@ def b_windmill():
             for i in range(10):
                 z = 0.25 + i * 0.34
                 seg((-0.2, z / 3.6 * 0.25, z), (0.2, z / 3.6 * 0.25, z), 0.018, 'wood_m')
-        slot('work', -0.55, 0.65, K.face(-0.55, 0.65, -1.2, 0.7))
+        slot('work', -0.85, -0.2, K.face(-0.85, -0.2, -1.45, 0.15))
         F.broom(-0.9, -1.2)
     K.set_door((0.0, -r0 - 0.95), (0.0, -r0 + 0.55))
     yard_decor([('barrel', 1.7, -1.6, 0, 1), ('crate', -1.75, -1.5, 25, 2), ('snow', 1.9, 1.7, 0.4, 3),

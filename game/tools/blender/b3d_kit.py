@@ -970,6 +970,7 @@ def export_glb(path):
 
 
 def scene_height(nodes):
+    bpy.context.view_layer.update()
     zmax = 0.0
     for ob in nodes.values():
         for v in ob.data.vertices:

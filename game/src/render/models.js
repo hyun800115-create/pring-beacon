@@ -7,6 +7,7 @@ import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 const SRC_FPS = 24;   // Blender 시간줄 기본 fps
+const GLB = (typeof window !== 'undefined' && window.__SM_GLB) || '.glb';   // 플레이 링크에서는 서버가 받는 이름(.glb.wasm)으로 올린다
 
 export class Library {
   constructor() {
@@ -28,7 +29,7 @@ export class Library {
 
   async loadChar(key) {
     if (this.chars[key]) return this.chars[key];
-    const [g, meta] = await Promise.all([this.loader.loadAsync(`assets3d/chars/${key}.glb`), this.json(`assets3d/chars/${key}.json`)]);
+    const [g, meta] = await Promise.all([this.loader.loadAsync(`assets3d/chars/${key}${GLB}`), this.json(`assets3d/chars/${key}.json`)]);
     const tracks = g.animations.flatMap((a) => a.tracks);
     for (const t of tracks) if (t.name.endsWith('.scale') && t.values.every((v) => v === 0 || v === 1)) t.setInterpolation(THREE.InterpolateDiscrete);
     const all = new THREE.AnimationClip('all', -1, tracks);
@@ -44,7 +45,7 @@ export class Library {
   async loadProp(key) {
     if (this.props[key]) return this.props[key];
     try {
-      const g = await this.loader.loadAsync(`assets3d/props/${key}.glb`);
+      const g = await this.loader.loadAsync(`assets3d/props/${key}${GLB}`);
       g.scene.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
       return (this.props[key] = g.scene);
     } catch (e) { console.warn('prop missing', key); return (this.props[key] = boxStandIn()); }
@@ -54,7 +55,7 @@ export class Library {
     if (this.blds[key] !== undefined) return this.blds[key];
     if (!this.index.buildings[key]) return (this.blds[key] = null);
     try {
-      const [g, meta] = await Promise.all([this.loader.loadAsync(`assets3d/buildings/${key}.glb`), this.json(`assets3d/buildings/${key}.json`)]);
+      const [g, meta] = await Promise.all([this.loader.loadAsync(`assets3d/buildings/${key}${GLB}`), this.json(`assets3d/buildings/${key}.json`)]);
       g.scene.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
       return (this.blds[key] = { scene: g.scene, meta: meta || {} });
     } catch (e) { console.warn('building missing', key, e); return (this.blds[key] = null); }
