@@ -66,7 +66,7 @@ export class Building {
       this.meta = inst.meta;
       for (const n of ['roof', 'walls', 'walls_low', 'iwalls', 'iwalls_low', 'floor', 'interior', 'exterior']) this.parts[n] = inst.scene.getObjectByName(n) || null;
       for (const n of ['walls_low', 'iwalls_low']) if (this.parts[n]) this.parts[n].visible = false;
-      inst.scene.traverse((o) => { if (o.name && o.name.startsWith('anim_')) this.anim = o; });
+      inst.scene.traverse((o) => { if (o.name && o.name.startsWith('anim_')) { this.anim = o; this.animAxis = 'z'; } });   // Blender 로컬 Y 축 = three 로컬 -Z
       if (inst.meta.size) this.size = inst.meta.size.slice();
       this.readSlots(inst.scene, inst.meta);
       this.hasInterior = !!(this.parts.roof && this.parts.interior);
@@ -277,6 +277,7 @@ export class Building {
     if (p.iwalls) p.iwalls.visible = !on;
     if (p.walls_low) p.walls_low.visible = on;
     if (p.iwalls_low) p.iwalls_low.visible = on;
+    if (this.anim && this.parts.roof) this.anim.visible = !on;   // 풍차 날개가 실내를 가리지 않게
   }
 
   // ---------------------------------------------------------------- 결과물 더미 (문 옆)

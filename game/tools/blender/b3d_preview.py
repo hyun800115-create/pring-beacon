@@ -181,19 +181,17 @@ def furniture_sheet(samples, res, keys=None):
     setup(samples)
     idx = json.load(open(os.path.join(FDIR, 'index.json'), encoding='utf-8'))
     keys = keys or list(idx)
-    cols = 8
-    pitch = 2.6
+    cols = 9
+    pitch = 2.3
     all_objs = []
     for i, k in enumerate(keys):
         x = (i % cols) * pitch
         y = -(i // cols) * pitch
         all_objs += import_glb(os.path.join(FDIR, k + '.glb'), (x, y, 0))
-        for s in idx[k].get('slots', []):
-            pass
     ground(200)
     lights()
     c, r = mesh_bounds(all_objs)
-    camera(c, r, (-0.6, -1.0, 1.1), (1600, 1100), fill=0.75)
+    camera(c, r, (-0.35, -1.0, 1.5), (1600, 1100), fill=0.62)
     if os.path.exists(CHAR):
         import_glb(CHAR, (-1.6, 0, 0), 0)
     path = os.path.join(OUT, 'furniture_sheet.png')

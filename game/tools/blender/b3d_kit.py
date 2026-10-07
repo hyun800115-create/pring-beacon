@@ -763,14 +763,10 @@ def _cut_low(src, name, zc, cap='end'):
     bm.to_mesh(me)
     bm.free()
     try:
-        if me.has_custom_normals:
+        if 'custom_normal' in me.attributes:
             me.attributes.remove(me.attributes['custom_normal'])
     except Exception:
-        try:
-            with bpy.context.temp_override(object=src):
-                pass
-        except Exception:
-            pass
+        pass
     try:
         me.set_sharp_from_angle(angle=math.radians(40))
     except Exception:
@@ -927,10 +923,6 @@ def finalize(low=True):
             pv = Vector(S.anim_origin[g])
             ob.data.transform(Matrix.Translation(-pv))
             ob.location = pv
-    # recalc normals outward per node (keeps closed parts consistent)
-    for g, ob in nodes.items():
-        if g.endswith('_low'):
-            continue
     return nodes
 
 

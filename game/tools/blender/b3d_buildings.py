@@ -666,6 +666,8 @@ def b_sawmill():
             F.log_stack(3, 0.12, 1.1, seed=6, snow_top=False)
         F.broom(1.0, -1.7)
         put(F.barrel_in, 2.75, -1.65, 0, r=0.2, h=0.5)
+        slot('work', 1.0, 1.15, 90)          # stacking planks
+        slot('work', -1.75, -0.6, 270)       # rolling logs to the saw
         F.sack(-0.9, 1.65, K.FZ, s=0.55, c='sack', flour=False)
         for i in range(6):
             sp(0.12, (0.2 + i * 0.25, -0.55 + (i % 3) * 0.1, K.FZ), 'pale', scale=(1.4, 1, 0.25), segs=8, rings=5)
@@ -1067,3 +1069,9 @@ def b_well():
         slot('chat', 1.25, 0.6, K.face(1.25, 0.6, 0, 0))
         slot('chat', -0.4, 1.3, K.face(-0.4, 1.3, 0, 0))
     K.set_door((0.0, -1.45), (0.0, -1.0))
+
+
+# contract order (CONTRACT3D section 5)
+ORDER = ['hall', 'house_1', 'house_2', 'house_3', 'woodcutter', 'quarry', 'sawmill', 'farm', 'windmill', 'bakery',
+         'tavern', 'shop', 'well']
+BUILDINGS = OrderedDict((k, BUILDINGS[k]) for k in ORDER)
