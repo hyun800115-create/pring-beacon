@@ -1,0 +1,77 @@
+{
+ "key": "player",
+ "clips": {
+  "idle": {
+   "start": 0,
+   "end": 4,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "walk": {
+   "start": 6,
+   "end": 14,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "carry_idle": {
+   "start": 16,
+   "end": 20,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "carry_walk": {
+   "start": 22,
+   "end": 30,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "chop": {
+   "start": 32,
+   "end": 40,
+   "frames": 8,
+   "fps": 14,
+   "loop": true
+  },
+  "mine": {
+   "start": 42,
+   "end": 50,
+   "frames": 8,
+   "fps": 14,
+   "loop": true
+  },
+  "harvest": {
+   "start": 52,
+   "end": 58,
+   "frames": 6,
+   "fps": 10,
+   "loop": true
+  }
+ },
+ "joints": [
+  "chest",
+  "el_L",
+  "el_R",
+  "hand_L",
+  "hand_R",
+  "head",
+  "hip_L",
+  "hip_R",
+  "hips",
+  "knee_L",
+  "knee_R",
+  "neck",
+  "root",
+  "sh_L",
+  "sh_R",
+  "spine"
+ ],
+ "hand": [
+  "hand_R",
+  "hand_L"
+ ],
+ "height": null
+}

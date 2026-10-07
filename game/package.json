@@ -1,0 +1,8 @@
+{
+  "name": "spring-march-game",
+  "private": true,
+  "description": "봄날의 행진 게임 (3D: three.js)",
+  "dependencies": {
+    "three": "^0.180.0"
+  }
+}

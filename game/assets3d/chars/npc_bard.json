@@ -1,0 +1,126 @@
+{
+ "key": "npc_bard",
+ "clips": {
+  "idle": {
+   "start": 0,
+   "end": 4,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "walk": {
+   "start": 6,
+   "end": 14,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "carry_walk": {
+   "start": 16,
+   "end": 24,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "happy": {
+   "start": 26,
+   "end": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": true
+  },
+  "talk": {
+   "start": 34,
+   "end": 42,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "laugh": {
+   "start": 44,
+   "end": 50,
+   "frames": 6,
+   "fps": 10,
+   "loop": true
+  },
+  "wave": {
+   "start": 52,
+   "end": 58,
+   "frames": 6,
+   "fps": 10,
+   "loop": true
+  },
+  "surprised": {
+   "start": 60,
+   "end": 66,
+   "frames": 6,
+   "fps": 12,
+   "loop": false
+  },
+  "angry": {
+   "start": 68,
+   "end": 74,
+   "frames": 6,
+   "fps": 10,
+   "loop": true
+  },
+  "sad": {
+   "start": 76,
+   "end": 80,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "hit": {
+   "start": 82,
+   "end": 88,
+   "frames": 6,
+   "fps": 12,
+   "loop": false
+  },
+  "sit": {
+   "start": 90,
+   "end": 94,
+   "frames": 4,
+   "fps": 4,
+   "loop": true
+  },
+  "perform": {
+   "start": 96,
+   "end": 104,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "shiver": {
+   "start": 106,
+   "end": 110,
+   "frames": 4,
+   "fps": 12,
+   "loop": true
+  }
+ },
+ "joints": [
+  "chest",
+  "el_L",
+  "el_R",
+  "hand_L",
+  "hand_R",
+  "head",
+  "hip_L",
+  "hip_R",
+  "hips",
+  "knee_L",
+  "knee_R",
+  "neck",
+  "root",
+  "sh_L",
+  "sh_R",
+  "spine"
+ ],
+ "hand": [
+  "hand_R",
+  "hand_L"
+ ],
+ "height": null
+}

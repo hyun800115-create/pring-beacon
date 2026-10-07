@@ -1,0 +1,728 @@
+{
+ "tree_pine_a": {
+  "kind": "prop",
+  "fp": [
+   "r",
+   0.45
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 1024,
+  "kb": 293
+ },
+ "rock_ore": {
+  "kind": "prop",
+  "fp": [
+   1.6,
+   1.4
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 512,
+  "kb": 99
+ },
+ "worker_hut": {
+  "kind": "building",
+  "fp": [
+   2.8,
+   2.4
+  ],
+  "front": "-Y",
+  "mats": 2,
+  "tex": 1024,
+  "kb": 1046
+ },
+ "item_log": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 121
+ },
+ "chief_lodge": {
+  "kind": "building",
+  "fp": [
+   4.6,
+   3.6
+  ],
+  "front": "-Y",
+  "mats": 4,
+  "tex": 2048,
+  "kb": 2430
+ },
+ "tree_pine_b": {
+  "kind": "prop",
+  "fp": [
+   "r",
+   0.42
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 1024,
+  "kb": 317
+ },
+ "tree_pine_snow": {
+  "kind": "prop",
+  "fp": [
+   "r",
+   0.45
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 1024,
+  "kb": 358
+ },
+ "tree_stump": {
+  "kind": "prop",
+  "fp": [
+   "r",
+   0.4
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 225
+ },
+ "rock_ore_b": {
+  "kind": "prop",
+  "fp": [
+   1.7,
+   1.5
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 512,
+  "kb": 94
+ },
+ "rock_rubble": {
+  "kind": "prop",
+  "fp": [
+   1.3,
+   1.1
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 512,
+  "kb": 28
+ },
+ "crop_wheat_0": {
+  "kind": "prop",
+  "fp": [
+   1.5,
+   1.5
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 182
+ },
+ "crop_wheat_1": {
+  "kind": "prop",
+  "fp": [
+   1.5,
+   1.5
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 358
+ },
+ "crop_wheat_2": {
+  "kind": "prop",
+  "fp": [
+   1.5,
+   1.5
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 491
+ },
+ "crop_wheat_3": {
+  "kind": "prop",
+  "fp": [
+   1.5,
+   1.5
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 769
+ },
+ "bush_snow": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   0.55
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 165
+ },
+ "snow_pile_a": {
+  "kind": "decor",
+  "fp": [
+   1.8,
+   1.3
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 1024,
+  "kb": 252
+ },
+ "snow_pile_b": {
+  "kind": "decor",
+  "fp": [
+   1.2,
+   1.0
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 123
+ },
+ "ice_chunk": {
+  "kind": "decor",
+  "fp": [
+   1.2,
+   1.0
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 512,
+  "kb": 17
+ },
+ "station_grill": {
+  "kind": "station",
+  "fp": [
+   2.6,
+   1.6
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 1024,
+  "kb": 816
+ },
+ "station_sawmill": {
+  "kind": "station",
+  "fp": [
+   3.0,
+   1.4
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 1024,
+  "kb": 485
+ },
+ "station_bakery": {
+  "kind": "station",
+  "fp": [
+   2.4,
+   2.2
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 1024,
+  "kb": 611
+ },
+ "station_smelter": {
+  "kind": "station",
+  "fp": [
+   2.4,
+   2.0
+  ],
+  "front": null,
+  "mats": 4,
+  "tex": 1024,
+  "kb": 481
+ },
+ "station_smokehouse": {
+  "kind": "station",
+  "fp": [
+   2.4,
+   2.0
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 1024,
+  "kb": 708
+ },
+ "market_counter": {
+  "kind": "building",
+  "fp": [
+   3.0,
+   1.3
+  ],
+  "front": "-Y",
+  "mats": 2,
+  "tex": 1024,
+  "kb": 945
+ },
+ "trade_post": {
+  "kind": "building",
+  "fp": [
+   3.0,
+   1.7
+  ],
+  "front": "-Y",
+  "mats": 2,
+  "tex": 1024,
+  "kb": 980
+ },
+ "tent_a": {
+  "kind": "building",
+  "fp": [
+   1.9,
+   2.4
+  ],
+  "front": "-Y",
+  "mats": 1,
+  "tex": 1024,
+  "kb": 485
+ },
+ "campfire": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   0.6
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 512,
+  "kb": 217
+ },
+ "upgrade_bench": {
+  "kind": "building",
+  "fp": [
+   2.4,
+   1.3
+  ],
+  "front": "-Y",
+  "mats": 2,
+  "tex": 1024,
+  "kb": 456
+ },
+ "fish_net": {
+  "kind": "building",
+  "fp": [
+   2.8,
+   2.8
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 1024,
+  "kb": 535
+ },
+ "dock_pier": {
+  "kind": "building",
+  "fp": [
+   2.0,
+   4.4
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 1024,
+  "kb": 482
+ },
+ "mine_entrance": {
+  "kind": "building",
+  "fp": [
+   4.0,
+   2.6
+  ],
+  "front": "S",
+  "mats": 3,
+  "tex": 1024,
+  "kb": 573
+ },
+ "boat_small": {
+  "kind": "decor",
+  "fp": [
+   2.6,
+   1.1
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 1024,
+  "kb": 278
+ },
+ "fence_log_x": {
+  "kind": "decor",
+  "fp": [
+   1.0,
+   0.36
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 1024,
+  "kb": 593
+ },
+ "fence_log_y": {
+  "kind": "decor",
+  "fp": [
+   0.36,
+   1.0
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 1024,
+  "kb": 587
+ },
+ "fence_post": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   0.22
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 109
+ },
+ "bench": {
+  "kind": "decor",
+  "fp": [
+   1.9,
+   0.6
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 49
+ },
+ "lamp_post": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   0.25
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 1024,
+  "kb": 180
+ },
+ "barrel": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   0.38
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 96
+ },
+ "crate": {
+  "kind": "decor",
+  "fp": [
+   0.8,
+   0.8
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 167
+ },
+ "firewood_pile": {
+  "kind": "decor",
+  "fp": [
+   1.0,
+   1.0
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 269
+ },
+ "signpost": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   0.25
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 121
+ },
+ "flag_pole": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   0.35
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 1024,
+  "kb": 78
+ },
+ "hay_bale": {
+  "kind": "decor",
+  "fp": [
+   1.0,
+   0.6
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 200
+ },
+ "item_fish_raw": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 1,
+  "tex": 256,
+  "kb": 90
+ },
+ "item_fish_cooked": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 1,
+  "tex": 256,
+  "kb": 49
+ },
+ "item_plank": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 86
+ },
+ "item_wheat": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 1,
+  "tex": 256,
+  "kb": 143
+ },
+ "item_bread": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 1,
+  "tex": 256,
+  "kb": 60
+ },
+ "item_ore": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 2,
+  "tex": 256,
+  "kb": 13
+ },
+ "item_ingot": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 1,
+  "tex": 256,
+  "kb": 12
+ },
+ "item_meat_raw": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 1,
+  "tex": 256,
+  "kb": 68
+ },
+ "item_meat_cooked": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 1,
+  "tex": 256,
+  "kb": 63
+ },
+ "item_coin": {
+  "kind": "item",
+  "fp": null,
+  "front": null,
+  "mats": 1,
+  "tex": 256,
+  "kb": 67
+ },
+ "snowman": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   0.42
+  ],
+  "front": null,
+  "mats": 2,
+  "tex": 512,
+  "kb": 751
+ },
+ "snowball_pile": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   0.4
+  ],
+  "front": null,
+  "mats": 1,
+  "tex": 512,
+  "kb": 225
+ },
+ "snow_fort": {
+  "kind": "decor",
+  "fp": [
+   2.1,
+   0.75
+  ],
+  "front": "S",
+  "mats": 1,
+  "tex": 1024,
+  "kb": 524
+ },
+ "log_seat": {
+  "kind": "decor",
+  "fp": [
+   1.6,
+   0.45
+  ],
+  "front": "S",
+  "mats": 1,
+  "tex": 512,
+  "kb": 224
+ },
+ "log_seat_x": {
+  "kind": "decor",
+  "fp": [
+   1.6,
+   0.45
+  ],
+  "front": "-Y",
+  "mats": 1,
+  "tex": 512,
+  "kb": 224
+ },
+ "log_seat_y": {
+  "kind": "decor",
+  "fp": [
+   1.6,
+   0.45
+  ],
+  "front": "+X",
+  "mats": 1,
+  "tex": 512,
+  "kb": 224
+ },
+ "sled": {
+  "kind": "decor",
+  "fp": [
+   1.25,
+   0.55
+  ],
+  "front": "+X",
+  "mats": 1,
+  "tex": 512,
+  "kb": 233
+ },
+ "dog_house": {
+  "kind": "decor",
+  "fp": [
+   1.0,
+   0.9
+  ],
+  "front": "S",
+  "mats": 1,
+  "tex": 512,
+  "kb": 304
+ },
+ "picnic_table": {
+  "kind": "decor",
+  "fp": [
+   1.8,
+   1.55
+  ],
+  "front": "S",
+  "mats": 1,
+  "tex": 1024,
+  "kb": 331
+ },
+ "lantern_string": {
+  "kind": "decor",
+  "fp": [
+   3.4,
+   0.3
+  ],
+  "front": "S",
+  "mats": 12,
+  "tex": 1024,
+  "kb": 708
+ },
+ "kids_swing": {
+  "kind": "decor",
+  "fp": [
+   2.0,
+   1.3
+  ],
+  "front": "S",
+  "mats": 1,
+  "tex": 1024,
+  "kb": 420
+ },
+ "ice_rink": {
+  "kind": "decal",
+  "fp": [
+   3.4,
+   2.3
+  ],
+  "front": null,
+  "mats": 3,
+  "tex": 1024,
+  "kb": 621
+ },
+ "clothesline": {
+  "kind": "decor",
+  "fp": [
+   2.8,
+   0.4
+  ],
+  "front": "S",
+  "mats": 1,
+  "tex": 1024,
+  "kb": 623
+ },
+ "igloo": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   1.0
+  ],
+  "front": "S",
+  "mats": 1,
+  "tex": 1024,
+  "kb": 963
+ },
+ "notice_board": {
+  "kind": "decor",
+  "fp": [
+   1.4,
+   0.4
+  ],
+  "front": "S",
+  "mats": 1,
+  "tex": 1024,
+  "kb": 344
+ },
+ "music_stand": {
+  "kind": "decor",
+  "fp": [
+   "r",
+   0.3
+  ],
+  "front": "S",
+  "mats": 1,
+  "tex": 512,
+  "kb": 126
+ }
+}

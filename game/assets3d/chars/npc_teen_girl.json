@@ -1,0 +1,133 @@
+{
+ "key": "npc_teen_girl",
+ "clips": {
+  "idle": {
+   "start": 0,
+   "end": 4,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "walk": {
+   "start": 6,
+   "end": 14,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "run": {
+   "start": 16,
+   "end": 24,
+   "frames": 8,
+   "fps": 16,
+   "loop": true
+  },
+  "carry_walk": {
+   "start": 26,
+   "end": 34,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "happy": {
+   "start": 36,
+   "end": 42,
+   "frames": 6,
+   "fps": 10,
+   "loop": true
+  },
+  "talk": {
+   "start": 44,
+   "end": 52,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "laugh": {
+   "start": 54,
+   "end": 60,
+   "frames": 6,
+   "fps": 10,
+   "loop": true
+  },
+  "wave": {
+   "start": 62,
+   "end": 68,
+   "frames": 6,
+   "fps": 10,
+   "loop": true
+  },
+  "surprised": {
+   "start": 70,
+   "end": 76,
+   "frames": 6,
+   "fps": 12,
+   "loop": false
+  },
+  "angry": {
+   "start": 78,
+   "end": 84,
+   "frames": 6,
+   "fps": 10,
+   "loop": true
+  },
+  "sad": {
+   "start": 86,
+   "end": 90,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "throw": {
+   "start": 92,
+   "end": 100,
+   "frames": 8,
+   "fps": 14,
+   "loop": false
+  },
+  "hit": {
+   "start": 102,
+   "end": 108,
+   "frames": 6,
+   "fps": 12,
+   "loop": false
+  },
+  "dance": {
+   "start": 110,
+   "end": 118,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "shiver": {
+   "start": 120,
+   "end": 124,
+   "frames": 4,
+   "fps": 12,
+   "loop": true
+  }
+ },
+ "joints": [
+  "chest",
+  "el_L",
+  "el_R",
+  "hand_L",
+  "hand_R",
+  "head",
+  "hip_L",
+  "hip_R",
+  "hips",
+  "knee_L",
+  "knee_R",
+  "neck",
+  "root",
+  "sh_L",
+  "sh_R",
+  "spine"
+ ],
+ "hand": [
+  "hand_R",
+  "hand_L"
+ ],
+ "height": null
+}
