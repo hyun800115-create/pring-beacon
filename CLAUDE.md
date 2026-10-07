@@ -70,3 +70,13 @@ PLAYWRIGHT_BROWSERS_PATH=.cache/pw-browsers npx playwright install chromium
 - 플레이 링크(Claude 아티팩트)용 빌드: `node tools/build/build_artifact.mjs --webp` → `node tools/build/test_deploy.mjs standalone sameorigin --quick`
 - 시험 결과(2026-10-07): 주인공 캐릭터 렌더 10장 약 1초, 서리마을 원본 실행 스크린샷 오류 0건.
 - 정확한 사용법·옵션은 `docs/handoff/03~05` 참고.
+
+## 새 게임 「봄날의 행진」 현재 상태 (2026-10-07 첫 시제품)
+- 결정 사항: `docs/기획_결정.md` (질문 13개 + 마을 생활(심즈식) 요청). 기획서(`docs/기획서.md`)는 아직 안 씀.
+- 코드: `game/` (Phaser 3.90, 빌드 없는 ES 모듈). `src/data/defs.js`(숫자·건물·주민), `src/world/world.js`(지도·깃발·길·물건·건물·물류),
+  `src/world/people.js`(주민 행동·감정·연애·결혼·출산·장례·이주민), `src/world/clock.js`(낮밤·계절), `src/scenes/Play.js`(화면·입력·카메라), `src/ui/hud.js`(HTML 메뉴).
+- 그림은 서리마을 것을 `game/assets/` 로 복사해 쓰고, 풍차·돌·밀가루·깃발·무덤은 `src/core/assets.js` 에서 직접 그린다(나중에 Blender로 교체).
+- 시험: `cd game` 후 `node tools/test/sm_check.mjs ../.cache/shots/x [--steps|--perf] [--vp 844x390 --mobile]`, 하루 이상 자동 플레이 `node tools/test/sm_play.mjs ../.cache/shots/x --secs 240`.
+- 성능: 짐꾼 544명 시험에서 이 PC 그래픽카드 60fps, 그래픽카드 없는 시험 크롬 26fps. 측정은 `?perf=1`.
+- 플레이 링크: `node tools/build/build_play.mjs` → `.cache/dist_play` 를 아티팩트로 올린다 (https://claude.ai/artifact/8eXSM5tB3aDGm83kWFPWVF).
+- 짐꾼 규칙: 길 토막마다 한 명이 원칙이지만 인구가 적어서, 물건이 기다리는 길에만 배정하고 한가하면 다른 일로 옮긴다. 깃발이 꽉 차면 맞바꾸기 허용.
