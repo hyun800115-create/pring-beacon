@@ -118,12 +118,14 @@ class Game {
 
   /** 봄의 봉화 점화: 불기둥, 봄이 오고 축제 */
   lightBeacon(b, ai) {
-    const top = b.height + 0.4;
-    const fire = new THREE.PointLight(0xff9a40, 30, 40, 1.4); fire.position.set(0, top, 0); b.group.add(fire);
+    let top = b.height + 0.4, fx = 0, fz = 0;
+    const ff = b.meta && b.meta.fx && b.meta.fx.find((f) => /fire/.test(f.id || f.name || ''));
+    if (ff && ff.pos) { fx = ff.pos[0]; fz = -ff.pos[1]; top = ff.pos[2] + 0.3; }   // 봉화대 꼭대기 화로 자리
+    const fire = new THREE.PointLight(0xff9a40, 30, 40, 1.4); fire.position.set(fx, top, fz); b.group.add(fire);
     b.fire = fire;
     const flames = [];
     const mat = new THREE.MeshBasicMaterial({ color: 0xffb040, transparent: true, opacity: 0.85 });
-    for (let k = 0; k < 14; k++) { const m = new THREE.Mesh(new THREE.ConeGeometry(0.35, 1.4, 6), mat); m.position.set((Math.random() - 0.5) * 1.2, top + Math.random(), (Math.random() - 0.5) * 1.2); b.group.add(m); flames.push({ m, s: 0.6 + Math.random(), p: Math.random() * 6 }); }
+    for (let k = 0; k < 14; k++) { const m = new THREE.Mesh(new THREE.ConeGeometry(0.35, 1.4, 6), mat); m.position.set(fx + (Math.random() - 0.5) * 1.2, top + Math.random(), fz + (Math.random() - 0.5) * 1.2); b.group.add(m); flames.push({ m, s: 0.6 + Math.random(), p: Math.random() * 6 }); }
     b.flames = flames;
     if (ai) {
       this.people.news(`🔥 이웃 마을 서리골이 먼저 봄의 봉화를 밝혔어요! 우리도 서둘러요`, 'warn');

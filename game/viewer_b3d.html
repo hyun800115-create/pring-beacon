@@ -100,11 +100,16 @@ async function show(kind, key) {
   cam.position.set(c.x - r * 0.9, r * 1.05 + 1, c.z + r * 1.25); ctl.target.set(c.x, size.y * 0.25, c.z);
   if (meta) {
     slotGroup = makeSlots(meta.slots); root.add(slotGroup);
+    if (meta.pen) {      // fenced area where animals wander (Blender centre/size -> three)
+      const pm = new THREE.Mesh(new THREE.PlaneGeometry(meta.pen.size[0], meta.pen.size[1]),
+        new THREE.MeshBasicMaterial({ color: 0xff7f50, transparent: true, opacity: 0.35, depthWrite: false }));
+      pm.rotation.x = -Math.PI / 2; pm.position.set(meta.pen.center[0], 0.06, -meta.pen.center[1]); slotGroup.add(pm);
+    }
     const t = await loadChar();
     if (t && state.char) {
       charObj = t.clone(true); charObj.position.copy(b2t(meta.door.out)); charObj.position.x += 0.5; root.add(charObj);
     }
-    document.getElementById('info').textContent = `${meta.name} (${key}) · ${meta.size.join('×')} m · 높이 ${meta.height} m · 삼각형 ${meta.tris} · 자리 ${meta.slots.length}개 · 방: ${meta.rooms.map((x) => x.name).join(', ')}`;
+    document.getElementById('info').textContent = `${meta.name} (${key}) · ${meta.size.join('×')} m · 높이 ${meta.height} m · 삼각형 ${meta.tris} · 자리 ${meta.slots.length}개 · 방: ${meta.rooms.map((x) => x.name).join(', ')}${meta.pen ? ` · 우리 ${meta.pen.size.join('×')} m` : ''}${meta.trees ? ` · 나무 ${meta.trees.length}그루` : ''}`;
   } else document.getElementById('info').textContent = key;
   applyCut(); applySlots();
 }

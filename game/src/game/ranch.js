@@ -21,6 +21,15 @@ export function decorate(b, world) {
     b.trees = [];
     const n = def.trees || def.hives || 5;
     const [w, d] = b.size;
+    // 실내 모델: 과수원은 tree_1.. 노드, 양봉장은 fx_bees 자리를 그대로 쓴다
+    const real = b.meta && b.meta.nodes;
+    if (real && def.hives) {
+      const pts = (b.meta.fx || []).filter((f) => /bee/.test(f.id || '')).map((f) => ({ x: f.pos[0], z: -f.pos[1] }));
+      const list = pts.length ? pts : [{ x: 0, z: 0 }];
+      for (const q of list) { const wp = b.toWorld(q.x, q.z); b.trees.push({ node: { position: new THREE.Vector3(q.x, 0, q.z) }, x: wp.x, z: wp.z, t: rand(0, def.every * 0.7), ready: false, reserved: false, fruit: null }); }
+      b.bees = makeBees(b);
+      return;
+    }
     for (let k = 0; k < n; k++) {
       const cols = Math.ceil(Math.sqrt(n)), i = k % cols, j = Math.floor(k / cols);
       const lx = (i / Math.max(1, cols - 1) - 0.5) * (w - 2.5), lz = (j / Math.max(1, Math.ceil(n / cols) - 1) - 0.5) * (d - 3) + 0.8;

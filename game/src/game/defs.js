@@ -103,42 +103,42 @@ export const BUILDINGS = {
     kind: 'decor', cost: { plank: 1 }, work: 2, icon: '🏮', fallback: [['lamp_post', 0, 0, 0, 1]], light: true,
   },
   coop: {
-    cat: 'farm', name: '닭장', desc: '닭이 달걀을 낳아요', size: [6.0, 5.0], height: 3,
+    cat: 'farm', name: '닭장', desc: '닭이 달걀을 낳아요', size: [8.6, 5.2], height: 3,
     kind: 'ranch', animal: 'animal_chicken', count: 5, out: 'egg', every: 26, workTime: 2.0, cost: { plank: 3 }, work: 8, icon: '🐔',
     fallback: [['dog_house', -1.6, -1.2, 0, 1.0], ['hay_bale', 1.4, -1.4, 20, 0.8]], fence: true,
   },
   barn: {
-    cat: 'farm', name: '외양간', desc: '젖소와 염소가 우유를 줘요 (밀을 먹여요)', size: [10.0, 8.0], height: 4.5,
+    cat: 'farm', name: '외양간', desc: '젖소와 염소가 우유를 줘요 (밀을 먹여요)', size: [13.0, 8.0], height: 4.5,
     kind: 'ranch', animal: 'animal_cow', animal2: 'animal_goat', count: 3, out: 'milk', every: 30, feed: 'wheat', workTime: 3.0, cost: { plank: 5, stone: 2 }, work: 12, icon: '🐄',
     fallback: [['worker_hut', -2.8, -2.4, 0, 1.0], ['hay_bale', 1.5, -2.8, 0, 1.0]], fence: true,
   },
   sheepfold: {
-    cat: 'farm', name: '양 우리', desc: '양털을 깎아요', size: [8.0, 7.0], height: 3,
+    cat: 'farm', name: '양 우리', desc: '양털을 깎아요', size: [11.0, 6.0], height: 3,
     kind: 'ranch', animal: 'animal_sheep', count: 4, out: 'wool', every: 40, workTime: 3.0, cost: { plank: 4 }, work: 10, icon: '🐑',
     fallback: [['tent_a', -2.2, -2.0, 0, 1.0]], fence: true,
   },
   pigsty: {
-    cat: 'farm', name: '축사', desc: '돼지와 소를 키워 고기를 얻어요 (밀을 먹여요)', size: [8.0, 6.0], height: 3,
+    cat: 'farm', name: '축사', desc: '돼지와 소를 키워 고기를 얻어요 (밀을 먹여요)', size: [9.0, 5.2], height: 3,
     kind: 'ranch', animal: 'animal_pig', animal2: 'animal_cattle', count: 4, out: 'meat', every: 50, feed: 'wheat', workTime: 3.0, cost: { plank: 4, stone: 1 }, work: 10, icon: '🐷',
     fallback: [['tent_a', -2.2, -1.6, 0, 0.9], ['barrel', 2.4, -1.8, 0, 1]], fence: true,
   },
   orchard: {
-    cat: 'farm', name: '과수원', desc: '사과나무에서 사과를 따요', size: [9.0, 8.0], height: 4,
+    cat: 'farm', name: '과수원', desc: '사과나무에서 사과를 따요', size: [9.6, 8.4], height: 4,
     kind: 'orchard', out: 'apple', trees: 6, every: 35, workTime: 2.5, tool: 'farmer', cost: { plank: 3 }, work: 9, icon: '🍎',
     fallback: [['upgrade_bench', -3.0, -2.8, 0, 0.9]],
   },
   apiary: {
-    cat: 'farm', name: '양봉장', desc: '벌들이 꿀을 모아요', size: [6.0, 5.0], height: 3,
+    cat: 'farm', name: '양봉장', desc: '벌들이 꿀을 모아요', size: [8.4, 6.4], height: 3,
     kind: 'orchard', out: 'honey', hives: 5, every: 45, workTime: 3.0, tool: 'farmer', cost: { plank: 3 }, work: 8, icon: '🍯',
     fallback: [['crate', -1.5, -1, 0, 0.9], ['crate', 0, -1, 0, 0.9], ['crate', 1.5, -1, 0, 0.9], ['crate', -0.7, 0.8, 0, 0.9], ['crate', 0.8, 0.8, 0, 0.9]],
   },
   fishing: {
-    cat: 'prod', name: '낚시터', desc: '물가에서 생선을 낚아요 (호수 옆, 정문이 물을 보게)', size: [4.0, 5.0], height: 3,
+    cat: 'prod', name: '낚시터', desc: '물가에서 생선을 낚아요 (호수 옆, 정문이 물을 보게)', size: [6.4, 10.0], height: 3,
     kind: 'fishing', out: 'fish', workTime: 7, tool: 'fisherman', cost: { plank: 3 }, work: 8, icon: '🎣', water: true,
     fallback: [['dock_pier', 0, 1.0, 0, 1.0], ['boat_small', 1.6, 1.8, 30, 0.8], ['fish_net', -1.2, -1.2, 0, 0.6]],
   },
   dairy: {
-    cat: 'prod', name: '치즈 공방', desc: '우유 → 치즈', size: [4.6, 4.0], height: 4,
+    cat: 'prod', name: '치즈 공방', desc: '우유 → 치즈', size: [6.6, 5.6], height: 4,
     kind: 'process', in: 'milk', out: 'cheese', time: 8, anim: 'work_hands', cost: { plank: 4, stone: 2 }, work: 10, icon: '🧀',
     fallback: [['station_smokehouse', 0, 0, 0, 1.2]],
   },
@@ -148,12 +148,12 @@ export const BUILDINGS = {
     fallback: [['flag_pole', 0, 0, 0, 1.2], ['campfire', 0, 1.0, 0, 1.4]],
   },
   beacon: {
-    cat: 'public', name: '봄의 봉화대', desc: '봉화를 밝히면 겨울이 물러가고 봄이 와요! 이웃 마을보다 먼저 밝혀 보세요', size: [5.0, 5.0], height: 9,
+    cat: 'public', name: '봄의 봉화대', desc: '봉화를 밝히면 겨울이 물러가고 봄이 와요! 이웃 마을보다 먼저 밝혀 보세요', size: [5.6, 5.6], height: 10.7,
     kind: 'beacon', cost: { plank: 20, stone: 30, bread: 10, honey: 3 }, work: 40, icon: '🏮',
     fallback: [['campfire', 0, 0, 0, 2.0], ['flag_pole', 1.6, 1.6, 0, 1.4], ['flag_pole', -1.6, 1.6, 0, 1.4]],
   },
   market: {
-    cat: 'shop', name: '시장 가판대', desc: '외부 상인이 여기 머물러요. 주민들이 장을 봐요', size: [4.0, 3.0], height: 3,
+    cat: 'shop', name: '시장 가판대', desc: '외부 상인이 여기 머물러요. 주민들이 장을 봐요', size: [4.2, 3.2], height: 3,
     kind: 'shop', cost: { plank: 3 }, work: 6, icon: '🛒', fun: 0.06, fallback: [['market_counter', 0, 0, 0, 1.1]],
   },
 };

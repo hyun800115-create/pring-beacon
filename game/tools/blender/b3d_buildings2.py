@@ -304,6 +304,37 @@ def cheese_wheel(x, y, z, r=0.13, h=0.09, cut=False):
     cy(r * 1.01, h * 0.25, (x, y, z + h * 0.1), 'orange', segs=12, bev=0)
 
 
+def flame(x, y, z, s=1.0, seed=0):
+    """Stylised layered campfire flame (emissive): orange outer teardrops + yellow core."""
+    R = rnd(seed)
+    sp(0.26 * s, (x, y, z + 0.2 * s), 'fire', scale=(1, 1, 1.0), segs=12, rings=7)
+    cy(0.22 * s, 0.5 * s, (x, y, z + 0.22 * s), 'fire', r_top=0.01, segs=12, bev=0)
+    for k in range(4):
+        a = math.tau * k / 4 + R.uniform(-0.3, 0.3)
+        px, py = x + math.cos(a) * 0.17 * s, y + math.sin(a) * 0.17 * s
+        h = R.uniform(0.22, 0.34) * s
+        sp(0.11 * s, (px, py, z + 0.1 * s), 'fire', segs=8, rings=5)
+        cy(0.1 * s, h, (px, py, z + 0.12 * s), 'fire', r_top=0.005, segs=8, bev=0)
+    sp(0.16 * s, (x, y - 0.1 * s, z + 0.2 * s), 'ember', scale=(1, 1, 1.1), segs=10, rings=6)
+    cy(0.13 * s, 0.32 * s, (x, y - 0.1 * s, z + 0.22 * s), 'ember', r_top=0.005, segs=10, bev=0)
+
+
+def stall_awning(x, y, z, w, depth=0.7, drop=0.35, c1='red', c2='cream', n=7):
+    """Striped awning (like K.awning) with only a thin snow line along the top edge."""
+    ang = math.degrees(math.atan2(drop, depth))
+    ln = math.hypot(depth, drop)
+    sw = w / n
+    for i in range(n):
+        xx = x - w / 2 + sw * (i + 0.5)
+        c = c1 if i % 2 == 0 else c2
+        bx((sw + 0.004, ln, 0.05), (xx, y - depth / 2, z - drop / 2), c, rot=(ang, 0, 0), bev=0.01, origin='center')
+        cy(sw / 2, 0.05, (xx, y - depth - 0.01, z - drop - 0.02), c, rot=(90, 0, 0), segs=10, origin='center', bev=0)
+    for sd in (-1, 1):
+        seg((x + sd * (w / 2 - 0.05), y, z - drop - 0.2), (x + sd * (w / 2 - 0.05), y - depth, z - drop), 0.015,
+            'iron')
+    snow(w - 0.2, ln * 0.22, 0.05, (x, y - depth * 0.1, z - drop * 0.1 + 0.03), rot=(ang, 0, 0), seed=n)
+
+
 def straw_floor(x0, y0, x1, y1, n=10, seed=0):
     R = rnd(seed)
     for i in range(n):
@@ -726,7 +757,7 @@ def b_fishing():
         my_sign(0.6, -sh.Dp / 2 - 0.02, 1.95, 'fish', w=0.45, h=0.34)
     # pier sticking out toward -Y (over the water)
     DZ = 0.32
-    y_root, y_end = 1.55, -4.6
+    y_root, y_end = 0.95, -4.6
     with grp('floor'):
         R = rnd(5)
         y = y_root
@@ -739,7 +770,8 @@ def b_fishing():
         for i in range(6):
             bx((2.8, 0.2, 0.07), (0, y_end + 0.5 - i * 0.22 + 0.02, DZ - 0.07 + 0.001), R.choice(['plank', 'plank2']),
                bev=0.012)
-        bx((1.6, 0.6, 0.12), (0, y_root + 0.25, 0.0), 'stone_l', bev=0.03)        # step from the shore
+        bx((1.6, 0.35, 0.16), (0, y_root + 0.1, 0.0), 'stone_l', bev=0.03)        # step up to the deck
+        K.stone_floor(-1.0, y_root + 0.28, 1.6, 1.8, seed=9, z0=-0.1)              # landing in front of the hut
     with grp('exterior'):
         for y in (y_root - 0.3, 0.0, -1.6, -3.2, y_end + 0.4, y_end - 0.15):
             for s in (-1, 1):
@@ -793,6 +825,7 @@ def b_fishing():
             for i in range(3):
                 cy(0.2 - i * 0.02, 0.05, (0, 0, i * 0.05), 'rope', segs=12, bev=0)
     K.add_room('부두', -1.4, y_end - 0.4, 1.4, y_root)
+    K.S.door['out'] = [-0.05, 1.25]
     K.S.extra['pier'] = dict(root=[0.0, y_root], end=[0.0, round(y_end - 0.4, 2)], deck_z=DZ, water='-Y')
     yard_decor([('snow', 2.6, 4.3, 0.35, 2), ('bush', -2.6, 4.2, 0.3, 4)])
 
@@ -936,7 +969,7 @@ def b_beacon():
     ops = [('S', 0.0, 0.55, -1, 1.85), ('E', 0.0, 0.18, 3.2, 3.9), ('W', 0.3, 0.18, 4.6, 5.3),
            ('N', -0.3, 0.18, 2.4, 3.1), ('S', 0.0, 0.2, 5.6, 6.3)]
     with grp('walls'):
-        top = square_tower(W0, W1, 0.12, 7.6, ops, seed=3)
+        top = square_tower(W0, W1, 0.12, 7.6, ops, seed=3, cols=('stone_w', 'stone_l', '#B9AC9C', 'stone'))
         # arched door frame
         y = -W0 / 2
         for s in (-1, 1):
@@ -984,10 +1017,7 @@ def b_beacon():
         for i in range(5):
             a = 360 * i / 5
             K.log_(0.06, 0.8, (0, 0, zt + 1.05), (70, 0, a), 'bark')
-        for i, (x, y, r, h) in enumerate(((0, 0, 0.32, 1.0), (0.18, 0.1, 0.2, 0.7), (-0.16, -0.08, 0.2, 0.75),
-                                          (0.05, -0.2, 0.16, 0.55))):
-            cy(r, h, (x, y, zt + 0.98), 'fire', r_top=0.02, segs=10, bev=0)
-        sp(0.18, (0, 0, zt + 1.1), 'ember', scale=(1, 1, 1.3), segs=10, rings=6)
+        flame(0, 0, zt + 0.95, s=1.7, seed=4)
         fx('fx_fire', 0, 0, zt + 1.3)
         fx('fx_light', 0, 0, zt + 1.6)
         fx('fx_smoke', 0, 0, zt + 2.3)
@@ -1010,7 +1040,8 @@ def b_beacon():
             F.log_stack(3, 0.09, 0.9, seed=4, snow_top=False)
         slot('work', -0.2, 0.5, K.face(-0.2, 0.5, -0.75, 0.75))
         put(F.barrel_in, -0.9, -0.75, 0, r=0.2, h=0.5)
-        bx((2.4, 0.6, 0.06), (0, 0.1, 2.55), 'wood_m', bev=0.01)          # landing
+        with grp('walls'):
+            bx((2.4, 0.6, 0.06), (0, 0.1, 2.55), 'wood_m', bev=0.01)      # landing (hidden in the cutaway)
     with grp('exterior'):
         # four little flower boxes + garland poles around the plinth
         for sx in (-1, 1):
@@ -1093,8 +1124,7 @@ def b_watchtower():
         cy(0.4, 0.04, (0, 0, P + 0.65), 'ember', segs=12, bev=0)
         for i in range(4):
             K.log_(0.05, 0.6, (0, 0, P + 0.72), (70, 0, 90 * i + 20), 'bark')
-        for (x, y, r, h) in ((0, 0, 0.24, 0.8), (0.13, 0.07, 0.14, 0.55), (-0.12, -0.06, 0.15, 0.6)):
-            cy(r, h, (x, y, P + 0.66), 'fire', r_top=0.02, segs=10, bev=0)
+        flame(0, 0, P + 0.62, s=1.0, seed=2)
         fx('fx_fire', 0, 0, P + 0.95)
         fx('fx_light', 0, 0, P + 1.2)
         fx('fx_smoke', 0, 0, P + 1.8)
@@ -1144,7 +1174,7 @@ def b_market():
         F.sack(1.7, 0.5, 0.1, s=0.7, c='sack', flour=False)
         put(F.stool, -0.9, 0.4, 0, sit=False, h=0.32)
     with grp('roof'):
-        K.awning(0, D / 2 + 0.35, 2.45, W + 0.4, depth=D + 0.7, drop=0.55, c1='red', c2='cream', n=9)
+        stall_awning(0, D / 2 + 0.35, 2.45, W + 0.4, depth=D + 0.7, drop=0.55, c1='red', c2='cream', n=9)
         for sx in (-1, 1):
             K.lantern(sx * 1.2, -D / 2 - 0.05, 1.95, bracket=False)
         # sign board on top
@@ -1187,7 +1217,9 @@ def b_statue():
         cy(0.28, 0.55, (0, 0, z + 0.35), br, r_top=0.2, segs=14, bev=0.04)          # coat
         cy(0.3, 0.1, (0, 0, z + 0.35), br2, segs=14, bev=0.02)
         sp(0.42, (0, 0, z + 1.18), br, scale=(1, 0.95, 0.95), segs=18, rings=10)       # big head
-        sp(0.45, (0, 0.05, z + 1.32), br2, scale=(1.02, 1, 0.75), segs=18, rings=10)   # hair cap
+        sp(0.44, (0, 0.1, z + 1.36), br2, scale=(1.0, 0.92, 0.72), segs=18, rings=10)   # hair cap
+        for s in (-1, 1):
+            sp(0.03, (s * 0.2, -0.36, z + 1.05), '#D9A06A', scale=(1.3, 0.4, 0.8), segs=8, rings=4)
         for s in (-1, 1):
             sp(0.05, (s * 0.15, -0.38, z + 1.15), '#5E3E22', scale=(1, 0.5, 1.2), segs=8, rings=5)
         # scarf
