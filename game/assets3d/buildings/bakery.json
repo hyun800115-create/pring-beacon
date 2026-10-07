@@ -1,0 +1,211 @@
+{
+ "key": "bakery",
+ "name": "빵집",
+ "category": "생산",
+ "size": [
+  7.0,
+  6.2
+ ],
+ "height": 5.51,
+ "rooms": [
+  {
+   "name": "가게",
+   "center": [
+    0.0,
+    -1.185
+   ],
+   "size": [
+    6.14,
+    2.37
+   ]
+  },
+  {
+   "name": "굽는 곳",
+   "center": [
+    0.0,
+    1.185
+   ],
+   "size": [
+    6.14,
+    2.37
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.sell.1",
+   "action": "sell",
+   "room": "가게",
+   "pos": [
+    0.2,
+    0.45,
+    0.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.shop.1",
+   "action": "shop",
+   "room": "가게",
+   "pos": [
+    0.2,
+    -0.95,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.shop.2",
+   "action": "shop",
+   "room": "가게",
+   "pos": [
+    -2.19,
+    -1.2,
+    0.12
+   ],
+   "yaw": -90.0
+  },
+  {
+   "id": "slot.shop.3",
+   "action": "shop",
+   "room": "가게",
+   "pos": [
+    -1.2,
+    -1.27,
+    0.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.tea.1",
+   "action": "tea",
+   "room": "가게",
+   "pos": [
+    2.74,
+    -0.9,
+    0.12
+   ],
+   "yaw": -90.0
+  },
+  {
+   "id": "slot.tea.2",
+   "action": "tea",
+   "room": "가게",
+   "pos": [
+    1.96,
+    -0.9,
+    0.12
+   ],
+   "yaw": 90.0
+  },
+  {
+   "id": "slot.bake.1",
+   "action": "bake",
+   "room": "굽는 곳",
+   "pos": [
+    -1.5,
+    0.69,
+    0.12
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.bake.2",
+   "action": "bake",
+   "room": "굽는 곳",
+   "pos": [
+    1.35,
+    1.29,
+    0.12
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.bake.3",
+   "action": "bake",
+   "room": "굽는 곳",
+   "pos": [
+    -0.5,
+    0.88,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.sit.1",
+   "action": "sit",
+   "room": "",
+   "pos": [
+    -1.5,
+    -3.37,
+    0.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.sit.2",
+   "action": "sit",
+   "room": "",
+   "pos": [
+    -0.9,
+    -3.37,
+    0.0
+   ],
+   "yaw": 0.0
+  }
+ ],
+ "door": {
+  "out": [
+   1.7,
+   -3.53
+  ],
+  "in": [
+   1.7,
+   -1.92
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light",
+   "pos": [
+    2.495,
+    -2.78,
+    1.172
+   ]
+  },
+  {
+   "id": "fx_smoke_1",
+   "pos": [
+    -1.3,
+    2.0,
+    5.55
+   ]
+  },
+  {
+   "id": "fx_fire",
+   "pos": [
+    -1.5,
+    1.24,
+    0.82
+   ]
+  },
+  {
+   "id": "fx_smoke_2",
+   "pos": [
+    -1.3,
+    1.99,
+    2.32
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 34424
+}

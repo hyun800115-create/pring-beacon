@@ -1,0 +1,132 @@
+[
+ {
+  "key": "house_1",
+  "name": "오두막",
+  "category": "주택",
+  "size": [
+   4.9,
+   4.1
+  ],
+  "height": 4.72
+ },
+ {
+  "key": "hall",
+  "name": "마을회관",
+  "category": "공공",
+  "size": [
+   9.6,
+   8.8
+  ],
+  "height": 6.99
+ },
+ {
+  "key": "house_2",
+  "name": "큰 오두막",
+  "category": "주택",
+  "size": [
+   6.6,
+   5.6
+  ],
+  "height": 5.25
+ },
+ {
+  "key": "house_3",
+  "name": "통나무집",
+  "category": "주택",
+  "size": [
+   8.2,
+   8.0
+  ],
+  "height": 6.01
+ },
+ {
+  "key": "woodcutter",
+  "name": "나무꾼 작업장",
+  "category": "생산",
+  "size": [
+   6.0,
+   5.6
+  ],
+  "height": 3.7
+ },
+ {
+  "key": "quarry",
+  "name": "채석장",
+  "category": "생산",
+  "size": [
+   6.4,
+   5.6
+  ],
+  "height": 3.71
+ },
+ {
+  "key": "sawmill",
+  "name": "제재소",
+  "category": "생산",
+  "size": [
+   7.4,
+   5.4
+  ],
+  "height": 4.33
+ },
+ {
+  "key": "farm",
+  "name": "밀 농장",
+  "category": "생산",
+  "size": [
+   7.6,
+   7.4
+  ],
+  "height": 5.14
+ },
+ {
+  "key": "windmill",
+  "name": "풍차",
+  "category": "생산",
+  "size": [
+   5.0,
+   5.0
+  ],
+  "height": 6.52
+ },
+ {
+  "key": "bakery",
+  "name": "빵집",
+  "category": "생산",
+  "size": [
+   7.0,
+   6.2
+  ],
+  "height": 5.51
+ },
+ {
+  "key": "tavern",
+  "name": "선술집",
+  "category": "상업",
+  "size": [
+   9.0,
+   7.6
+  ],
+  "height": 6.29
+ },
+ {
+  "key": "shop",
+  "name": "잡화점",
+  "category": "상업",
+  "size": [
+   6.8,
+   6.0
+  ],
+  "height": 4.86
+ },
+ {
+  "key": "well",
+  "name": "우물",
+  "category": "공공",
+  "size": [
+   2.6,
+   2.6
+  ],
+  "height": 2.29
+ }
+]

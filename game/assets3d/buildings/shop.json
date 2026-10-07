@@ -1,0 +1,110 @@
+{
+ "key": "shop",
+ "name": "잡화점",
+ "category": "상업",
+ "size": [
+  6.8,
+  6.0
+ ],
+ "height": 4.86,
+ "rooms": [
+  {
+   "name": "가게",
+   "center": [
+    0.0,
+    0.0
+   ],
+   "size": [
+    5.74,
+    4.34
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.sell.1",
+   "action": "sell",
+   "room": "가게",
+   "pos": [
+    0.9,
+    1.35,
+    0.12
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.shop.1",
+   "action": "shop",
+   "room": "가게",
+   "pos": [
+    0.9,
+    -0.05,
+    0.12
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.shop.2",
+   "action": "shop",
+   "room": "가게",
+   "pos": [
+    -2.09,
+    0.3,
+    0.12
+   ],
+   "yaw": -90.0
+  },
+  {
+   "id": "slot.shop.3",
+   "action": "shop",
+   "room": "가게",
+   "pos": [
+    2.09,
+    -0.8,
+    0.12
+   ],
+   "yaw": 90.0
+  },
+  {
+   "id": "slot.shop.4",
+   "action": "shop",
+   "room": "가게",
+   "pos": [
+    -0.9,
+    -1.55,
+    0.12
+   ],
+   "yaw": 180.0
+  }
+ ],
+ "door": {
+  "out": [
+   1.0,
+   -3.33
+  ],
+  "in": [
+   1.0,
+   -1.72
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light",
+   "pos": [
+    1.795,
+    -2.58,
+    1.172
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 31092
+}

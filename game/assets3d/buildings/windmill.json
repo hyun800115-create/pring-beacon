@@ -1,0 +1,89 @@
+{
+ "key": "windmill",
+ "name": "풍차",
+ "category": "생산",
+ "size": [
+  5.0,
+  5.0
+ ],
+ "height": 6.52,
+ "rooms": [
+  {
+   "name": "방앗간",
+   "center": [
+    0.0,
+    0.0
+   ],
+   "size": [
+    3.3,
+    3.3
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.work.1",
+   "action": "work",
+   "room": "방앗간",
+   "pos": [
+    0.0,
+    -0.8,
+    0.12
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.sit.1",
+   "action": "sit",
+   "room": "방앗간",
+   "pos": [
+    0.79,
+    -0.723,
+    0.12
+   ],
+   "yaw": -150.0
+  },
+  {
+   "id": "slot.work.2",
+   "action": "work",
+   "room": "방앗간",
+   "pos": [
+    -0.55,
+    0.65,
+    0.0
+   ],
+   "yaw": -94.4
+  }
+ ],
+ "door": {
+  "out": [
+   0.0,
+   -2.9
+  ],
+  "in": [
+   0.0,
+   -1.4
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light",
+   "pos": [
+    0.85,
+    -2.03,
+    1.522
+   ]
+  }
+ ],
+ "nodes": [
+  "anim_blades",
+  "exterior",
+  "floor",
+  "interior",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 21392
+}

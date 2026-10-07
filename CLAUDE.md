@@ -71,12 +71,21 @@ PLAYWRIGHT_BROWSERS_PATH=.cache/pw-browsers npx playwright install chromium
 - 시험 결과(2026-10-07): 주인공 캐릭터 렌더 10장 약 1초, 서리마을 원본 실행 스크린샷 오류 0건.
 - 정확한 사용법·옵션은 `docs/handoff/03~05` 참고.
 
-## 새 게임 「봄날의 행진」 현재 상태 (2026-10-07 첫 시제품)
-- 결정 사항: `docs/기획_결정.md` (질문 13개 + 마을 생활(심즈식) 요청). 기획서(`docs/기획서.md`)는 아직 안 씀.
-- 코드: `game/` (Phaser 3.90, 빌드 없는 ES 모듈). `src/data/defs.js`(숫자·건물·주민), `src/world/world.js`(지도·깃발·길·물건·건물·물류),
-  `src/world/people.js`(주민 행동·감정·연애·결혼·출산·장례·이주민), `src/world/clock.js`(낮밤·계절), `src/scenes/Play.js`(화면·입력·카메라), `src/ui/hud.js`(HTML 메뉴).
-- 그림은 서리마을 것을 `game/assets/` 로 복사해 쓰고, 풍차·돌·밀가루·깃발·무덤은 `src/core/assets.js` 에서 직접 그린다(나중에 Blender로 교체).
-- 시험: `cd game` 후 `node tools/test/sm_check.mjs ../.cache/shots/x [--steps|--perf] [--vp 844x390 --mobile]`, 하루 이상 자동 플레이 `node tools/test/sm_play.mjs ../.cache/shots/x --secs 240`.
-- 성능: 짐꾼 544명 시험에서 이 PC 그래픽카드 60fps, 그래픽카드 없는 시험 크롬 26fps. 측정은 `?perf=1`.
-- 플레이 링크: `node tools/build/build_play.mjs` → `.cache/dist_play` 를 아티팩트로 올린다 (https://claude.ai/artifact/8eXSM5tB3aDGm83kWFPWVF).
-- 짐꾼 규칙: 길 토막마다 한 명이 원칙이지만 인구가 적어서, 물건이 기다리는 길에만 배정하고 한가하면 다른 일로 옮긴다. 깃발이 꽉 차면 맞바꾸기 허용.
+## 새 게임 「봄날의 행진」 현재 상태 (2026-10-07, 3D 전환 중)
+- 결정 사항: `docs/기획_결정.md` (질문 13개 + 마을 생활 + 1판 피드백: 3D·360° 회전, 깃발 없는 직접 운반, 자유 길·배치, 분류 메뉴, 건설 현장, 실내 생활).
+- **3D 계약서**: `docs/CONTRACT3D.md` (건물 GLB 노드 이름 roof/walls/walls_low/iwalls/iwalls_low/floor/interior/exterior/anim_*/fx_*, slot.<동작>.<번호>, 가구 목록).
+- 2D 시제품은 보관만: `game/index2d.html` + `game/src2d/` (Phaser).
+- 3D 게임: `game/index.html` + `game/src/` (three.js 0.180, 가져오기 지도(importmap)로 `game/node_modules/three` 사용, 빌드 없이 실행).
+  - `src/render/stage.js` 화면·빛·카메라·조작(가운데 버튼/오른쪽 끌기 = 360° 회전, 휠 확대, 두 손가락 비틀기·벌리기), 낮밤 하늘
+  - `src/render/models.js` GLB 창고, `Doll`(주민 인형: 동작 재생·손에 물건), `Pool`(나무·바위 인스턴싱)
+  - `src/game/defs.js` 건물(분류 house/prod/shop/public), 길 3종(흙길·자갈길·돌길), 숫자
+  - `src/game/roads.js` 자유 곡선 길 연결망(교차 자동 연결) + 길 따라 길찾기(길이 빠르면 길로)
+  - `src/game/buildings.js` 건물 모습(실내 GLB 있으면 사용, 없으면 서리마을 소품 조합), 공사 현장(흙바닥·말뚝·비계·재료 더미·아래서 위로 자르기), 실내 보기
+  - `src/game/world.js` 자연·건물 놓기 검사(회전 사각형 겹침)·물류(나르기 일감)·효과
+  - `src/game/people.js` 주민 행동 전부 (2D 판에서 옮김 + 3D: 비계 위 망치질, 나무 쓰러짐, 가구 자리 사용, 침대에서 눕기)
+  - `src/ui/hud.js`·`bubbles.js` HTML 메뉴·말풍선
+- 3D 에셋 도구 (`game/tools/blender/`): `export_glb.py`(캐릭터+동작, 관절별 부품 합치기, 모양 단순화), `export_props_glb.py`(소품, 계산 무늬를 그림으로 굽기, 단순화),
+  Blender 팀 담당 `b3d_*.py`(실내 있는 건물·가구) → `game/assets3d/{chars,props,buildings,furniture}`.
+  - 주의: Blender 에서 위치 읽기 전에 `bpy.context.view_layer.update()`, 합친 뒤 면 방향 다시 계산. 계산 무늬 재질은 굽지 않으면 하얗게 나옴.
+- 시험: `cd game && PLAYWRIGHT_BROWSERS_PATH=../.cache/pw-browsers node tools/test/g3d.mjs ../.cache/shots/g3d --play 120` (`--gpu` = 이 PC 그래픽카드, `--perf` = 주민 300명). 모델 보기: `viewer.html?k=npc_aunt&c=idle,walk&p=tree_pine_a`.
+- 2D 판 플레이 링크(보관): https://claude.ai/artifact/8eXSM5tB3aDGm83kWFPWVF

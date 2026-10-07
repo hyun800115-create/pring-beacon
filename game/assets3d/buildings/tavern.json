@@ -1,0 +1,394 @@
+{
+ "key": "tavern",
+ "name": "선술집",
+ "category": "상업",
+ "size": [
+  9.0,
+  7.6
+ ],
+ "height": 6.29,
+ "rooms": [
+  {
+   "name": "홀",
+   "center": [
+    0.0,
+    -1.035
+   ],
+   "size": [
+    8.14,
+    4.07
+   ]
+  },
+  {
+   "name": "바",
+   "center": [
+    -0.835,
+    2.035
+   ],
+   "size": [
+    6.47,
+    2.07
+   ]
+  },
+  {
+   "name": "창고",
+   "center": [
+    3.235,
+    2.035
+   ],
+   "size": [
+    1.67,
+    2.07
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.sell.1",
+   "action": "sell",
+   "room": "바",
+   "pos": [
+    0.2,
+    2.0,
+    0.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.warm.1",
+   "action": "warm",
+   "room": "바",
+   "pos": [
+    -3.131,
+    0.477,
+    0.12
+   ],
+   "yaw": -115.0
+  },
+  {
+   "id": "slot.warm.2",
+   "action": "warm",
+   "room": "바",
+   "pos": [
+    -3.131,
+    1.323,
+    0.12
+   ],
+   "yaw": -65.0
+  },
+  {
+   "id": "slot.sit.1",
+   "action": "sit",
+   "room": "바",
+   "pos": [
+    -1.275,
+    3.17,
+    0.12
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.sit.2",
+   "action": "sit",
+   "room": "바",
+   "pos": [
+    -1.925,
+    3.17,
+    0.12
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.shop.1",
+   "action": "shop",
+   "room": "홀",
+   "pos": [
+    -0.4,
+    0.6,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.shop.2",
+   "action": "shop",
+   "room": "홀",
+   "pos": [
+    0.4,
+    0.6,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.shop.3",
+   "action": "shop",
+   "room": "홀",
+   "pos": [
+    1.2,
+    0.6,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.sit.3",
+   "action": "sit",
+   "room": "홀",
+   "pos": [
+    -0.8,
+    0.32,
+    0.12
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.sit.4",
+   "action": "sit",
+   "room": "홀",
+   "pos": [
+    1.6,
+    0.32,
+    0.12
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.eat.1",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    -2.196,
+    -1.146,
+    0.12
+   ],
+   "yaw": -45.0
+  },
+  {
+   "id": "slot.eat.2",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    -2.904,
+    -1.146,
+    0.12
+   ],
+   "yaw": 45.0
+  },
+  {
+   "id": "slot.eat.3",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    -2.904,
+    -1.854,
+    0.12
+   ],
+   "yaw": 135.0
+  },
+  {
+   "id": "slot.eat.4",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    -2.196,
+    -1.854,
+    0.12
+   ],
+   "yaw": -135.0
+  },
+  {
+   "id": "slot.eat.5",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    2.954,
+    -1.046,
+    0.12
+   ],
+   "yaw": -45.0
+  },
+  {
+   "id": "slot.eat.6",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    2.246,
+    -1.046,
+    0.12
+   ],
+   "yaw": 45.0
+  },
+  {
+   "id": "slot.eat.7",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    2.246,
+    -1.754,
+    0.12
+   ],
+   "yaw": 135.0
+  },
+  {
+   "id": "slot.eat.8",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    2.954,
+    -1.754,
+    0.12
+   ],
+   "yaw": -135.0
+  },
+  {
+   "id": "slot.eat.9",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    0.59,
+    -1.175,
+    0.12
+   ],
+   "yaw": -120.0
+  },
+  {
+   "id": "slot.eat.10",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    0.2,
+    -0.5,
+    0.12
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.eat.11",
+   "action": "eat",
+   "room": "홀",
+   "pos": [
+    -0.19,
+    -1.175,
+    0.12
+   ],
+   "yaw": 120.0
+  },
+  {
+   "id": "slot.chat.1",
+   "action": "chat",
+   "room": "홀",
+   "pos": [
+    2.0,
+    0.35,
+    0.0
+   ],
+   "yaw": 77.9
+  },
+  {
+   "id": "slot.chat.2",
+   "action": "chat",
+   "room": "홀",
+   "pos": [
+    2.7,
+    0.2,
+    0.0
+   ],
+   "yaw": -102.1
+  },
+  {
+   "id": "slot.sit.5",
+   "action": "sit",
+   "room": "",
+   "pos": [
+    2.175,
+    -4.07,
+    0.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.sit.6",
+   "action": "sit",
+   "room": "",
+   "pos": [
+    2.825,
+    -4.07,
+    0.0
+   ],
+   "yaw": 0.0
+  }
+ ],
+ "door": {
+  "out": [
+   0.2,
+   -4.85
+  ],
+  "in": [
+   0.2,
+   -2.62
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light_1",
+   "pos": [
+    1.07,
+    -3.48,
+    1.272
+   ]
+  },
+  {
+   "id": "fx_smoke",
+   "pos": [
+    -3.95,
+    0.9,
+    6.338
+   ]
+  },
+  {
+   "id": "fx_fire",
+   "pos": [
+    -3.815,
+    0.9,
+    0.37
+   ]
+  },
+  {
+   "id": "fx_light_2",
+   "pos": [
+    -3.77,
+    -2.77,
+    1.32
+   ]
+  },
+  {
+   "id": "fx_light_3",
+   "pos": [
+    -1.7,
+    -4.3,
+    1.722
+   ]
+  },
+  {
+   "id": "fx_light_4",
+   "pos": [
+    2.1,
+    -4.3,
+    1.722
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "iwalls",
+  "iwalls_low",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 41680
+}

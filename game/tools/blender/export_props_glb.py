@@ -154,6 +154,21 @@ def bake_to_texture(ob, key):
     return size
 
 
+DECIMATE = {'tree_pine': 0.22, 'tree_stump': 0.3, 'rock_': 0.35, 'bush_snow': 0.3, 'snow_pile': 0.3, 'crop_wheat': 0.18,
+            'item_': 0.5, 'ice_chunk': 0.4, 'snowball_pile': 0.3}
+
+
+def decimate(ob, key):
+    ratio = next((r for k, r in DECIMATE.items() if key.startswith(k)), 0.7)
+    if ratio >= 0.99:
+        return
+    m = ob.modifiers.new('dec', 'DECIMATE')
+    m.ratio = ratio
+    m.use_collapse_triangulate = True
+    with bpy.context.temp_override(object=ob, active_object=ob):
+        bpy.ops.object.modifier_apply(modifier=m.name)
+
+
 def export(key, spec):
     t0 = time.time()
     bc.reset_scene()
@@ -175,6 +190,8 @@ def export(key, spec):
     nmat = merge_by_material()
     tex = 0
     obs = [o for o in bpy.data.objects if o.type == 'MESH']
+    if obs:
+        decimate(obs[0], key)
     if obs and '--nobake' not in sys.argv:
         tex = bake_to_texture(obs[0], key)
         nmat = len(obs[0].data.materials)

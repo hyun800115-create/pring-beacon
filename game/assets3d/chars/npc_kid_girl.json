@@ -105,6 +105,48 @@
    "frames": 4,
    "fps": 12,
    "loop": true
+  },
+  "sit": {
+   "start": 126,
+   "end": 130,
+   "frames": 4,
+   "fps": 4,
+   "loop": true
+  },
+  "sit_talk": {
+   "start": 132,
+   "end": 140,
+   "frames": 8,
+   "fps": 8,
+   "loop": true
+  },
+  "sit_eat": {
+   "start": 142,
+   "end": 148,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  "sit_read": {
+   "start": 150,
+   "end": 154,
+   "frames": 4,
+   "fps": 2,
+   "loop": true
+  },
+  "work_hands": {
+   "start": 156,
+   "end": 162,
+   "frames": 6,
+   "fps": 7,
+   "loop": true
+  },
+  "sleep": {
+   "start": 164,
+   "end": 168,
+   "frames": 4,
+   "fps": 2,
+   "loop": true
   }
  },
  "joints": [

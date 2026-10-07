@@ -1,0 +1,39 @@
+{
+ "chair": {
+  "tris": 440,
+  "mats": 2,
+  "slots": [
+   "slot.sit.1"
+  ],
+  "size": [
+   0.4,
+   0.4
+  ],
+  "height": 0.72
+ },
+ "bed_single": {
+  "tris": 676,
+  "mats": 4,
+  "slots": [
+   "slot.sleep.1"
+  ],
+  "size": [
+   0.79,
+   1.44
+  ],
+  "height": 0.62
+ },
+ "hearth": {
+  "tris": 1980,
+  "mats": 20,
+  "slots": [
+   "slot.warm.1",
+   "slot.warm.2"
+  ],
+  "size": [
+   1.6,
+   0.93
+  ],
+  "height": 2.35
+ }
+}

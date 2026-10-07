@@ -8,21 +8,21 @@ import { build } from 'esbuild';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
-const OUT = path.resolve(process.argv[2] || path.join(ROOT, '..', '.cache', 'dist_play'));
+const OUT = path.resolve(process.argv[2] || path.join(ROOT, '..', '.cache', 'dist_play2d'));
 
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 
 await build({
-  entryPoints: [path.join(ROOT, 'src', 'main.js')], bundle: true, format: 'iife', minify: true,
+  entryPoints: [path.join(ROOT, 'src2d', 'main.js')], bundle: true, format: 'iife', minify: true,
   target: ['es2020'], outfile: path.join(OUT, 'game.js'), logLevel: 'warning',
 });
 
-const css = fs.readFileSync(path.join(ROOT, 'src', 'ui', 'hud.css'), 'utf8');
+const css = fs.readFileSync(path.join(ROOT, 'src2d', 'ui', 'hud.css'), 'utf8');
 let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const title = html.match(/<title>[\s\S]*?<\/title>/)[0].replace('봄날의 행진 · 시제품', '봄날의 행진');
 const body = html.slice(html.indexOf('<body>') + 6, html.indexOf('</body>'))
-  .replace('<script type="module" src="src/main.js"></script>', '<script src="game.js"></script>');
+  .replace('<script type="module" src="src2d/main.js"></script>', '<script src="game.js"></script>');
 html = `${title}\n<style>\n${css}\n</style>\n${body.trim()}\n`;
 fs.writeFileSync(path.join(OUT, 'index.html'), html);
 

@@ -1,0 +1,129 @@
+{
+ "key": "farm",
+ "name": "밀 농장",
+ "category": "생산",
+ "size": [
+  7.6,
+  7.4
+ ],
+ "height": 5.14,
+ "rooms": [
+  {
+   "name": "헛간",
+   "center": [
+    0.0,
+    0.8
+   ],
+   "size": [
+    5.34,
+    4.14
+   ]
+  },
+  {
+   "name": "밭",
+   "center": [
+    2.1,
+    -2.75
+   ],
+   "size": [
+    3.0,
+    1.7
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.sleep.1",
+   "action": "sleep",
+   "room": "헛간",
+   "pos": [
+    2.15,
+    1.95,
+    0.45
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.sit.1",
+   "action": "sit",
+   "room": "헛간",
+   "pos": [
+    1.3,
+    1.4,
+    0.12
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.work.1",
+   "action": "work",
+   "room": "헛간",
+   "pos": [
+    -0.55,
+    1.25,
+    0.0
+   ],
+   "yaw": -121.8
+  },
+  {
+   "id": "slot.work.2",
+   "action": "work",
+   "room": "헛간",
+   "pos": [
+    1.95,
+    0.6,
+    0.0
+   ],
+   "yaw": 90.0
+  },
+  {
+   "id": "slot.work.3",
+   "action": "work",
+   "room": "밭",
+   "pos": [
+    2.1,
+    -1.8,
+    0.0
+   ],
+   "yaw": 180.0
+  }
+ ],
+ "door": {
+  "out": [
+   0.0,
+   -2.43
+  ],
+  "in": [
+   0.0,
+   -0.82
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light_1",
+   "pos": [
+    1.07,
+    -1.68,
+    1.522
+   ]
+  },
+  {
+   "id": "fx_light_2",
+   "pos": [
+    1.45,
+    2.55,
+    0.7
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 20244
+}

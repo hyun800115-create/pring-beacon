@@ -1,0 +1,110 @@
+{
+ "key": "woodcutter",
+ "name": "나무꾼 작업장",
+ "category": "생산",
+ "size": [
+  6.0,
+  5.6
+ ],
+ "height": 3.7,
+ "rooms": [
+  {
+   "name": "헛간",
+   "center": [
+    0.0,
+    1.0
+   ],
+   "size": [
+    3.34,
+    2.54
+   ]
+  },
+  {
+   "name": "마당",
+   "center": [
+    0.0,
+    -1.65
+   ],
+   "size": [
+    5.6,
+    2.1
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.work.1",
+   "action": "work",
+   "room": "헛간",
+   "pos": [
+    0.35,
+    1.24,
+    0.12
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.sit.1",
+   "action": "sit",
+   "room": "헛간",
+   "pos": [
+    -1.15,
+    1.4,
+    0.12
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.work.2",
+   "action": "work",
+   "room": "마당",
+   "pos": [
+    1.25,
+    -2.1,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.work.3",
+   "action": "work",
+   "room": "마당",
+   "pos": [
+    -0.2,
+    -1.65,
+    0.0
+   ],
+   "yaw": 165.0
+  }
+ ],
+ "door": {
+  "out": [
+   -0.55,
+   -1.43
+  ],
+  "in": [
+   -0.55,
+   0.18
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light",
+   "pos": [
+    0.32,
+    -0.68,
+    1.172
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 17440
+}

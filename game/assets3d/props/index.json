@@ -8,7 +8,7 @@
   "front": null,
   "mats": 1,
   "tex": 1024,
-  "kb": 293
+  "kb": 183
  },
  "rock_ore": {
   "kind": "prop",
@@ -19,7 +19,7 @@
   "front": null,
   "mats": 2,
   "tex": 512,
-  "kb": 99
+  "kb": 48
  },
  "worker_hut": {
   "kind": "building",
@@ -30,7 +30,7 @@
   "front": "-Y",
   "mats": 2,
   "tex": 1024,
-  "kb": 1046
+  "kb": 986
  },
  "item_log": {
   "kind": "item",
@@ -38,7 +38,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 121
+  "kb": 114
  },
  "chief_lodge": {
   "kind": "building",
@@ -49,7 +49,7 @@
   "front": "-Y",
   "mats": 4,
   "tex": 2048,
-  "kb": 2430
+  "kb": 2201
  },
  "tree_pine_b": {
   "kind": "prop",
@@ -60,7 +60,7 @@
   "front": null,
   "mats": 1,
   "tex": 1024,
-  "kb": 317
+  "kb": 189
  },
  "tree_pine_snow": {
   "kind": "prop",
@@ -71,7 +71,7 @@
   "front": null,
   "mats": 1,
   "tex": 1024,
-  "kb": 358
+  "kb": 192
  },
  "tree_stump": {
   "kind": "prop",
@@ -82,7 +82,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 225
+  "kb": 185
  },
  "rock_ore_b": {
   "kind": "prop",
@@ -93,7 +93,7 @@
   "front": null,
   "mats": 2,
   "tex": 512,
-  "kb": 94
+  "kb": 48
  },
  "rock_rubble": {
   "kind": "prop",
@@ -104,7 +104,7 @@
   "front": null,
   "mats": 2,
   "tex": 512,
-  "kb": 28
+  "kb": 13
  },
  "crop_wheat_0": {
   "kind": "prop",
@@ -115,7 +115,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 182
+  "kb": 132
  },
  "crop_wheat_1": {
   "kind": "prop",
@@ -126,7 +126,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 358
+  "kb": 192
  },
  "crop_wheat_2": {
   "kind": "prop",
@@ -137,7 +137,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 491
+  "kb": 232
  },
  "crop_wheat_3": {
   "kind": "prop",
@@ -148,7 +148,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 769
+  "kb": 347
  },
  "bush_snow": {
   "kind": "decor",
@@ -159,7 +159,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 165
+  "kb": 114
  },
  "snow_pile_a": {
   "kind": "decor",
@@ -170,7 +170,7 @@
   "front": null,
   "mats": 1,
   "tex": 1024,
-  "kb": 252
+  "kb": 192
  },
  "snow_pile_b": {
   "kind": "decor",
@@ -181,7 +181,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 123
+  "kb": 92
  },
  "ice_chunk": {
   "kind": "decor",
@@ -192,7 +192,7 @@
   "front": null,
   "mats": 2,
   "tex": 512,
-  "kb": 17
+  "kb": 11
  },
  "station_grill": {
   "kind": "station",
@@ -203,7 +203,7 @@
   "front": null,
   "mats": 2,
   "tex": 1024,
-  "kb": 816
+  "kb": 776
  },
  "station_sawmill": {
   "kind": "station",
@@ -214,7 +214,7 @@
   "front": null,
   "mats": 1,
   "tex": 1024,
-  "kb": 485
+  "kb": 454
  },
  "station_bakery": {
   "kind": "station",
@@ -225,7 +225,7 @@
   "front": null,
   "mats": 2,
   "tex": 1024,
-  "kb": 611
+  "kb": 570
  },
  "station_smelter": {
   "kind": "station",
@@ -236,7 +236,7 @@
   "front": null,
   "mats": 4,
   "tex": 1024,
-  "kb": 481
+  "kb": 447
  },
  "station_smokehouse": {
   "kind": "station",
@@ -247,7 +247,7 @@
   "front": null,
   "mats": 2,
   "tex": 1024,
-  "kb": 708
+  "kb": 585
  },
  "market_counter": {
   "kind": "building",
@@ -258,7 +258,7 @@
   "front": "-Y",
   "mats": 2,
   "tex": 1024,
-  "kb": 945
+  "kb": 813
  },
  "trade_post": {
   "kind": "building",
@@ -269,7 +269,7 @@
   "front": "-Y",
   "mats": 2,
   "tex": 1024,
-  "kb": 980
+  "kb": 857
  },
  "tent_a": {
   "kind": "building",
@@ -280,7 +280,7 @@
   "front": "-Y",
   "mats": 1,
   "tex": 1024,
-  "kb": 485
+  "kb": 430
  },
  "campfire": {
   "kind": "decor",
@@ -291,7 +291,7 @@
   "front": null,
   "mats": 2,
   "tex": 512,
-  "kb": 217
+  "kb": 208
  },
  "upgrade_bench": {
   "kind": "building",
@@ -302,7 +302,7 @@
   "front": "-Y",
   "mats": 2,
   "tex": 1024,
-  "kb": 456
+  "kb": 429
  },
  "fish_net": {
   "kind": "building",
@@ -313,7 +313,7 @@
   "front": null,
   "mats": 1,
   "tex": 1024,
-  "kb": 535
+  "kb": 465
  },
  "dock_pier": {
   "kind": "building",
@@ -324,7 +324,7 @@
   "front": null,
   "mats": 2,
   "tex": 1024,
-  "kb": 482
+  "kb": 441
  },
  "mine_entrance": {
   "kind": "building",
@@ -335,7 +335,7 @@
   "front": "S",
   "mats": 3,
   "tex": 1024,
-  "kb": 573
+  "kb": 514
  },
  "boat_small": {
   "kind": "decor",
@@ -346,7 +346,7 @@
   "front": null,
   "mats": 1,
   "tex": 1024,
-  "kb": 278
+  "kb": 263
  },
  "fence_log_x": {
   "kind": "decor",
@@ -357,7 +357,7 @@
   "front": null,
   "mats": 1,
   "tex": 1024,
-  "kb": 593
+  "kb": 563
  },
  "fence_log_y": {
   "kind": "decor",
@@ -368,7 +368,7 @@
   "front": null,
   "mats": 1,
   "tex": 1024,
-  "kb": 587
+  "kb": 553
  },
  "fence_post": {
   "kind": "decor",
@@ -379,7 +379,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 109
+  "kb": 101
  },
  "bench": {
   "kind": "decor",
@@ -390,7 +390,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 49
+  "kb": 44
  },
  "lamp_post": {
   "kind": "decor",
@@ -401,7 +401,7 @@
   "front": null,
   "mats": 2,
   "tex": 1024,
-  "kb": 180
+  "kb": 178
  },
  "barrel": {
   "kind": "decor",
@@ -412,7 +412,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 96
+  "kb": 77
  },
  "crate": {
   "kind": "decor",
@@ -423,7 +423,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 167
+  "kb": 157
  },
  "firewood_pile": {
   "kind": "decor",
@@ -434,7 +434,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 269
+  "kb": 258
  },
  "signpost": {
   "kind": "decor",
@@ -445,7 +445,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 121
+  "kb": 100
  },
  "flag_pole": {
   "kind": "decor",
@@ -456,7 +456,7 @@
   "front": null,
   "mats": 1,
   "tex": 1024,
-  "kb": 78
+  "kb": 75
  },
  "hay_bale": {
   "kind": "decor",
@@ -467,7 +467,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 200
+  "kb": 190
  },
  "item_fish_raw": {
   "kind": "item",
@@ -475,7 +475,7 @@
   "front": null,
   "mats": 1,
   "tex": 256,
-  "kb": 90
+  "kb": 72
  },
  "item_fish_cooked": {
   "kind": "item",
@@ -483,7 +483,7 @@
   "front": null,
   "mats": 1,
   "tex": 256,
-  "kb": 49
+  "kb": 41
  },
  "item_plank": {
   "kind": "item",
@@ -491,7 +491,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 86
+  "kb": 97
  },
  "item_wheat": {
   "kind": "item",
@@ -499,7 +499,7 @@
   "front": null,
   "mats": 1,
   "tex": 256,
-  "kb": 143
+  "kb": 99
  },
  "item_bread": {
   "kind": "item",
@@ -507,7 +507,7 @@
   "front": null,
   "mats": 1,
   "tex": 256,
-  "kb": 60
+  "kb": 42
  },
  "item_ore": {
   "kind": "item",
@@ -515,7 +515,7 @@
   "front": null,
   "mats": 2,
   "tex": 256,
-  "kb": 13
+  "kb": 7
  },
  "item_ingot": {
   "kind": "item",
@@ -531,7 +531,7 @@
   "front": null,
   "mats": 1,
   "tex": 256,
-  "kb": 68
+  "kb": 53
  },
  "item_meat_cooked": {
   "kind": "item",
@@ -539,7 +539,7 @@
   "front": null,
   "mats": 1,
   "tex": 256,
-  "kb": 63
+  "kb": 52
  },
  "item_coin": {
   "kind": "item",
@@ -547,7 +547,7 @@
   "front": null,
   "mats": 1,
   "tex": 256,
-  "kb": 67
+  "kb": 47
  },
  "snowman": {
   "kind": "decor",
@@ -558,7 +558,7 @@
   "front": null,
   "mats": 2,
   "tex": 512,
-  "kb": 751
+  "kb": 605
  },
  "snowball_pile": {
   "kind": "decor",
@@ -569,7 +569,7 @@
   "front": null,
   "mats": 1,
   "tex": 512,
-  "kb": 225
+  "kb": 127
  },
  "snow_fort": {
   "kind": "decor",
@@ -580,7 +580,7 @@
   "front": "S",
   "mats": 1,
   "tex": 1024,
-  "kb": 524
+  "kb": 478
  },
  "log_seat": {
   "kind": "decor",
@@ -591,7 +591,7 @@
   "front": "S",
   "mats": 1,
   "tex": 512,
-  "kb": 224
+  "kb": 202
  },
  "log_seat_x": {
   "kind": "decor",
@@ -602,7 +602,7 @@
   "front": "-Y",
   "mats": 1,
   "tex": 512,
-  "kb": 224
+  "kb": 203
  },
  "log_seat_y": {
   "kind": "decor",
@@ -613,7 +613,7 @@
   "front": "+X",
   "mats": 1,
   "tex": 512,
-  "kb": 224
+  "kb": 203
  },
  "sled": {
   "kind": "decor",
@@ -624,7 +624,7 @@
   "front": "+X",
   "mats": 1,
   "tex": 512,
-  "kb": 233
+  "kb": 206
  },
  "dog_house": {
   "kind": "decor",
@@ -635,7 +635,7 @@
   "front": "S",
   "mats": 1,
   "tex": 512,
-  "kb": 304
+  "kb": 248
  },
  "picnic_table": {
   "kind": "decor",
@@ -646,7 +646,7 @@
   "front": "S",
   "mats": 1,
   "tex": 1024,
-  "kb": 331
+  "kb": 338
  },
  "lantern_string": {
   "kind": "decor",
@@ -657,7 +657,7 @@
   "front": "S",
   "mats": 12,
   "tex": 1024,
-  "kb": 708
+  "kb": 639
  },
  "kids_swing": {
   "kind": "decor",
@@ -668,7 +668,7 @@
   "front": "S",
   "mats": 1,
   "tex": 1024,
-  "kb": 420
+  "kb": 401
  },
  "ice_rink": {
   "kind": "decal",
@@ -679,7 +679,7 @@
   "front": null,
   "mats": 3,
   "tex": 1024,
-  "kb": 621
+  "kb": 595
  },
  "clothesline": {
   "kind": "decor",
@@ -690,7 +690,7 @@
   "front": "S",
   "mats": 1,
   "tex": 1024,
-  "kb": 623
+  "kb": 583
  },
  "igloo": {
   "kind": "decor",
@@ -701,7 +701,7 @@
   "front": "S",
   "mats": 1,
   "tex": 1024,
-  "kb": 963
+  "kb": 855
  },
  "notice_board": {
   "kind": "decor",
@@ -712,7 +712,7 @@
   "front": "S",
   "mats": 1,
   "tex": 1024,
-  "kb": 344
+  "kb": 314
  },
  "music_stand": {
   "kind": "decor",
@@ -723,6 +723,6 @@
   "front": "S",
   "mats": 1,
   "tex": 512,
-  "kb": 126
+  "kb": 121
  }
 }

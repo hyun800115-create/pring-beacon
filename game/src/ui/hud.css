@@ -106,3 +106,21 @@ html, body {
   .news { top: calc(46px + env(safe-area-inset-top, 0px)); } .card { top: calc(46px + env(safe-area-inset-top, 0px)); }
   .prompt { top: calc(48px + env(safe-area-inset-top, 0px)); font-size: 13px; padding: 7px 10px; max-width: 70vw; }
 }
+
+/* ===== 3D 판 추가 ===== */
+#game canvas { width: 100% !important; height: 100% !important; }
+#bubbles { position: fixed; inset: 0; pointer-events: none; z-index: 4; overflow: hidden; }
+.bub { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 4px; padding: 3px 9px 3px 4px; border-radius: 14px; background: rgba(255,255,255,.94); box-shadow: 0 2px 8px rgba(40,50,80,.18); font-weight: 800; font-size: 13.5px; color: #2b2f3a; white-space: nowrap; transition: opacity .2s; }
+.bub.only { background: transparent; box-shadow: none; padding: 0; }
+.bub .em { display: inline-block; background-image: url(../../assets/emotes/emotes.png); background-repeat: no-repeat; flex: none; }
+.cats { display: flex; gap: 4px; padding: 4px 6px 0; justify-content: center; }
+.cat { border: 0; border-radius: 10px 10px 0 0; padding: 6px 12px; font: 800 13px inherit; font-family: inherit; background: #e6ecf4; color: #4a5a78; cursor: pointer; }
+.cat.on { background: #fff; color: #2b2f3a; box-shadow: 0 -2px 6px rgba(40,50,80,.08); }
+.dock { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(8px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; max-width: calc(100vw - 20px); }
+.dock .bar { position: static; transform: none; }
+.camctl { position: absolute; right: 10px; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); display: grid; grid-template-columns: 42px 42px; gap: 6px; padding: 6px; }
+.camctl button { width: 42px; height: 42px; border: 0; border-radius: 10px; background: #edf1f7; font-size: 19px; cursor: pointer; color: #2b2f3a; }
+.placebar { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(150px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 6px; padding: 6px 10px; align-items: center; font-weight: 800; font-size: 13px; }
+.placebar button { border: 0; border-radius: 10px; padding: 8px 12px; font: 800 15px inherit; font-family: inherit; background: #edf1f7; cursor: pointer; }
+.placebar button.go { background: #3d8be0; color: #fff; }
+@media (max-height: 480px) { .camctl { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); grid-template-columns: 36px 36px; } .camctl button { width: 36px; height: 36px; font-size: 16px; } .placebar { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); } .cat { padding: 4px 9px; font-size: 12px; } }

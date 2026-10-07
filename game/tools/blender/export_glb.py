@@ -51,7 +51,11 @@ def build(key):
         VIL = vil_build
         rig = vil_build.build(key)
         anims = vil_build.anims_for(key)
-        pose = lambda an, i, n: vil_build.pose_for(rig, an, i, 'S')  # noqa: E731
+        base = lambda an, i: vil_build.pose_for(rig, an, i, 'S')  # noqa: E731
+        if not key.startswith('pet_'):
+            anims = dict(anims)
+            anims.update(EXTRA)
+        pose = lambda an, i, n: extra_pose(vil_build, rig, base, an, i, n)  # noqa: E731
     else:
         import char_build
         import char_anim
@@ -92,8 +96,76 @@ def join_parts(rig):
             toggles.setdefault(tn, []).append(bpy.data.objects[name])
     for tn in rig.toggles:
         rig.toggles[tn] = toggles.get(tn, [])
+    # 모양 단순하게 (몸 0.3, 얼굴 부품 0.6) — 둥근 치비 모양이라 거의 티가 안 난다
+    for o in bpy.data.objects:
+        if o.type != 'MESH' or len(o.data.polygons) < 300:
+            continue
+        m = o.modifiers.new('dec', 'DECIMATE')
+        m.ratio = 0.6 if keep.get(o.name) else 0.3
+        with bpy.context.temp_override(object=o, active_object=o):
+            bpy.ops.object.modifier_apply(modifier=m.name)
     n1 = len([o for o in bpy.data.objects if o.type == 'MESH'])
     return n0, n1
+
+
+# 실내 생활용 추가 동작 (주민만): 앉아서 이야기·먹기·읽기, 서서 손일(요리·빵·작업), 누워 자기
+EXTRA = {
+    'sit':        {'frames': 4, 'fps': 4, 'repeat': -1},
+    'sit_talk':   {'frames': 8, 'fps': 8, 'repeat': -1},
+    'sit_eat':    {'frames': 6, 'fps': 5, 'repeat': -1},
+    'sit_read':   {'frames': 4, 'fps': 2, 'repeat': -1},
+    'work_hands': {'frames': 6, 'fps': 7, 'repeat': -1},
+    'sleep':      {'frames': 4, 'fps': 2, 'repeat': -1},
+}
+ARM_KEYS = ('ik_', 'sh_', 'el_', 'hand_', 'head', 'neck')
+
+
+def extra_pose(vb, rig, base, an, i, n):
+    import math
+    if an not in EXTRA:
+        return base(an, i)
+    if an == 'sit':
+        return base('sit', i % 4)
+    if an == 'sit_talk':
+        p = base('sit', i % 4)
+        t = base('talk', i % 8)
+        for k, v in t.items():
+            if k.startswith(ARM_KEYS) or k == '_show':
+                p[k] = v
+        return p
+    if an == 'sit_eat':
+        p = base('sit', i % 4)
+        up = [0.0, 0.0, 0.5, 1.0, 1.0, 0.4][i % 6]
+        a = (-0.12, -0.24, -0.08)
+        m = (-0.04, -0.17, 0.12)
+        p['ik_R'] = tuple(a[k] + (m[k] - a[k]) * up for k in range(3)) + (-1.0, 0.2, -0.3)
+        p['ik_L'] = (0.12, -0.24, -0.10, 1.0, 0.2, -0.3)
+        p['_show'] = vb.show_set(rig, 'talk_mid' if up > 0.7 else 'talk_closed', set())
+        return p
+    if an == 'sit_read':
+        p = base('sit', i % 4)
+        p['ik_R'] = (-0.07, -0.24, -0.02, -1.0, 0.2, -0.5)
+        p['ik_L'] = (0.07, -0.24, -0.02, 1.0, 0.2, -0.5)
+        p['head'] = (12, 0, 0)
+        p['_show'] = vb.show_set(rig, 'blink' if i == 3 else 'neutral', set())
+        return p
+    if an == 'work_hands':
+        p = base('idle', 0)
+        a = 2 * math.pi * i / 6
+        p['ik_R'] = (-0.10, -0.26, -0.12 + 0.05 * math.sin(a), -1.0, 0.2, -0.4)
+        p['ik_L'] = (0.10, -0.26, -0.12 + 0.05 * math.cos(a), 1.0, 0.2, -0.4)
+        p['head'] = (14, 0, 0)
+        p['_show'] = vb.show_set(rig, 'blink' if i == 5 else 'neutral', set())
+        return p
+    if an == 'sleep':
+        p = base('idle', 0)
+        p['root'] = (90, 0, 0)
+        p['chest@'] = (0, 0, 0.006 * math.sin(2 * math.pi * i / 4))
+        p['ik_R'] = (-0.14, -0.10, -0.18, -1.0, 0.2, -0.3)
+        p['ik_L'] = (0.14, -0.10, -0.18, 1.0, 0.2, -0.3)
+        p['_show'] = vb.show_set(rig, 'sleepy' if i % 2 else 'sleepy_b', set())
+        return p
+    return base(an, i)
 
 
 def bake(rig, anims, pose):
