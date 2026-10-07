@@ -1,0 +1,1327 @@
+{
+ "version": 1,
+ "generator": "tools/blender/prop_render.py + prop_pack.py",
+ "conventions": {
+  "ppu": 64,
+  "anchor": "normalised [ax, ay] of the full untrimmed frame = world origin = footprint centre (items: bottom centre of the item).",
+  "footprint": "screen-px bounding size [w, h] of the ground footprint (diamond for boxes, ellipse for round things); centred on the anchor.",
+  "topPx": "visual height above the anchor in px (for bubbles / progress rings).",
+  "front": "-Y = faces screen down-left (SW); S = faces the camera (screen down).",
+  "stackStep": "items: px between stacked copies at scale 1 (draw copy i at y - i*stackStep).",
+  "shadows": "props/buildings have a baked soft shadow falling screen down-right; items have none.",
+  "carryScale": "items: recommended scale for stacks carried in a character's hands (chibi bodies; at 1x an item is head-wide). Draw carried copy i at scale carryScale and y - i*stackStep*carryScale. Ground/pad towers and UI icons stay at scale 1 (stackStep is native).",
+  "fxPoints": "stations: px offsets [dx, dy] from the anchor where game FX can be spawned (fire = flame/heat source, smoke = just above the chimney/vent top, blade, dust, crucible).",
+  "work": "stations: the idle frame is the resting state (embers banked, no smoke); anims.work is a seamless 4-frame loop with flames, smoke puffs and moving parts baked in. All frames share frameSize and anchor, so swap frames in place."
+ },
+ "atlases": [
+  {
+   "key": "props_nature",
+   "png": "props/props_nature.png",
+   "json": "props/props_nature.json"
+  },
+  {
+   "key": "props_buildings",
+   "png": "props/props_buildings.png",
+   "json": "props/props_buildings.json"
+  },
+  {
+   "key": "props_decor",
+   "png": "props/props_decor.png",
+   "json": "props/props_decor.json"
+  },
+  {
+   "key": "props_items",
+   "png": "props/props_items.png",
+   "json": "props/props_items.json"
+  }
+ ],
+ "sprites": {
+  "tree_pine_a": {
+   "atlas": "props_nature",
+   "frame": "tree_pine_a",
+   "anchor": [
+    0.33203,
+    0.67
+   ],
+   "kind": "prop",
+   "footprint": [
+    58,
+    29
+   ],
+   "frameSize": [
+    256,
+    300
+   ],
+   "topPx": 180,
+   "footprintM": {
+    "radius": 0.45
+   },
+   "notes": "Choppable pine (~3.2 m). Footprint = trunk area; the canopy may overlap sprites behind it."
+  },
+  "tree_pine_b": {
+   "atlas": "props_nature",
+   "frame": "tree_pine_b",
+   "anchor": [
+    0.27143,
+    0.67135
+   ],
+   "kind": "prop",
+   "footprint": [
+    54,
+    27
+   ],
+   "frameSize": [
+    280,
+    356
+   ],
+   "topPx": 219,
+   "footprintM": {
+    "radius": 0.42
+   },
+   "notes": "Taller slimmer pine variant (~3.9 m), lighter snow."
+  },
+  "tree_pine_snow": {
+   "atlas": "props_nature",
+   "frame": "tree_pine_snow",
+   "anchor": [
+    0.32955,
+    0.66883
+   ],
+   "kind": "prop",
+   "footprint": [
+    58,
+    29
+   ],
+   "frameSize": [
+    264,
+    308
+   ],
+   "topPx": 186,
+   "footprintM": {
+    "radius": 0.45
+   },
+   "notes": "Heavily snow-laden pine (~3.3 m)."
+  },
+  "tree_stump": {
+   "atlas": "props_nature",
+   "frame": "tree_stump",
+   "anchor": [
+    0.44355,
+    0.52885
+   ],
+   "kind": "prop",
+   "footprint": [
+    51,
+    26
+   ],
+   "frameSize": [
+    124,
+    104
+   ],
+   "topPx": 35,
+   "footprintM": {
+    "radius": 0.4
+   },
+   "notes": "Chopped pine stump (shown while the tree regrows)."
+  },
+  "rock_ore": {
+   "atlas": "props_nature",
+   "frame": "rock_ore",
+   "anchor": [
+    0.40698,
+    0.55921
+   ],
+   "kind": "prop",
+   "footprint": [
+    136,
+    68
+   ],
+   "frameSize": [
+    172,
+    152
+   ],
+   "topPx": 65,
+   "footprintM": [
+    1.6,
+    1.4
+   ],
+   "notes": "Mineable boulder with orange ore veins + nuggets."
+  },
+  "rock_ore_b": {
+   "atlas": "props_nature",
+   "frame": "rock_ore_b",
+   "anchor": [
+    0.42568,
+    0.56757
+   ],
+   "kind": "prop",
+   "footprint": [
+    145,
+    72
+   ],
+   "frameSize": [
+    148,
+    148
+   ],
+   "topPx": 64,
+   "footprintM": [
+    1.7,
+    1.5
+   ],
+   "notes": "Mineable boulder variant (two-lobed, more ore)."
+  },
+  "rock_rubble": {
+   "atlas": "props_nature",
+   "frame": "rock_rubble",
+   "anchor": [
+    0.45968,
+    0.51087
+   ],
+   "kind": "prop",
+   "footprint": [
+    109,
+    54
+   ],
+   "frameSize": [
+    124,
+    92
+   ],
+   "topPx": 26,
+   "footprintM": [
+    1.3,
+    1.1
+   ],
+   "notes": "Depleted ore rock (shown while it respawns)."
+  },
+  "crop_wheat_0": {
+   "atlas": "props_nature",
+   "frame": "crop_wheat_0",
+   "anchor": [
+    0.46809,
+    0.50781
+   ],
+   "kind": "prop",
+   "footprint": [
+    136,
+    68
+   ],
+   "frameSize": [
+    188,
+    128
+   ],
+   "topPx": 45,
+   "footprintM": [
+    1.5,
+    1.5
+   ],
+   "notes": "1.5 m wheat plot, stage 0: bare tilled soil. Plots can be placed edge to edge (1.5 m grid)."
+  },
+  "crop_wheat_1": {
+   "atlas": "props_nature",
+   "frame": "crop_wheat_1",
+   "anchor": [
+    0.46809,
+    0.50781
+   ],
+   "kind": "prop",
+   "footprint": [
+    136,
+    68
+   ],
+   "frameSize": [
+    188,
+    128
+   ],
+   "topPx": 45,
+   "footprintM": [
+    1.5,
+    1.5
+   ],
+   "notes": "1.5 m wheat plot, stage 1: sprouts. Plots can be placed edge to edge (1.5 m grid)."
+  },
+  "crop_wheat_2": {
+   "atlas": "props_nature",
+   "frame": "crop_wheat_2",
+   "anchor": [
+    0.46809,
+    0.56757
+   ],
+   "kind": "prop",
+   "footprint": [
+    136,
+    68
+   ],
+   "frameSize": [
+    188,
+    148
+   ],
+   "topPx": 63,
+   "footprintM": [
+    1.5,
+    1.5
+   ],
+   "notes": "1.5 m wheat plot, stage 2: green young wheat. Plots can be placed edge to edge (1.5 m grid)."
+  },
+  "crop_wheat_3": {
+   "atlas": "props_nature",
+   "frame": "crop_wheat_3",
+   "anchor": [
+    0.41509,
+    0.58511
+   ],
+   "kind": "prop",
+   "footprint": [
+    136,
+    68
+   ],
+   "frameSize": [
+    212,
+    188
+   ],
+   "topPx": 90,
+   "footprintM": [
+    1.5,
+    1.5
+   ],
+   "notes": "1.5 m wheat plot, stage 3: golden ripe wheat (harvestable). Plots can be placed edge to edge (1.5 m grid)."
+  },
+  "bush_snow": {
+   "atlas": "props_nature",
+   "frame": "bush_snow",
+   "anchor": [
+    0.41912,
+    0.56452
+   ],
+   "kind": "decor",
+   "footprint": [
+    70,
+    35
+   ],
+   "frameSize": [
+    136,
+    124
+   ],
+   "topPx": 50,
+   "footprintM": {
+    "radius": 0.55
+   },
+   "notes": "Snowy bush with red berries."
+  },
+  "snow_pile_a": {
+   "atlas": "props_nature",
+   "frame": "snow_pile_a",
+   "anchor": [
+    0.46277,
+    0.51852
+   ],
+   "kind": "decor",
+   "footprint": [
+    140,
+    70
+   ],
+   "frameSize": [
+    188,
+    108
+   ],
+   "topPx": 35,
+   "footprintM": [
+    1.8,
+    1.3
+   ],
+   "notes": "Large snow pile."
+  },
+  "snow_pile_b": {
+   "atlas": "props_nature",
+   "frame": "snow_pile_b",
+   "anchor": [
+    0.5,
+    0.47826
+   ],
+   "kind": "decor",
+   "footprint": [
+    100,
+    50
+   ],
+   "frameSize": [
+    124,
+    92
+   ],
+   "topPx": 24,
+   "footprintM": [
+    1.2,
+    1.0
+   ],
+   "notes": "Small snow pile with snowballs."
+  },
+  "ice_chunk": {
+   "atlas": "props_nature",
+   "frame": "ice_chunk",
+   "anchor": [
+    0.46324,
+    0.575
+   ],
+   "kind": "decor",
+   "footprint": [
+    100,
+    50
+   ],
+   "frameSize": [
+    136,
+    120
+   ],
+   "topPx": 48,
+   "footprintM": [
+    1.2,
+    1.0
+   ],
+   "notes": "Glossy ice block cluster with snow."
+  },
+  "station_grill": {
+   "atlas": "props_buildings",
+   "frame": "station_grill",
+   "anchor": [
+    0.44403,
+    0.62719
+   ],
+   "kind": "station",
+   "footprint": [
+    190,
+    95
+   ],
+   "anims": {
+    "work": {
+     "frames": [
+      "station_grill_work_0",
+      "station_grill_work_1",
+      "station_grill_work_2",
+      "station_grill_work_3"
+     ],
+     "fps": 8,
+     "repeat": -1
+    }
+   },
+   "frameSize": [
+    268,
+    228
+   ],
+   "topPx": 89,
+   "footprintM": [
+    2.6,
+    1.6
+   ],
+   "fxPoints": {
+    "fire": [
+     0,
+     -34
+    ],
+    "smoke": [
+     -11,
+     -98
+    ]
+   },
+   "notes": "Fish grill: stone hearth + iron grate with fish. work = embers pulse. Long axis along world X."
+  },
+  "station_sawmill": {
+   "atlas": "props_buildings",
+   "frame": "station_sawmill",
+   "anchor": [
+    0.42188,
+    0.56633
+   ],
+   "kind": "station",
+   "footprint": [
+    199,
+    100
+   ],
+   "anims": {
+    "work": {
+     "frames": [
+      "station_sawmill_work_0",
+      "station_sawmill_work_1",
+      "station_sawmill_work_2",
+      "station_sawmill_work_3"
+     ],
+     "fps": 10,
+     "repeat": -1
+    }
+   },
+   "frameSize": [
+    256,
+    196
+   ],
+   "topPx": 91,
+   "footprintM": [
+    3.0,
+    1.4
+   ],
+   "fxPoints": {
+    "blade": [
+     11,
+     -44
+    ],
+    "dust": [
+     -36,
+     18
+    ]
+   },
+   "notes": "Sawmill: log bench with circular blade (log feeds from the left/up-left, planks out at +X / screen down-right). work = blade spins (4-frame seamless loop)."
+  },
+  "station_bakery": {
+   "atlas": "props_buildings",
+   "frame": "station_bakery",
+   "anchor": [
+    0.44697,
+    0.70977
+   ],
+   "kind": "station",
+   "footprint": [
+    208,
+    104
+   ],
+   "anims": {
+    "work": {
+     "frames": [
+      "station_bakery_work_0",
+      "station_bakery_work_1",
+      "station_bakery_work_2",
+      "station_bakery_work_3"
+     ],
+     "fps": 6,
+     "repeat": -1
+    }
+   },
+   "frameSize": [
+    264,
+    348
+   ],
+   "topPx": 159,
+   "footprintM": [
+    2.4,
+    2.2
+   ],
+   "fxPoints": {
+    "fire": [
+     0,
+     -3
+    ],
+    "smoke": [
+     0,
+     -167
+    ]
+   },
+   "notes": "Bread oven: stone plinth + clay dome; the glowing mouth faces the camera (screen down). work = mouth glow pulses."
+  },
+  "station_smelter": {
+   "atlas": "props_buildings",
+   "frame": "station_smelter",
+   "anchor": [
+    0.43846,
+    0.75305
+   ],
+   "kind": "station",
+   "footprint": [
+    199,
+    100
+   ],
+   "anims": {
+    "work": {
+     "frames": [
+      "station_smelter_work_0",
+      "station_smelter_work_1",
+      "station_smelter_work_2",
+      "station_smelter_work_3"
+     ],
+     "fps": 8,
+     "repeat": -1
+    }
+   },
+   "frameSize": [
+    260,
+    328
+   ],
+   "topPx": 159,
+   "footprintM": [
+    2.4,
+    2.0
+   ],
+   "fxPoints": {
+    "fire": [
+     -41,
+     -29
+    ],
+    "crucible": [
+     17,
+     -30
+    ],
+    "smoke": [
+     -9,
+     -167
+    ]
+   },
+   "notes": "Smelter: brick furnace (glowing door on the -Y / down-left face) + crucible of molten metal on the +X side + ingot mould. work = furnace + crucible glow pulse."
+  },
+  "station_smokehouse": {
+   "atlas": "props_buildings",
+   "frame": "station_smokehouse",
+   "anchor": [
+    0.34247,
+    0.6994
+   ],
+   "kind": "station",
+   "footprint": [
+    199,
+    100
+   ],
+   "anims": {
+    "work": {
+     "frames": [
+      "station_smokehouse_work_0",
+      "station_smokehouse_work_1",
+      "station_smokehouse_work_2",
+      "station_smokehouse_work_3"
+     ],
+     "fps": 6,
+     "repeat": -1
+    }
+   },
+   "frameSize": [
+    292,
+    336
+   ],
+   "topPx": 155,
+   "footprintM": [
+    2.4,
+    2.0
+   ],
+   "fxPoints": {
+    "fire": [
+     -34,
+     6
+    ],
+    "smoke": [
+     -2,
+     -161
+    ]
+   },
+   "notes": "Smokehouse: plank hut with an open meat rack in front (-Y / down-left) over embers. work = embers glow pulse."
+  },
+  "market_counter": {
+   "atlas": "props_buildings",
+   "frame": "market_counter",
+   "anchor": [
+    0.35204,
+    0.62784
+   ],
+   "kind": "building",
+   "footprint": [
+    195,
+    97
+   ],
+   "frameSize": [
+    392,
+    352
+   ],
+   "topPx": 200,
+   "front": "-Y",
+   "footprintM": [
+    3.0,
+    1.3
+   ],
+   "notes": "Food stall. Front (customer side) faces screen down-left (world -Y); the seller side is the back (screen up-right)."
+  },
+  "trade_post": {
+   "atlas": "props_buildings",
+   "frame": "trade_post",
+   "anchor": [
+    0.34737,
+    0.6236
+   ],
+   "kind": "building",
+   "footprint": [
+    213,
+    106
+   ],
+   "frameSize": [
+    380,
+    356
+   ],
+   "topPx": 202,
+   "front": "-Y",
+   "footprintM": [
+    3.0,
+    1.7
+   ],
+   "notes": "Merchant sled with crates, sacks and a blue awning. Front faces screen down-left (world -Y); runners curl up at +X (screen down-right)."
+  },
+  "worker_hut": {
+   "atlas": "props_buildings",
+   "frame": "worker_hut",
+   "anchor": [
+    0.39474,
+    0.65489
+   ],
+   "kind": "building",
+   "footprint": [
+    235,
+    118
+   ],
+   "frameSize": [
+    380,
+    368
+   ],
+   "topPx": 221,
+   "front": "-Y",
+   "footprintM": [
+    2.8,
+    2.4
+   ],
+   "notes": "Small log cabin for hired workers. Door faces screen down-left (world -Y)."
+  },
+  "chief_lodge": {
+   "atlas": "props_buildings",
+   "frame": "chief_lodge",
+   "anchor": [
+    0.41606,
+    0.67235
+   ],
+   "kind": "building",
+   "footprint": [
+    371,
+    186
+   ],
+   "frameSize": [
+    548,
+    528
+   ],
+   "topPx": 334,
+   "front": "-Y",
+   "footprintM": [
+    4.6,
+    3.6
+   ],
+   "notes": "Chief's big log lodge (decor). Porch + door face screen down-left (world -Y)."
+  },
+  "tent_a": {
+   "atlas": "props_buildings",
+   "frame": "tent_a",
+   "anchor": [
+    0.44932,
+    0.60417
+   ],
+   "kind": "building",
+   "footprint": [
+    195,
+    97
+   ],
+   "frameSize": [
+    296,
+    240
+   ],
+   "topPx": 124,
+   "front": "-Y",
+   "footprintM": [
+    1.9,
+    2.4
+   ],
+   "notes": "Canvas A-frame tent; entrance faces screen down-left (world -Y)."
+  },
+  "campfire": {
+   "atlas": "props_buildings",
+   "frame": "campfire",
+   "anchor": [
+    0.47794,
+    0.51
+   ],
+   "kind": "decor",
+   "footprint": [
+    77,
+    38
+   ],
+   "frameSize": [
+    136,
+    100
+   ],
+   "topPx": 30,
+   "footprintM": {
+    "radius": 0.6
+   },
+   "notes": "Logs + stone ring; the flames are drawn by the game (fx_fire) at the anchor, ~20 px up."
+  },
+  "upgrade_bench": {
+   "atlas": "props_buildings",
+   "frame": "upgrade_bench",
+   "anchor": [
+    0.35606,
+    0.66935
+   ],
+   "kind": "building",
+   "footprint": [
+    167,
+    84
+   ],
+   "frameSize": [
+    264,
+    248
+   ],
+   "topPx": 146,
+   "front": "-Y",
+   "footprintM": [
+    2.4,
+    1.3
+   ],
+   "notes": "Backpack upgrade workbench: table with backpack, anvil on a stump, tool board at the back."
+  },
+  "fish_net": {
+   "atlas": "props_buildings",
+   "frame": "fish_net",
+   "anchor": [
+    0.41092,
+    0.44712
+   ],
+   "kind": "building",
+   "footprint": [
+    253,
+    127
+   ],
+   "frameSize": [
+    348,
+    208
+   ],
+   "topPx": 72,
+   "footprintM": [
+    2.8,
+    2.8
+   ],
+   "notes": "V-shaped fish trap net on poles. The closed corner points at the camera (screen down); the open side faces screen up (the sea). Fish shown inside. Place it on the shoreline."
+  },
+  "dock_pier": {
+   "atlas": "props_buildings",
+   "frame": "dock_pier",
+   "anchor": [
+    0.44415,
+    0.62662
+   ],
+   "kind": "building",
+   "footprint": [
+    290,
+    145
+   ],
+   "frameSize": [
+    376,
+    308
+   ],
+   "topPx": 173,
+   "footprintM": [
+    2.0,
+    4.4
+   ],
+   "notes": "Wooden pier 2 m wide, 4.4 m long along world +Y (runs screen up-right into the sea). Anchor = centre; the land end is at -Y (screen down-left)."
+  },
+  "mine_entrance": {
+   "atlas": "props_buildings",
+   "frame": "mine_entrance",
+   "anchor": [
+    0.46505,
+    0.65333
+   ],
+   "kind": "building",
+   "footprint": [
+    256,
+    83
+   ],
+   "frameSize": [
+    372,
+    300
+   ],
+   "topPx": 175,
+   "front": "S",
+   "footprintM": [
+    4.0,
+    2.6
+   ],
+   "notes": "Rock face with a timber-framed tunnel; the tunnel faces the camera (screen down). Rails + ore cart come out toward the viewer. Anchor = centre of the rock base."
+  },
+  "boat_small": {
+   "atlas": "props_buildings",
+   "frame": "boat_small",
+   "anchor": [
+    0.45098,
+    0.55128
+   ],
+   "kind": "decor",
+   "footprint": [
+    167,
+    84
+   ],
+   "frameSize": [
+    204,
+    156
+   ],
+   "topPx": 66,
+   "footprintM": [
+    2.6,
+    1.1
+   ],
+   "notes": "Small rowboat floating (hull cut at the waterline z=0), long axis along world X."
+  },
+  "fence_log_x": {
+   "atlas": "props_decor",
+   "frame": "fence_log_x",
+   "anchor": [
+    0.34091,
+    0.59091
+   ],
+   "kind": "decor",
+   "footprint": [
+    62,
+    31
+   ],
+   "frameSize": [
+    132,
+    132
+   ],
+   "topPx": 57,
+   "footprintM": [
+    1.0,
+    0.36
+   ],
+   "tileAxis": "x",
+   "notes": "1 m palisade segment of 3 vertical logs (r 0.16 m, ~0.9 m tall), anchor = segment centre on the ground. Tiles seamlessly incl. the baked shadow: place consecutive segments 1 m apart along world +X (the run goes screen down-right): screen step (+45.25, +22.63) px per segment, and depth-sort by anchor y as usual. A run end looks best capped with fence_post."
+  },
+  "fence_log_y": {
+   "atlas": "props_decor",
+   "frame": "fence_log_y",
+   "anchor": [
+    0.34091,
+    0.58824
+   ],
+   "kind": "decor",
+   "footprint": [
+    62,
+    31
+   ],
+   "frameSize": [
+    132,
+    136
+   ],
+   "topPx": 60,
+   "footprintM": [
+    0.36,
+    1.0
+   ],
+   "tileAxis": "y",
+   "notes": "1 m palisade segment of 3 vertical logs (r 0.16 m, ~0.9 m tall), anchor = segment centre on the ground. Tiles seamlessly incl. the baked shadow: place consecutive segments 1 m apart along world +Y (the run goes screen up-right): screen step (+45.25, -22.63) px per segment, and depth-sort by anchor y as usual. A run end looks best capped with fence_post."
+  },
+  "fence_post": {
+   "atlas": "props_decor",
+   "frame": "fence_post",
+   "anchor": [
+    0.28333,
+    0.61429
+   ],
+   "kind": "decor",
+   "footprint": [
+    28,
+    14
+   ],
+   "frameSize": [
+    120,
+    140
+   ],
+   "topPx": 66,
+   "footprintM": {
+    "radius": 0.22
+   },
+   "notes": "Thick fence end/corner post with snow cap."
+  },
+  "bench": {
+   "atlas": "props_decor",
+   "frame": "bench",
+   "anchor": [
+    0.41667,
+    0.55
+   ],
+   "kind": "decor",
+   "footprint": [
+    113,
+    57
+   ],
+   "frameSize": [
+    180,
+    140
+   ],
+   "topPx": 57,
+   "footprintM": [
+    1.9,
+    0.6
+   ],
+   "notes": "Plank bench (like the reference), long axis along world X."
+  },
+  "lamp_post": {
+   "atlas": "props_decor",
+   "frame": "lamp_post",
+   "anchor": [
+    0.20556,
+    0.63983
+   ],
+   "kind": "decor",
+   "footprint": [
+    32,
+    16
+   ],
+   "frameSize": [
+    180,
+    236
+   ],
+   "topPx": 130,
+   "footprintM": {
+    "radius": 0.25
+   },
+   "notes": "Wooden lamp post with a warm glowing lantern (~2.4 m)."
+  },
+  "barrel": {
+   "atlas": "props_decor",
+   "frame": "barrel",
+   "anchor": [
+    0.34848,
+    0.60714
+   ],
+   "kind": "decor",
+   "footprint": [
+    49,
+    24
+   ],
+   "frameSize": [
+    132,
+    140
+   ],
+   "topPx": 65,
+   "footprintM": {
+    "radius": 0.38
+   },
+   "notes": "Wooden barrel with iron hoops and snow on the lid."
+  },
+  "crate": {
+   "atlas": "props_decor",
+   "frame": "crate",
+   "anchor": [
+    0.375,
+    0.58333
+   ],
+   "kind": "decor",
+   "footprint": [
+    72,
+    36
+   ],
+   "frameSize": [
+    152,
+    144
+   ],
+   "topPx": 64,
+   "footprintM": [
+    0.8,
+    0.8
+   ],
+   "notes": "Wooden crate with snow on top."
+  },
+  "firewood_pile": {
+   "atlas": "props_decor",
+   "frame": "firewood_pile",
+   "anchor": [
+    0.40625,
+    0.59459
+   ],
+   "kind": "decor",
+   "footprint": [
+    91,
+    45
+   ],
+   "frameSize": [
+    160,
+    148
+   ],
+   "topPx": 67,
+   "footprintM": [
+    1.0,
+    1.0
+   ],
+   "notes": "Pyramid of logs (end grain faces screen down-right) with snow on top."
+  },
+  "signpost": {
+   "atlas": "props_decor",
+   "frame": "signpost",
+   "anchor": [
+    0.32143,
+    0.645
+   ],
+   "kind": "decor",
+   "footprint": [
+    32,
+    16
+   ],
+   "frameSize": [
+    168,
+    200
+   ],
+   "topPx": 108,
+   "footprintM": {
+    "radius": 0.25
+   },
+   "notes": "Post with two blank arrow boards (no baked text)."
+  },
+  "flag_pole": {
+   "atlas": "props_decor",
+   "frame": "flag_pole",
+   "anchor": [
+    0.15132,
+    0.64
+   ],
+   "kind": "decor",
+   "footprint": [
+    45,
+    22
+   ],
+   "frameSize": [
+    304,
+    400
+   ],
+   "topPx": 236,
+   "footprintM": {
+    "radius": 0.35
+   },
+   "notes": "Tall flag pole (~4 m) with a red village banner."
+  },
+  "hay_bale": {
+   "atlas": "props_decor",
+   "frame": "hay_bale",
+   "anchor": [
+    0.40909,
+    0.5625
+   ],
+   "kind": "decor",
+   "footprint": [
+    72,
+    36
+   ],
+   "frameSize": [
+    132,
+    112
+   ],
+   "topPx": 43,
+   "footprintM": [
+    1.0,
+    0.6
+   ],
+   "notes": "Rectangular hay bale with twine and a little snow."
+  },
+  "item_fish_raw": {
+   "atlas": "props_items",
+   "frame": "item_fish_raw",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 11,
+   "icon": true,
+   "carryScale": 0.6,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 16,
+   "thicknessM": 0.2,
+   "notes": "Whole raw fish lying on its side."
+  },
+  "item_fish_cooked": {
+   "atlas": "props_items",
+   "frame": "item_fish_cooked",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 9,
+   "icon": true,
+   "carryScale": 0.6,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 18,
+   "thicknessM": 0.17,
+   "notes": "Grilled salmon steak (like the reference tower)."
+  },
+  "item_log": {
+   "atlas": "props_items",
+   "frame": "item_log",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 13,
+   "icon": true,
+   "carryScale": 0.65,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 22,
+   "thicknessM": 0.24,
+   "notes": "Log lying along world X (end grain toward screen down-right)."
+  },
+  "item_plank": {
+   "atlas": "props_items",
+   "frame": "item_plank",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 8,
+   "icon": true,
+   "carryScale": 0.6,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 20,
+   "thicknessM": 0.14,
+   "notes": "Sawn plank lying along world X."
+  },
+  "item_wheat": {
+   "atlas": "props_items",
+   "frame": "item_wheat",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 11,
+   "icon": true,
+   "carryScale": 0.6,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 17,
+   "thicknessM": 0.2,
+   "notes": "Wheat sheaf tied with a red band, ears toward screen right."
+  },
+  "item_bread": {
+   "atlas": "props_items",
+   "frame": "item_bread",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 13,
+   "icon": true,
+   "carryScale": 0.65,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 17,
+   "thicknessM": 0.24,
+   "notes": "Bread loaf."
+  },
+  "item_ore": {
+   "atlas": "props_items",
+   "frame": "item_ore",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 12,
+   "icon": true,
+   "carryScale": 0.65,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 19,
+   "thicknessM": 0.22,
+   "notes": "Chunk of orange iron ore."
+  },
+  "item_ingot": {
+   "atlas": "props_items",
+   "frame": "item_ingot",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 9,
+   "icon": true,
+   "carryScale": 0.65,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 12,
+   "thicknessM": 0.16,
+   "notes": "Shiny steel ingot (trapezoid bar)."
+  },
+  "item_meat_raw": {
+   "atlas": "props_items",
+   "frame": "item_meat_raw",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 11,
+   "icon": true,
+   "carryScale": 0.55,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 15,
+   "thicknessM": 0.2,
+   "notes": "Raw ham/drumstick with bone."
+  },
+  "item_meat_cooked": {
+   "atlas": "props_items",
+   "frame": "item_meat_cooked",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 11,
+   "icon": true,
+   "carryScale": 0.55,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 15,
+   "thicknessM": 0.2,
+   "notes": "Smoked/roasted ham with bone."
+  },
+  "item_coin": {
+   "atlas": "props_items",
+   "frame": "item_coin",
+   "anchor": [
+    0.5,
+    0.75
+   ],
+   "kind": "item",
+   "stackStep": 8,
+   "icon": true,
+   "carryScale": 0.65,
+   "frameSize": [
+    72,
+    72
+   ],
+   "topPx": 15,
+   "thicknessM": 0.14,
+   "notes": "Thick gold coin with an embossed star."
+  }
+ }
+}

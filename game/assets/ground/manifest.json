@@ -1,0 +1,293 @@
+{
+ "version": 1,
+ "generator": "tools/fx/gen_ground.py",
+ "conventions": {
+  "textures": "512x512, seamless in x and y (tile with TileSprite or a canvas pattern at scale 1).",
+  "isoAxes": "Planks / furrows run along screen (2,1) (world A axis); rows every 0.514 m.",
+  "decals": "Alpha PNGs with soft edges; anchor = centre unless noted. Draw above ground, below props."
+ },
+ "images": [
+  {
+   "key": "ground_snow",
+   "png": "ground/ground_snow.png"
+  },
+  {
+   "key": "ground_plaza",
+   "png": "ground/ground_plaza.png"
+  },
+  {
+   "key": "ground_dirt",
+   "png": "ground/ground_dirt.png"
+  },
+  {
+   "key": "ground_farm",
+   "png": "ground/ground_farm.png"
+  },
+  {
+   "key": "ground_rock",
+   "png": "ground/ground_rock.png"
+  },
+  {
+   "key": "water_sea",
+   "png": "ground/water_sea.png"
+  },
+  {
+   "key": "water_shallow",
+   "png": "ground/water_shallow.png"
+  },
+  {
+   "key": "shore_foam",
+   "png": "ground/shore_foam.png"
+  },
+  {
+   "key": "fish_school",
+   "png": "ground/fish_school.png"
+  },
+  {
+   "key": "decal_path_a",
+   "png": "ground/decal_path_a.png"
+  },
+  {
+   "key": "decal_path_b",
+   "png": "ground/decal_path_b.png"
+  },
+  {
+   "key": "decal_snow_drift_a",
+   "png": "ground/decal_snow_drift_a.png"
+  },
+  {
+   "key": "decal_snow_drift_b",
+   "png": "ground/decal_snow_drift_b.png"
+  },
+  {
+   "key": "decal_dirt_patch",
+   "png": "ground/decal_dirt_patch.png"
+  },
+  {
+   "key": "decal_footprints",
+   "png": "ground/decal_footprints.png"
+  },
+  {
+   "key": "decal_puddle_ice",
+   "png": "ground/decal_puddle_ice.png"
+  }
+ ],
+ "sprites": {
+  "ground_snow": {
+   "image": "ground_snow",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "tile",
+   "tile": "xy",
+   "frameSize": [
+    512,
+    512
+   ],
+   "notes": "Soft blue-white snow (#F4F7FB avg) with wind ripples + glitter."
+  },
+  "ground_plaza": {
+   "image": "ground_plaza",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "tile",
+   "tile": "xy",
+   "frameSize": [
+    512,
+    512
+   ],
+   "notes": "Terracotta deck planks along screen (2,1); 0.51 m wide, joints + nails."
+  },
+  "ground_dirt": {
+   "image": "ground_dirt",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "tile",
+   "tile": "xy",
+   "frameSize": [
+    512,
+    512
+   ],
+   "notes": "Trodden earth with pebbles and snow specks (works at 0.45-1.0 alpha over snow)."
+  },
+  "ground_farm": {
+   "image": "ground_farm",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "tile",
+   "tile": "xy",
+   "frameSize": [
+    512,
+    512
+   ],
+   "notes": "Tilled soil, ridges along screen (2,1) every 0.51 m (matches crop plots)."
+  },
+  "ground_rock": {
+   "image": "ground_rock",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "tile",
+   "tile": "xy",
+   "frameSize": [
+    512,
+    512
+   ],
+   "notes": "Mine gravel: grey stones + rare orange ore chips."
+  },
+  "water_sea": {
+   "image": "water_sea",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "tile",
+   "tile": "xy",
+   "frameSize": [
+    512,
+    512
+   ],
+   "notes": "Deep sea #1F5FA8 with soft caustic webs. Scroll slowly for motion."
+  },
+  "water_shallow": {
+   "image": "water_shallow",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "tile",
+   "tile": "xy",
+   "frameSize": [
+    512,
+    512
+   ],
+   "notes": "Shallow turquoise water with bright caustics."
+  },
+  "shore_foam": {
+   "image": "shore_foam",
+   "anchor": [
+    0.5,
+    0.69
+   ],
+   "kind": "decal",
+   "frameSize": [
+    512,
+    64
+   ],
+   "notes": "Seamless in x (512x64). Water above, land below; foam lip centre at y=44 (0.69). Tile along the shoreline.",
+   "tile": "x"
+  },
+  "fish_school": {
+   "image": "fish_school",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "decal",
+   "frameSize": [
+    256,
+    128
+   ],
+   "notes": "13 dark-blue fish facing LEFT (slightly up), soft alpha; scroll left across water_sea, flipX to swim right."
+  },
+  "decal_path_a": {
+   "image": "decal_path_a",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "decal",
+   "frameSize": [
+    256,
+    128
+   ],
+   "notes": "Trodden path running screen down-right (A axis), ~2.5 m long."
+  },
+  "decal_path_b": {
+   "image": "decal_path_b",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "decal",
+   "frameSize": [
+    256,
+    128
+   ],
+   "notes": "Trodden path running screen up-right (B axis), ~2.5 m long."
+  },
+  "decal_snow_drift_a": {
+   "image": "decal_snow_drift_a",
+   "anchor": [
+    0.5,
+    0.6
+   ],
+   "kind": "decal",
+   "frameSize": [
+    256,
+    128
+   ],
+   "notes": "Snow mound with blue shade + cast shadow."
+  },
+  "decal_snow_drift_b": {
+   "image": "decal_snow_drift_b",
+   "anchor": [
+    0.5,
+    0.6
+   ],
+   "kind": "decal",
+   "frameSize": [
+    256,
+    128
+   ],
+   "notes": "Snow mound (other orientation)."
+  },
+  "decal_dirt_patch": {
+   "image": "decal_dirt_patch",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "decal",
+   "frameSize": [
+    192,
+    96
+   ],
+   "notes": "Bare earth patch with pebbles, soft edge."
+  },
+  "decal_footprints": {
+   "image": "decal_footprints",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "decal",
+   "frameSize": [
+    256,
+    128
+   ],
+   "notes": "Boot prints walking down-right (A axis)."
+  },
+  "decal_puddle_ice": {
+   "image": "decal_puddle_ice",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "decal",
+   "frameSize": [
+    160,
+    80
+   ],
+   "notes": "Frozen puddle with snow rim, glare and cracks."
+  }
+ }
+}

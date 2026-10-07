@@ -1,0 +1,4371 @@
+{
+ "version": 1,
+ "notes": "Villagers & pets (CONTRACT_VILLAGERS A). Frames {anim}_{dir}_{i}; each anim lists its dirs (social anims S/SE/E only, mirror SW/W from SE/E). Expressions are baked per frame. sit: anchor = seat-surface front-centre (0.45 m up); seatHeightPx = its height above the ground for depth sorting. throw.impactPoint = snowball release point on impactFrame.",
+ "atlases": [
+  {
+   "key": "vil_npc_kid_boy",
+   "png": "villagers/vil_npc_kid_boy.png",
+   "json": "villagers/vil_npc_kid_boy.json"
+  },
+  {
+   "key": "vil_npc_kid_girl",
+   "png": "villagers/vil_npc_kid_girl.png",
+   "json": "villagers/vil_npc_kid_girl.json"
+  },
+  {
+   "key": "vil_npc_kid_prankster",
+   "png": "villagers/vil_npc_kid_prankster.png",
+   "json": "villagers/vil_npc_kid_prankster.json"
+  },
+  {
+   "key": "vil_npc_teen_girl",
+   "png": "villagers/vil_npc_teen_girl.png",
+   "json": "villagers/vil_npc_teen_girl.json"
+  },
+  {
+   "key": "vil_npc_young_man",
+   "png": "villagers/vil_npc_young_man.png",
+   "json": "villagers/vil_npc_young_man.json"
+  },
+  {
+   "key": "vil_npc_aunt",
+   "png": "villagers/vil_npc_aunt.png",
+   "json": "villagers/vil_npc_aunt.json"
+  },
+  {
+   "key": "vil_npc_uncle",
+   "png": "villagers/vil_npc_uncle.png",
+   "json": "villagers/vil_npc_uncle.json"
+  },
+  {
+   "key": "vil_npc_grandma",
+   "png": "villagers/vil_npc_grandma.png",
+   "json": "villagers/vil_npc_grandma.json"
+  },
+  {
+   "key": "vil_npc_grandpa",
+   "png": "villagers/vil_npc_grandpa.png",
+   "json": "villagers/vil_npc_grandpa.json"
+  },
+  {
+   "key": "vil_npc_merchant",
+   "png": "villagers/vil_npc_merchant.png",
+   "json": "villagers/vil_npc_merchant.json"
+  },
+  {
+   "key": "vil_npc_herbalist",
+   "png": "villagers/vil_npc_herbalist.png",
+   "json": "villagers/vil_npc_herbalist.json"
+  },
+  {
+   "key": "vil_npc_bard",
+   "png": "villagers/vil_npc_bard.png",
+   "json": "villagers/vil_npc_bard.json"
+  },
+  {
+   "key": "vil_npc_blacksmith",
+   "png": "villagers/vil_npc_blacksmith.png",
+   "json": "villagers/vil_npc_blacksmith.json"
+  },
+  {
+   "key": "vil_npc_fashion",
+   "png": "villagers/vil_npc_fashion.png",
+   "json": "villagers/vil_npc_fashion.json"
+  },
+  {
+   "key": "vil_npc_yellow",
+   "png": "villagers/vil_npc_yellow.png",
+   "json": "villagers/vil_npc_yellow.json"
+  },
+  {
+   "key": "vil_npc_red",
+   "png": "villagers/vil_npc_red.png",
+   "json": "villagers/vil_npc_red.json"
+  },
+  {
+   "key": "vil_npc_blue",
+   "png": "villagers/vil_npc_blue.png",
+   "json": "villagers/vil_npc_blue.json"
+  },
+  {
+   "key": "vil_pet_dog",
+   "png": "villagers/vil_pet_dog.png",
+   "json": "villagers/vil_pet_dog.json"
+  },
+  {
+   "key": "vil_pet_cat",
+   "png": "villagers/vil_pet_cat.png",
+   "json": "villagers/vil_pet_cat.json"
+  },
+  {
+   "key": "vil_pet_penguin",
+   "png": "villagers/vil_pet_penguin.png",
+   "json": "villagers/vil_pet_penguin.json"
+  }
+ ],
+ "images": [
+  {
+   "key": "portrait_npc_kid_boy",
+   "png": "villagers/portrait_npc_kid_boy.png"
+  },
+  {
+   "key": "portrait_npc_kid_girl",
+   "png": "villagers/portrait_npc_kid_girl.png"
+  },
+  {
+   "key": "portrait_npc_kid_prankster",
+   "png": "villagers/portrait_npc_kid_prankster.png"
+  },
+  {
+   "key": "portrait_npc_teen_girl",
+   "png": "villagers/portrait_npc_teen_girl.png"
+  },
+  {
+   "key": "portrait_npc_young_man",
+   "png": "villagers/portrait_npc_young_man.png"
+  },
+  {
+   "key": "portrait_npc_aunt",
+   "png": "villagers/portrait_npc_aunt.png"
+  },
+  {
+   "key": "portrait_npc_uncle",
+   "png": "villagers/portrait_npc_uncle.png"
+  },
+  {
+   "key": "portrait_npc_grandma",
+   "png": "villagers/portrait_npc_grandma.png"
+  },
+  {
+   "key": "portrait_npc_grandpa",
+   "png": "villagers/portrait_npc_grandpa.png"
+  },
+  {
+   "key": "portrait_npc_merchant",
+   "png": "villagers/portrait_npc_merchant.png"
+  },
+  {
+   "key": "portrait_npc_herbalist",
+   "png": "villagers/portrait_npc_herbalist.png"
+  },
+  {
+   "key": "portrait_npc_bard",
+   "png": "villagers/portrait_npc_bard.png"
+  },
+  {
+   "key": "portrait_npc_blacksmith",
+   "png": "villagers/portrait_npc_blacksmith.png"
+  },
+  {
+   "key": "portrait_npc_fashion",
+   "png": "villagers/portrait_npc_fashion.png"
+  },
+  {
+   "key": "portrait_npc_yellow",
+   "png": "villagers/portrait_npc_yellow.png"
+  },
+  {
+   "key": "portrait_npc_red",
+   "png": "villagers/portrait_npc_red.png"
+  },
+  {
+   "key": "portrait_npc_blue",
+   "png": "villagers/portrait_npc_blue.png"
+  },
+  {
+   "key": "portrait_pet_dog",
+   "png": "villagers/portrait_pet_dog.png"
+  },
+  {
+   "key": "portrait_pet_cat",
+   "png": "villagers/portrait_pet_cat.png"
+  },
+  {
+   "key": "portrait_pet_penguin",
+   "png": "villagers/portrait_pet_penguin.png"
+  }
+ ],
+ "sprites": {
+  "portrait_npc_kid_boy": {
+   "image": "portrait_npc_kid_boy",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_kid_girl": {
+   "image": "portrait_npc_kid_girl",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_kid_prankster": {
+   "image": "portrait_npc_kid_prankster",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_teen_girl": {
+   "image": "portrait_npc_teen_girl",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_young_man": {
+   "image": "portrait_npc_young_man",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_aunt": {
+   "image": "portrait_npc_aunt",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_uncle": {
+   "image": "portrait_npc_uncle",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_grandma": {
+   "image": "portrait_npc_grandma",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_grandpa": {
+   "image": "portrait_npc_grandpa",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_merchant": {
+   "image": "portrait_npc_merchant",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_herbalist": {
+   "image": "portrait_npc_herbalist",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_bard": {
+   "image": "portrait_npc_bard",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_blacksmith": {
+   "image": "portrait_npc_blacksmith",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_fashion": {
+   "image": "portrait_npc_fashion",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_yellow": {
+   "image": "portrait_npc_yellow",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_red": {
+   "image": "portrait_npc_red",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_npc_blue": {
+   "image": "portrait_npc_blue",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_pet_dog": {
+   "image": "portrait_pet_dog",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_pet_cat": {
+   "image": "portrait_pet_cat",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_pet_penguin": {
+   "image": "portrait_pet_penguin",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  }
+ },
+ "characters": {
+  "npc_kid_boy": {
+   "atlas": "vil_npc_kid_boy",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "kid",
+   "name": {
+    "ko": "꼬마 도윤",
+    "en": "Doyun"
+   },
+   "traits": [
+    "playful",
+    "snowball_fights",
+    "tag"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "run": {
+     "frames": 8,
+     "fps": 16,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "throw": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ],
+     "impactFrame": 5,
+     "impactPoint": {
+      "S": [
+       0,
+       -27
+      ],
+      "SE": [
+       8,
+       -29
+      ],
+      "E": [
+       11,
+       -33
+      ]
+     }
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "dance": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     2,
+     -23,
+     false
+    ],
+    "SE": [
+     12,
+     -25,
+     false
+    ],
+    "E": [
+     15,
+     -31,
+     false
+    ],
+    "NE": [
+     9,
+     -36,
+     true
+    ],
+    "N": [
+     -2,
+     -38,
+     true
+    ]
+   },
+   "headTop": -76,
+   "shadow": [
+    36,
+    14
+   ],
+   "portrait": "portrait_npc_kid_boy"
+  },
+  "npc_kid_girl": {
+   "atlas": "vil_npc_kid_girl",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "kid",
+   "name": {
+    "ko": "꼬마 하린",
+    "en": "Harin"
+   },
+   "traits": [
+    "cheerful",
+    "tag",
+    "dance",
+    "snowman"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "run": {
+     "frames": 8,
+     "fps": 16,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "throw": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ],
+     "impactFrame": 5,
+     "impactPoint": {
+      "S": [
+       0,
+       -27
+      ],
+      "SE": [
+       8,
+       -29
+      ],
+      "E": [
+       11,
+       -33
+      ]
+     }
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "dance": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     2,
+     -23,
+     false
+    ],
+    "SE": [
+     12,
+     -25,
+     false
+    ],
+    "E": [
+     15,
+     -31,
+     false
+    ],
+    "NE": [
+     9,
+     -36,
+     true
+    ],
+    "N": [
+     -2,
+     -38,
+     true
+    ]
+   },
+   "headTop": -67,
+   "shadow": [
+    36,
+    14
+   ],
+   "portrait": "portrait_npc_kid_girl"
+  },
+  "npc_kid_prankster": {
+   "atlas": "vil_npc_kid_prankster",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "kid",
+   "name": {
+    "ko": "장난꾸러기 준",
+    "en": "Jun"
+   },
+   "traits": [
+    "prankster",
+    "snowball_fights",
+    "runs_away"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "run": {
+     "frames": 8,
+     "fps": 16,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "throw": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ],
+     "impactFrame": 5,
+     "impactPoint": {
+      "S": [
+       0,
+       -27
+      ],
+      "SE": [
+       8,
+       -29
+      ],
+      "E": [
+       11,
+       -33
+      ]
+     }
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "dance": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     2,
+     -23,
+     false
+    ],
+    "SE": [
+     12,
+     -25,
+     false
+    ],
+    "E": [
+     15,
+     -31,
+     false
+    ],
+    "NE": [
+     9,
+     -36,
+     true
+    ],
+    "N": [
+     -2,
+     -38,
+     true
+    ]
+   },
+   "headTop": -68,
+   "shadow": [
+    36,
+    14
+   ],
+   "portrait": "portrait_npc_kid_prankster"
+  },
+  "npc_teen_girl": {
+   "atlas": "vil_npc_teen_girl",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "teen",
+   "name": {
+    "ko": "소녀 서아",
+    "en": "Seoa"
+   },
+   "traits": [
+    "chatty",
+    "dance"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "run": {
+     "frames": 8,
+     "fps": 16,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "throw": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ],
+     "impactFrame": 5,
+     "impactPoint": {
+      "S": [
+       0,
+       -38
+      ],
+      "SE": [
+       7,
+       -39
+      ],
+      "E": [
+       10,
+       -43
+      ]
+     }
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "dance": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -30,
+     false
+    ],
+    "SE": [
+     13,
+     -34,
+     false
+    ],
+    "E": [
+     16,
+     -40,
+     false
+    ],
+    "NE": [
+     10,
+     -45,
+     true
+    ],
+    "N": [
+     -3,
+     -47,
+     true
+    ]
+   },
+   "headTop": -82,
+   "shadow": [
+    42,
+    16
+   ],
+   "portrait": "portrait_npc_teen_girl"
+  },
+  "npc_young_man": {
+   "atlas": "vil_npc_young_man",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "청년 태오",
+    "en": "Taeo"
+   },
+   "traits": [
+    "show_off",
+    "snowball_fights",
+    "waves"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "run": {
+     "frames": 8,
+     "fps": 16,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "throw": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ],
+     "impactFrame": 5,
+     "impactPoint": {
+      "S": [
+       -1,
+       -44
+      ],
+      "SE": [
+       7,
+       -45
+      ],
+      "E": [
+       11,
+       -49
+      ]
+     }
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "dance": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -35,
+     false
+    ],
+    "SE": [
+     15,
+     -38,
+     false
+    ],
+    "E": [
+     18,
+     -45,
+     false
+    ],
+    "NE": [
+     11,
+     -51,
+     true
+    ],
+    "N": [
+     -3,
+     -53,
+     true
+    ]
+   },
+   "headTop": -83,
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_npc_young_man"
+  },
+  "npc_aunt": {
+   "atlas": "vil_npc_aunt",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "빵집 아주머니",
+    "en": "Baker Auntie"
+   },
+   "traits": [
+    "kind",
+    "chatty",
+    "compliments"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "dance": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sit": {
+     "frames": 4,
+     "fps": 4,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -33,
+     false
+    ],
+    "SE": [
+     14,
+     -36,
+     false
+    ],
+    "E": [
+     17,
+     -43,
+     false
+    ],
+    "NE": [
+     10,
+     -48,
+     true
+    ],
+    "N": [
+     -3,
+     -50,
+     true
+    ]
+   },
+   "headTop": -89,
+   "shadow": [
+    48,
+    19
+   ],
+   "portrait": "portrait_npc_aunt",
+   "seatOffset": [
+    0,
+    0
+   ],
+   "seatHeightPx": 25,
+   "headTopSit": -79
+  },
+  "npc_uncle": {
+   "atlas": "vil_npc_uncle",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "아저씨",
+    "en": "Uncle"
+   },
+   "traits": [
+    "grumpy",
+    "sulks",
+    "belly_laugh"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "dance": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -31,
+     false
+    ],
+    "SE": [
+     14,
+     -34,
+     false
+    ],
+    "E": [
+     17,
+     -40,
+     false
+    ],
+    "NE": [
+     10,
+     -46,
+     true
+    ],
+    "N": [
+     -3,
+     -48,
+     true
+    ]
+   },
+   "headTop": -81,
+   "shadow": [
+    54,
+    21
+   ],
+   "portrait": "portrait_npc_uncle"
+  },
+  "npc_grandma": {
+   "atlas": "vil_npc_grandma",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "elder",
+   "name": {
+    "ko": "할머니",
+    "en": "Grandma"
+   },
+   "traits": [
+    "gentle",
+    "bench",
+    "praises_kids"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sit": {
+     "frames": 4,
+     "fps": 4,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     2,
+     -25,
+     false
+    ],
+    "SE": [
+     15,
+     -29,
+     false
+    ],
+    "E": [
+     19,
+     -36,
+     false
+    ],
+    "NE": [
+     12,
+     -42,
+     true
+    ],
+    "N": [
+     -2,
+     -44,
+     true
+    ]
+   },
+   "headTop": -74,
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_npc_grandma",
+   "seatOffset": [
+    0,
+    0
+   ],
+   "seatHeightPx": 25,
+   "headTopSit": -69
+  },
+  "npc_grandpa": {
+   "atlas": "vil_npc_grandpa",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "elder",
+   "name": {
+    "ko": "할아버지",
+    "en": "Grandpa"
+   },
+   "traits": [
+    "easygoing",
+    "bench",
+    "naps"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sit": {
+     "frames": 4,
+     "fps": 4,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     2,
+     -23,
+     false
+    ],
+    "SE": [
+     16,
+     -27,
+     false
+    ],
+    "E": [
+     21,
+     -35,
+     false
+    ],
+    "NE": [
+     13,
+     -41,
+     true
+    ],
+    "N": [
+     -2,
+     -44,
+     true
+    ]
+   },
+   "headTop": -71,
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_npc_grandpa",
+   "seatOffset": [
+    0,
+    0
+   ],
+   "seatHeightPx": 25,
+   "headTopSit": -65
+  },
+  "npc_merchant": {
+   "atlas": "vil_npc_merchant",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "떠돌이 상인",
+    "en": "Wandering Merchant"
+   },
+   "traits": [
+    "sly",
+    "chatty",
+    "calls_customers"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -32,
+     false
+    ],
+    "SE": [
+     14,
+     -35,
+     false
+    ],
+    "E": [
+     17,
+     -42,
+     false
+    ],
+    "NE": [
+     10,
+     -48,
+     true
+    ],
+    "N": [
+     -3,
+     -49,
+     true
+    ]
+   },
+   "headTop": -93,
+   "shadow": [
+    52,
+    20
+   ],
+   "portrait": "portrait_npc_merchant"
+  },
+  "npc_herbalist": {
+   "atlas": "vil_npc_herbalist",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "약초꾼",
+    "en": "Herbalist"
+   },
+   "traits": [
+    "shy",
+    "startles"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sit": {
+     "frames": 4,
+     "fps": 4,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -33,
+     false
+    ],
+    "SE": [
+     14,
+     -36,
+     false
+    ],
+    "E": [
+     17,
+     -43,
+     false
+    ],
+    "NE": [
+     10,
+     -48,
+     true
+    ],
+    "N": [
+     -3,
+     -50,
+     true
+    ]
+   },
+   "headTop": -82,
+   "shadow": [
+    48,
+    19
+   ],
+   "portrait": "portrait_npc_herbalist",
+   "seatOffset": [
+    0,
+    0
+   ],
+   "seatHeightPx": 25,
+   "headTopSit": -72
+  },
+  "npc_bard": {
+   "atlas": "vil_npc_bard",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "음유시인",
+    "en": "Bard"
+   },
+   "traits": [
+    "romantic",
+    "plays_music",
+    "campfire"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sit": {
+     "frames": 4,
+     "fps": 4,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "perform": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -33,
+     false
+    ],
+    "SE": [
+     14,
+     -36,
+     false
+    ],
+    "E": [
+     17,
+     -43,
+     false
+    ],
+    "NE": [
+     10,
+     -48,
+     true
+    ],
+    "N": [
+     -3,
+     -50,
+     true
+    ]
+   },
+   "headTop": -91,
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_npc_bard",
+   "seatOffset": [
+    0,
+    0
+   ],
+   "seatHeightPx": 25,
+   "headTopSit": -81
+  },
+  "npc_blacksmith": {
+   "atlas": "vil_npc_blacksmith",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "대장장이 언니",
+    "en": "Blacksmith"
+   },
+   "traits": [
+    "hearty",
+    "belly_laugh",
+    "arms_akimbo"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "dance": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -32,
+     false
+    ],
+    "SE": [
+     15,
+     -36,
+     false
+    ],
+    "E": [
+     18,
+     -42,
+     false
+    ],
+    "NE": [
+     11,
+     -48,
+     true
+    ],
+    "N": [
+     -3,
+     -50,
+     true
+    ]
+   },
+   "headTop": -81,
+   "shadow": [
+    50,
+    19
+   ],
+   "portrait": "portrait_npc_blacksmith"
+  },
+  "npc_fashion": {
+   "atlas": "vil_npc_fashion",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "멋쟁이",
+    "en": "Fashionista"
+   },
+   "traits": [
+    "vain",
+    "dance",
+    "poses"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "dance": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -33,
+     false
+    ],
+    "SE": [
+     14,
+     -36,
+     false
+    ],
+    "E": [
+     17,
+     -43,
+     false
+    ],
+    "NE": [
+     10,
+     -48,
+     true
+    ],
+    "N": [
+     -3,
+     -50,
+     true
+    ]
+   },
+   "headTop": -89,
+   "shadow": [
+    48,
+    19
+   ],
+   "portrait": "portrait_npc_fashion"
+  },
+  "npc_yellow": {
+   "atlas": "vil_npc_yellow",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "노란 파카 주민",
+    "en": "Yellow Parka"
+   },
+   "traits": [
+    "ordinary",
+    "customer"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -33,
+     false
+    ],
+    "SE": [
+     14,
+     -36,
+     false
+    ],
+    "E": [
+     17,
+     -43,
+     false
+    ],
+    "NE": [
+     10,
+     -48,
+     true
+    ],
+    "N": [
+     -3,
+     -50,
+     true
+    ]
+   },
+   "headTop": -81,
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_npc_yellow"
+  },
+  "npc_red": {
+   "atlas": "vil_npc_red",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "빨간 파카 주민",
+    "en": "Red Parka"
+   },
+   "traits": [
+    "ordinary",
+    "customer"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -33,
+     false
+    ],
+    "SE": [
+     14,
+     -36,
+     false
+    ],
+    "E": [
+     17,
+     -43,
+     false
+    ],
+    "NE": [
+     10,
+     -48,
+     true
+    ],
+    "N": [
+     -3,
+     -50,
+     true
+    ]
+   },
+   "headTop": -90,
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_npc_red"
+  },
+  "npc_blue": {
+   "atlas": "vil_npc_blue",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "villager",
+   "role": "adult",
+   "name": {
+    "ko": "파란 파카 주민",
+    "en": "Blue Parka"
+   },
+   "traits": [
+    "ordinary",
+    "customer"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "talk": {
+     "frames": 8,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "laugh": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "wave": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "surprised": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "angry": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "sad": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "hit": {
+     "frames": 6,
+     "fps": 12,
+     "repeat": 0,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "shiver": {
+     "frames": 4,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "carryPoint": {
+    "S": [
+     3,
+     -33,
+     false
+    ],
+    "SE": [
+     14,
+     -36,
+     false
+    ],
+    "E": [
+     17,
+     -43,
+     false
+    ],
+    "NE": [
+     10,
+     -48,
+     true
+    ],
+    "N": [
+     -3,
+     -50,
+     true
+    ]
+   },
+   "headTop": -84,
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_npc_blue"
+  },
+  "pet_dog": {
+   "atlas": "vil_pet_dog",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "pet",
+   "role": "pet",
+   "name": {
+    "ko": "시바견 콩이",
+    "en": "Kongi"
+   },
+   "traits": [
+    "energetic",
+    "chases_kids",
+    "tail_wag"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "run": {
+     "frames": 8,
+     "fps": 16,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "sit": {
+     "frames": 4,
+     "fps": 4,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "headTop": -39,
+   "shadow": [
+    54,
+    23
+   ],
+   "portrait": "portrait_pet_dog"
+  },
+  "pet_cat": {
+   "atlas": "vil_pet_cat",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "pet",
+   "role": "pet",
+   "name": {
+    "ko": "고양이 나비",
+    "en": "Nabi"
+   },
+   "traits": [
+    "aloof",
+    "loafs_on_benches"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "run": {
+     "frames": 8,
+     "fps": 16,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "sit": {
+     "frames": 4,
+     "fps": 4,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "loaf": {
+     "frames": 4,
+     "fps": 4,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "headTop": -49,
+   "shadow": [
+    47,
+    20
+   ],
+   "portrait": "portrait_pet_cat"
+  },
+  "pet_penguin": {
+   "atlas": "vil_pet_penguin",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "kind": "pet",
+   "role": "pet",
+   "name": {
+    "ko": "펭귄 뽀삐",
+    "en": "Ppoppi"
+   },
+   "traits": [
+    "quirky",
+    "waddles",
+    "kids_chase"
+   ],
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "run": {
+     "frames": 8,
+     "fps": 16,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E",
+      "NE",
+      "N"
+     ]
+    },
+    "sit": {
+     "frames": 4,
+     "fps": 4,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "dirs": [
+      "S",
+      "SE",
+      "E"
+     ]
+    }
+   },
+   "headTop": -42,
+   "shadow": [
+    38,
+    17
+   ],
+   "portrait": "portrait_pet_penguin"
+  }
+ }
+}

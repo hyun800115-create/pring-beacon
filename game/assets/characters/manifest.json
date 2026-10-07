@@ -1,0 +1,1234 @@
+{
+ "version": 1,
+ "atlases": [
+  {
+   "key": "char_player",
+   "png": "characters/char_player.png",
+   "json": "characters/char_player.json"
+  },
+  {
+   "key": "char_fisherman",
+   "png": "characters/char_fisherman.png",
+   "json": "characters/char_fisherman.json"
+  },
+  {
+   "key": "char_lumberjack",
+   "png": "characters/char_lumberjack.png",
+   "json": "characters/char_lumberjack.json"
+  },
+  {
+   "key": "char_farmer",
+   "png": "characters/char_farmer.png",
+   "json": "characters/char_farmer.json"
+  },
+  {
+   "key": "char_miner",
+   "png": "characters/char_miner.png",
+   "json": "characters/char_miner.json"
+  },
+  {
+   "key": "char_hunter",
+   "png": "characters/char_hunter.png",
+   "json": "characters/char_hunter.json"
+  },
+  {
+   "key": "char_villager_a",
+   "png": "characters/char_villager_a.png",
+   "json": "characters/char_villager_a.json"
+  },
+  {
+   "key": "char_villager_b",
+   "png": "characters/char_villager_b.png",
+   "json": "characters/char_villager_b.json"
+  },
+  {
+   "key": "char_villager_c",
+   "png": "characters/char_villager_c.png",
+   "json": "characters/char_villager_c.json"
+  },
+  {
+   "key": "char_deer",
+   "png": "characters/char_deer.png",
+   "json": "characters/char_deer.json"
+  },
+  {
+   "key": "char_boar",
+   "png": "characters/char_boar.png",
+   "json": "characters/char_boar.json"
+  }
+ ],
+ "images": [
+  {
+   "key": "portrait_player",
+   "png": "characters/portrait_player.png"
+  },
+  {
+   "key": "portrait_fisherman",
+   "png": "characters/portrait_fisherman.png"
+  },
+  {
+   "key": "portrait_lumberjack",
+   "png": "characters/portrait_lumberjack.png"
+  },
+  {
+   "key": "portrait_farmer",
+   "png": "characters/portrait_farmer.png"
+  },
+  {
+   "key": "portrait_miner",
+   "png": "characters/portrait_miner.png"
+  },
+  {
+   "key": "portrait_hunter",
+   "png": "characters/portrait_hunter.png"
+  },
+  {
+   "key": "portrait_villager_a",
+   "png": "characters/portrait_villager_a.png"
+  },
+  {
+   "key": "portrait_villager_b",
+   "png": "characters/portrait_villager_b.png"
+  },
+  {
+   "key": "portrait_villager_c",
+   "png": "characters/portrait_villager_c.png"
+  },
+  {
+   "key": "portrait_player_512",
+   "png": "characters/portrait_player_512.png"
+  }
+ ],
+ "sprites": {
+  "portrait_player": {
+   "image": "portrait_player",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_fisherman": {
+   "image": "portrait_fisherman",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_lumberjack": {
+   "image": "portrait_lumberjack",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_farmer": {
+   "image": "portrait_farmer",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_miner": {
+   "image": "portrait_miner",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_hunter": {
+   "image": "portrait_hunter",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_villager_a": {
+   "image": "portrait_villager_a",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_villager_b": {
+   "image": "portrait_villager_b",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "portrait_villager_c": {
+   "image": "portrait_villager_c",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "128x128 head-and-shoulders, facing S"
+  },
+  "projectile_arrow": {
+   "atlas": "char_hunter",
+   "frame": "projectile_arrow",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "notes": "hunter arrow in flight; points screen-right, rotate to the flight angle; spawn at characters.hunter.anims.work.impactPoint on impactFrame"
+  },
+  "portrait_player_512": {
+   "image": "portrait_player_512",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "ui",
+   "notes": "512x512 key art: the chief waving"
+  }
+ },
+ "characters": {
+  "player": {
+   "atlas": "char_player",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "carry_idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "chop": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": -1,
+     "impactFrame": 5,
+     "impactPoint": {
+      "S": [
+       5,
+       -5
+      ],
+      "SE": [
+       26,
+       -11
+      ],
+      "E": [
+       31,
+       -24
+      ],
+      "NE": [
+       18,
+       -34
+      ],
+      "N": [
+       -6,
+       -37
+      ]
+     }
+    },
+    "mine": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": -1,
+     "impactFrame": 5,
+     "impactPoint": {
+      "S": [
+       5,
+       -6
+      ],
+      "SE": [
+       25,
+       -12
+      ],
+      "E": [
+       30,
+       -24
+      ],
+      "NE": [
+       17,
+       -34
+      ],
+      "N": [
+       -6,
+       -37
+      ]
+     }
+    },
+    "harvest": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1,
+     "impactFrame": 3,
+     "impactPoint": {
+      "S": [
+       0,
+       -29
+      ],
+      "SE": [
+       4,
+       -30
+      ],
+      "E": [
+       6,
+       -32
+      ],
+      "NE": [
+       4,
+       -35
+      ],
+      "N": [
+       0,
+       -35
+      ]
+     }
+    }
+   },
+   "carryPoint": {
+    "S": [
+     0,
+     -31,
+     false
+    ],
+    "SE": [
+     12,
+     -34,
+     false
+    ],
+    "E": [
+     17,
+     -40,
+     false
+    ],
+    "NE": [
+     12,
+     -46,
+     true
+    ],
+    "N": [
+     0,
+     -48,
+     true
+    ]
+   },
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_player",
+   "kind": "human",
+   "headTop": -81
+  },
+  "fisherman": {
+   "atlas": "char_fisherman",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "carry_idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "work": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": -1,
+     "impactFrame": 4,
+     "impactPoint": {
+      "S": [
+       -1,
+       18
+      ],
+      "SE": [
+       26,
+       12
+      ],
+      "E": [
+       38,
+       -1
+      ],
+      "NE": [
+       26,
+       -15
+      ],
+      "N": [
+       -1,
+       -21
+      ]
+     }
+    }
+   },
+   "carryPoint": {
+    "S": [
+     0,
+     -31,
+     false
+    ],
+    "SE": [
+     12,
+     -34,
+     false
+    ],
+    "E": [
+     17,
+     -40,
+     false
+    ],
+    "NE": [
+     12,
+     -46,
+     true
+    ],
+    "N": [
+     0,
+     -48,
+     true
+    ]
+   },
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_fisherman",
+   "kind": "human",
+   "headTop": -83
+  },
+  "lumberjack": {
+   "atlas": "char_lumberjack",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "carry_idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "work": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": -1,
+     "impactFrame": 5,
+     "impactPoint": {
+      "S": [
+       6,
+       -2
+      ],
+      "SE": [
+       29,
+       -10
+      ],
+      "E": [
+       35,
+       -24
+      ],
+      "NE": [
+       20,
+       -35
+      ],
+      "N": [
+       -8,
+       -38
+      ]
+     }
+    }
+   },
+   "carryPoint": {
+    "S": [
+     0,
+     -31,
+     false
+    ],
+    "SE": [
+     12,
+     -34,
+     false
+    ],
+    "E": [
+     17,
+     -40,
+     false
+    ],
+    "NE": [
+     12,
+     -46,
+     true
+    ],
+    "N": [
+     0,
+     -48,
+     true
+    ]
+   },
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_lumberjack",
+   "kind": "human",
+   "headTop": -85
+  },
+  "farmer": {
+   "atlas": "char_farmer",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "carry_idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "work": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": -1,
+     "impactFrame": 4,
+     "impactPoint": {
+      "S": [
+       13,
+       -21
+      ],
+      "SE": [
+       13,
+       -27
+      ],
+      "E": [
+       6,
+       -31
+      ],
+      "NE": [
+       -5,
+       -31
+      ],
+      "N": [
+       -14,
+       -27
+      ]
+     }
+    }
+   },
+   "carryPoint": {
+    "S": [
+     0,
+     -31,
+     false
+    ],
+    "SE": [
+     12,
+     -34,
+     false
+    ],
+    "E": [
+     17,
+     -40,
+     false
+    ],
+    "NE": [
+     12,
+     -46,
+     true
+    ],
+    "N": [
+     0,
+     -48,
+     true
+    ]
+   },
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_farmer",
+   "kind": "human",
+   "headTop": -86
+  },
+  "miner": {
+   "atlas": "char_miner",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "carry_idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "work": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": -1,
+     "impactFrame": 5,
+     "impactPoint": {
+      "S": [
+       5,
+       -6
+      ],
+      "SE": [
+       25,
+       -12
+      ],
+      "E": [
+       30,
+       -24
+      ],
+      "NE": [
+       17,
+       -34
+      ],
+      "N": [
+       -6,
+       -37
+      ]
+     }
+    }
+   },
+   "carryPoint": {
+    "S": [
+     0,
+     -31,
+     false
+    ],
+    "SE": [
+     12,
+     -34,
+     false
+    ],
+    "E": [
+     17,
+     -40,
+     false
+    ],
+    "NE": [
+     12,
+     -46,
+     true
+    ],
+    "N": [
+     0,
+     -48,
+     true
+    ]
+   },
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_miner",
+   "kind": "human",
+   "headTop": -84
+  },
+  "hunter": {
+   "atlas": "char_hunter",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "carry_idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "work": {
+     "frames": 8,
+     "fps": 14,
+     "repeat": -1,
+     "impactFrame": 5,
+     "impactPoint": {
+      "S": [
+       -3,
+       -14
+      ],
+      "SE": [
+       25,
+       -18
+      ],
+      "E": [
+       38,
+       -31
+      ],
+      "NE": [
+       29,
+       -45
+      ],
+      "N": [
+       4,
+       -52
+      ]
+     }
+    }
+   },
+   "carryPoint": {
+    "S": [
+     0,
+     -31,
+     false
+    ],
+    "SE": [
+     12,
+     -34,
+     false
+    ],
+    "E": [
+     17,
+     -40,
+     false
+    ],
+    "NE": [
+     12,
+     -46,
+     true
+    ],
+    "N": [
+     0,
+     -48,
+     true
+    ]
+   },
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_hunter",
+   "kind": "human",
+   "headTop": -83
+  },
+  "villager_a": {
+   "atlas": "char_villager_a",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1
+    }
+   },
+   "carryPoint": {
+    "S": [
+     0,
+     -31,
+     false
+    ],
+    "SE": [
+     12,
+     -34,
+     false
+    ],
+    "E": [
+     17,
+     -40,
+     false
+    ],
+    "NE": [
+     12,
+     -46,
+     true
+    ],
+    "N": [
+     0,
+     -48,
+     true
+    ]
+   },
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_villager_a",
+   "kind": "human",
+   "headTop": -81
+  },
+  "villager_b": {
+   "atlas": "char_villager_b",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1
+    }
+   },
+   "carryPoint": {
+    "S": [
+     0,
+     -31,
+     false
+    ],
+    "SE": [
+     12,
+     -34,
+     false
+    ],
+    "E": [
+     17,
+     -40,
+     false
+    ],
+    "NE": [
+     12,
+     -46,
+     true
+    ],
+    "N": [
+     0,
+     -48,
+     true
+    ]
+   },
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_villager_b",
+   "kind": "human",
+   "headTop": -90
+  },
+  "villager_c": {
+   "atlas": "char_villager_c",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "carry_walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    },
+    "happy": {
+     "frames": 6,
+     "fps": 10,
+     "repeat": -1
+    }
+   },
+   "carryPoint": {
+    "S": [
+     0,
+     -31,
+     false
+    ],
+    "SE": [
+     12,
+     -34,
+     false
+    ],
+    "E": [
+     17,
+     -40,
+     false
+    ],
+    "NE": [
+     12,
+     -46,
+     true
+    ],
+    "N": [
+     0,
+     -48,
+     true
+    ]
+   },
+   "shadow": [
+    46,
+    18
+   ],
+   "portrait": "portrait_villager_c",
+   "kind": "human",
+   "headTop": -84
+  },
+  "deer": {
+   "atlas": "char_deer",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    }
+   },
+   "shadow": [
+    56,
+    22
+   ],
+   "kind": "animal",
+   "headTop": -56
+  },
+  "boar": {
+   "atlas": "char_boar",
+   "frameSize": [
+    128,
+    128
+   ],
+   "anchor": [
+    0.5,
+    0.8125
+   ],
+   "dirs": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N"
+   ],
+   "mirror": {
+    "SW": "SE",
+    "W": "E",
+    "NW": "NE"
+   },
+   "frameName": "{anim}_{dir}_{i}",
+   "anims": {
+    "idle": {
+     "frames": 4,
+     "fps": 6,
+     "repeat": -1
+    },
+    "walk": {
+     "frames": 8,
+     "fps": 12,
+     "repeat": -1
+    }
+   },
+   "shadow": [
+    62,
+    26
+   ],
+   "kind": "animal",
+   "headTop": -43
+  }
+ }
+}

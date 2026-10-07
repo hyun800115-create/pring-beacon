@@ -1,0 +1,496 @@
+{
+ "version": 1,
+ "generator": "tools/fx/gen_emotes.py",
+ "conventions": {
+  "emotes": "emote_* are 64x64 frames (trimmed in the atlas, anchor = centre), soft-3D, no text. Show them inside ui_emote_bubble (bubble scale ~0.75, emote at the same scale placed at the bubble contentCenter) or floating alone at scale ~0.7 with a pop (0 -> 1.15 -> 1 in ~200 ms) and a gentle bob. Readable down to ~32 px.",
+  "emoteBubble": "ui_emote_bubble anchor = tail tip: put it at the villager anchor + (0, headTop - 4) (times the character scale). Emote centre = anchor + contentCenter * bubbleScale.",
+  "chatBubble": "Speech bubble = nineslice(ui_chat_bubble, w, h) with origin (0.5, 1) at (x, y) + image ui_chat_tail with origin (0.5, 0) at (x + dx, y - 20). Tail tip = (x + dx, y + 5) -> to point at a head top P use y = P.y - 5. Keep |dx| <= w/2 - 36. Sizes 80x56 .. 320x96 (any size >= 80x56 works). Text: dark #2B2F3A, ~20 px, centred in the content box (inset l12 r12 t8 b18). For an emote inside a chat bubble use scale ~0.55.",
+  "blend": "All spritesheets are NORMAL-blend artwork with dark tinted rims: they read on snow, plaza and sea.",
+  "sheets": "Horizontal strips, frame i at x = i*frameWidth. Phaser anim key = sheet key."
+ },
+ "atlases": [
+  {
+   "key": "emotes",
+   "png": "emotes/emotes.png",
+   "json": "emotes/emotes.json"
+  }
+ ],
+ "images": [
+  {
+   "key": "ui_chat_bubble",
+   "png": "emotes/ui_chat_bubble.png"
+  }
+ ],
+ "spritesheets": [
+  {
+   "key": "fx_snow_splat",
+   "png": "emotes/fx_snow_splat.png",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frameCount": 10,
+   "fps": 24,
+   "repeat": 0,
+   "anchor": [
+    0.5,
+    0.45
+   ],
+   "blend": "NORMAL",
+   "notes": "Snowball impact burst: squash, lumpy splat, chunks flying out and falling. Anchor = impact point (where fx_snowball hits, e.g. the target's face/chest ~ anchor + (0, -40))."
+  },
+  {
+   "key": "fx_music_notes",
+   "png": "emotes/fx_music_notes.png",
+   "frameWidth": 96,
+   "frameHeight": 128,
+   "frameCount": 16,
+   "fps": 12,
+   "repeat": -1,
+   "anchor": [
+    0.5,
+    0.9
+   ],
+   "blend": "NORMAL",
+   "notes": "Seamless loop of rising, swaying notes (purple/pink/blue/gold). Anchor = bard's lute / head side. Notes rise ~85 px."
+  },
+  {
+   "key": "fx_hearts",
+   "png": "emotes/fx_hearts.png",
+   "frameWidth": 96,
+   "frameHeight": 128,
+   "frameCount": 16,
+   "fps": 16,
+   "repeat": 0,
+   "anchor": [
+    0.5,
+    0.9
+   ],
+   "blend": "NORMAL",
+   "notes": "One-shot: 5 hearts pop up one after another and float ~80 px up. Anchor = head top."
+  },
+  {
+   "key": "fx_anger_puff",
+   "png": "emotes/fx_anger_puff.png",
+   "frameWidth": 144,
+   "frameHeight": 96,
+   "frameCount": 12,
+   "fps": 18,
+   "repeat": 0,
+   "anchor": [
+    0.5,
+    0.85
+   ],
+   "blend": "NORMAL",
+   "notes": "One-shot: two dark huff puffs blast out sideways from the head + throbbing red anger vein above. Anchor = head top (character anchor + (0, headTop))."
+  },
+  {
+   "key": "fx_sweat_drops",
+   "png": "emotes/fx_sweat_drops.png",
+   "frameWidth": 112,
+   "frameHeight": 96,
+   "frameCount": 12,
+   "fps": 18,
+   "repeat": 0,
+   "anchor": [
+    0.5,
+    0.7
+   ],
+   "blend": "NORMAL",
+   "notes": "One-shot: 4 sweat drops spring off the head in arcs. Anchor = head top."
+  },
+  {
+   "key": "fx_zzz",
+   "png": "emotes/fx_zzz.png",
+   "frameWidth": 96,
+   "frameHeight": 128,
+   "frameCount": 18,
+   "fps": 8,
+   "repeat": -1,
+   "anchor": [
+    0.35,
+    0.92
+   ],
+   "blend": "NORMAL",
+   "notes": "EXTRA (not in contract): looping Z shapes drifting up-right for dozing villagers (grandpa on the bench). Anchor = head top; use flipX when the sleeper faces right."
+  }
+ ],
+ "sprites": {
+  "emote_heart": {
+   "atlas": "emotes",
+   "frame": "emote_heart",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Big glossy pink heart (like / love)."
+  },
+  "emote_love": {
+   "atlas": "emotes",
+   "frame": "emote_love",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Face with heart eyes + blush (loves it / crush)."
+  },
+  "emote_laugh": {
+   "atlas": "emotes",
+   "frame": "emote_laugh",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Squinting laughing face (>< eyes, wide open mouth) with tears flying."
+  },
+  "emote_exclaim": {
+   "atlas": "emotes",
+   "frame": "emote_exclaim",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Red \"!\" (surprise / alert / got hit)."
+  },
+  "emote_question": {
+   "atlas": "emotes",
+   "frame": "emote_question",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Blue \"?\" (confused / what?)."
+  },
+  "emote_anger": {
+   "atlas": "emotes",
+   "frame": "emote_anger",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Red manga cross-vein (angry / sulking)."
+  },
+  "emote_sweat": {
+   "atlas": "emotes",
+   "frame": "emote_sweat",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Awkward smile ^^; with a big sweat drop (embarrassed / nervous)."
+  },
+  "emote_music": {
+   "atlas": "emotes",
+   "frame": "emote_music",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Purple beamed notes (singing / bard performing)."
+  },
+  "emote_zzz": {
+   "atlas": "emotes",
+   "frame": "emote_zzz",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Three blue Z shapes (sleeping / dozing on the bench)."
+  },
+  "emote_idea": {
+   "atlas": "emotes",
+   "frame": "emote_idea",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Glowing light bulb (idea!)."
+  },
+  "emote_sparkle": {
+   "atlas": "emotes",
+   "frame": "emote_sparkle",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Gold twinkles (pretty / impressed / new)."
+  },
+  "emote_cold": {
+   "atlas": "emotes",
+   "frame": "emote_cold",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Blue shivering face, chattering teeth, red nose, snow on the head."
+  },
+  "emote_tear": {
+   "atlas": "emotes",
+   "frame": "emote_tear",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Sad crying face with tears (sad / hurt feelings)."
+  },
+  "emote_dots": {
+   "atlas": "emotes",
+   "frame": "emote_dots",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Typing dots \"...\" (static). Animated version: sprites.emote_dots.anims.typing.",
+   "anims": {
+    "typing": {
+     "frames": [
+      "emote_dots_a0",
+      "emote_dots_a1",
+      "emote_dots_a2",
+      "emote_dots"
+     ],
+     "fps": 6,
+     "repeat": -1
+    }
+   }
+  },
+  "emote_star": {
+   "atlas": "emotes",
+   "frame": "emote_star",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Gold star (great job / best)."
+  },
+  "emote_fish": {
+   "atlas": "emotes",
+   "frame": "emote_fish",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Fish (talking about fish / wants fish)."
+  },
+  "emote_bread": {
+   "atlas": "emotes",
+   "frame": "emote_bread",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Warm bread loaf with steam (talking about bread / hungry)."
+  },
+  "emote_wave": {
+   "atlas": "emotes",
+   "frame": "emote_wave",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Waving hand with a red parka cuff (hello / bye)."
+  },
+  "emote_thumbs": {
+   "atlas": "emotes",
+   "frame": "emote_thumbs",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Thumbs up with a red parka cuff (good / nice)."
+  },
+  "emote_snowball": {
+   "atlas": "emotes",
+   "frame": "emote_snowball",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "emote",
+   "frameSize": [
+    64,
+    64
+   ],
+   "notes": "Flying snowball (snowball fight! / challenge)."
+  },
+  "ui_emote_bubble": {
+   "atlas": "emotes",
+   "frame": "ui_emote_bubble",
+   "anchor": [
+    0.5,
+    0.9198
+   ],
+   "kind": "ui",
+   "frameSize": [
+    92,
+    106
+   ],
+   "contentCenter": [
+    0,
+    -54.5
+   ],
+   "contentRadius": 35.5,
+   "notes": "Round emote bubble (~81 px across) with tail at the bottom centre; anchor = tail tip. Draw the emote at anchor + contentCenter (scaled with the bubble). Recommended bubble scale 0.75."
+  },
+  "ui_chat_bubble": {
+   "image": "ui_chat_bubble",
+   "anchor": [
+    0.5,
+    1.0
+   ],
+   "kind": "ui",
+   "frameSize": [
+    96,
+    78
+   ],
+   "minSize": [
+    80,
+    56
+   ],
+   "contentInset": {
+    "left": 12,
+    "right": 12,
+    "top": 8,
+    "bottom": 18
+   },
+   "bodyBottomInset": 9.8,
+   "notes": "9-slice speech-bubble BODY (no tail; add ui_chat_tail). Bottom 9.8 px of the frame are drop shadow. See conventions.chatBubble."
+  },
+  "ui_chat_tail": {
+   "atlas": "emotes",
+   "frame": "ui_chat_tail",
+   "anchor": [
+    0.5,
+    0.0
+   ],
+   "kind": "ui",
+   "frameSize": [
+    44,
+    40
+   ],
+   "attachTo": "ui_chat_bubble",
+   "attachY": -20,
+   "tip": [
+    0.0,
+    25.0
+   ],
+   "notes": "Tail for ui_chat_bubble. Origin (0.5, 0) at (bubble x + dx, bubble bottom - 20): it merges seamlessly with the body outline. Tip = anchor + tip. Mirror-safe (symmetric)."
+  },
+  "fx_snowball": {
+   "atlas": "emotes",
+   "frame": "fx_snowball",
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "kind": "fx",
+   "frameSize": [
+    28,
+    28
+   ],
+   "notes": "Thrown snowball (~22 px). Lighting is baked from the upper-left: do not rotate. Fly it on a parabola (~0.35-0.5 s) with a soft ground-shadow ellipse below; on arrival play fx_snow_splat at the hit point and the target's hit anim."
+  }
+ },
+ "nineSlice": {
+  "ui_chat_bubble": {
+   "image": "ui_chat_bubble",
+   "left": 22,
+   "right": 22,
+   "top": 22,
+   "bottom": 30
+  }
+ }
+}
