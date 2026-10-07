@@ -74,8 +74,20 @@ def col(c):
     return P.get(c, c)
 
 
+# near-duplicate palette entries folded together so a building stays under 30 materials
+HARD = {
+    'plank3': 'log1', 'plank2': 'log3', 'wood_l': 'plank', 'wood_m': 'log2', 'bark': 'wood_d', 'pale': 'end',
+    'stone_w': 'stone', 'iron_l': 'stone_d', 'steel': 'stone_l', 'charcoal': 'iron', 'ink': 'iron',
+    'white': 'cream', 'ceramic': 'cream', 'paper': 'cream', 'flour': 'cream', 'mortar': 'canvas', 'rope': 'sack',
+    'brick_d': 'red_d', 'book_r': 'red', 'terracotta': 'brick', 'book_b': 'blue', 'water': 'blue_l',
+    'book_g': 'green', 'book_y': 'mustard', 'wheat': 'straw', 'gold': 'yellow', 'copper': 'orange',
+    'bread_d': 'bread', 'soil': 'wood_dd', 'leather': 'wood_d', 'straw_d': 'mustard', 'pale2': 'end',
+}
+
+
 def M(c, rough=0.75, metal=0.0):
     """Flat Principled material from a palette name or hex (cached)."""
+    c = HARD.get(c, c)
     if c in EMIT:
         key = ('E', c)
         if key not in _MATS:
@@ -108,6 +120,7 @@ class State:
         self.rooms = []
         self.door = None
         self.anim_origin = {}
+        self.low_cap = {'walls': 'end', 'iwalls': 'pale2'}
         self.wall_cut = []     # extra info
         self.n = 0
 
@@ -772,6 +785,9 @@ def tri_count(ob):
     return sum(len(p.vertices) - 2 for p in ob.data.polygons)
 
 
+PROTECT = ('log', 'roof_', 'plank', 'end')
+
+
 def _limit_materials(nodes, limit=30):
     """If more than `limit` materials are used, remap the rarest non-emissive ones to the nearest colour."""
     use = {}
@@ -791,27 +807,34 @@ def _limit_materials(nodes, limit=30):
         p = m.node_tree.nodes.get('Principled BSDF')
         return p.inputs['Emission Strength'].default_value > 0.01
 
-    prot = ('roof_', 'log', 'plank', 'wood_', 'stone', 'end', 'pale')
-    names = sorted(use, key=lambda n: (use[n] * (20 if n.startswith(prot) else 1), n))
+    def enc(v):
+        return 12.92 * v if v <= 0.0031308 else 1.055 * v ** (1 / 2.4) - 0.055
+
+    def lab(m):
+        r, g, b = [enc(max(0.0, v)) for v in rgb(m)]
+        # cheap perceptual-ish space: luma + two chroma axes
+        return (0.6 * (0.3 * r + 0.59 * g + 0.11 * b), r - g, (r + g) / 2 - b)
+
     keep = set(use)
     remap = {}
-    for nm in names:
-        if len(keep) <= limit:
-            break
-        m = bpy.data.materials[nm]
-        if emissive(m) or nm == 'snow':
-            continue
-        c = rgb(m)
+    cand = sorted(n for n in keep if not emissive(bpy.data.materials[n]) and n != "snow")
+    while len(keep) > limit and len(cand) > 1:
         best = None
-        for a in ALIAS.get(nm, ()):
-            if a in keep and a != nm:
-                best = a
-                break
-        if best is None:
-            best = min((k for k in keep if k != nm and not emissive(bpy.data.materials[k]) and k != 'snow'),
-                       key=lambda k: sum((a - b) ** 2 for a, b in zip(c, rgb(bpy.data.materials[k]))))
-        remap[nm] = best
-        keep.discard(nm)
+        for i, a in enumerate(cand):
+            la = lab(bpy.data.materials[a])
+            for b2 in cand[i + 1:]:
+                lb = lab(bpy.data.materials[b2])
+                d = sum((x - y) ** 2 for x, y in zip(la, lb))
+                if a.startswith(PROTECT) or b2.startswith(PROTECT):
+                    d = d * 12 + 0.002          # keep log / roof / floor variation as long as possible
+                if best is None or d < best[0]:
+                    best = (d, a, b2)
+        _, a, b2 = best
+        lo, hi = (a, b2) if use[a] < use[b2] else (b2, a)
+        remap[lo] = hi
+        use[hi] += use[lo]
+        keep.discard(lo)
+        cand.remove(lo)
     for nm in list(remap):
         t = remap[nm]
         while t in remap:
@@ -890,7 +913,7 @@ def finalize(low=True):
     if low:
         for g in ('walls', 'iwalls'):
             if g in nodes:
-                nodes[g + '_low'] = _cut_low(nodes[g], g + '_low', FZ + LOW_CUT)
+                nodes[g + '_low'] = _cut_low(nodes[g], g + '_low', FZ + LOW_CUT, cap=S.low_cap.get(g, 'end'))
     for g in [k for k in nodes if k.endswith('~')]:
         base = g[:-1]
         if base in nodes:

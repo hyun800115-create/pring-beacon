@@ -340,8 +340,10 @@ class Game {
 
   updateBuildings(dt) {
     const w = this.world, day = this.clock.phase === PHASE.DAY;
+    const evening = this.clock.phase !== PHASE.DAY;
     for (const b of w.blds) {
-      b.update(dt, this.stage.night);
+      const busy = b.def.kind === 'house' ? evening && this.people.list.some((p) => p.home === b && !p.dead) : b.def.kind === 'process' ? b.working : b.def.kind === 'hq' || b.def.kind === 'shop';
+      b.update(dt, this.stage.night, busy);
       if (b.state !== 'active' || b.dead) continue;
       const def = b.def;
       if (def.kind === 'farm') for (const p of b.plots) if (p.stage < 3) { p.t += dt; const s = Math.min(3, Math.floor(p.t / (def.grow / 3))); if (s !== p.stage) w.setPlotStage(p, s); }
@@ -444,6 +446,7 @@ class Game {
         offer(yes) { if (!self.people.offer) return false; self.hud.modalEl.style.display = 'none'; self.people.answerOffer(yes); return true; },
         news() { return self.people.log.slice(0, 15).map((x) => x.text); },
         people() { return self.people.list.filter((p) => !p.dead).map((p) => ({ n: p.name, job: p.job ? p.job.kind + (p.job.bld ? ':' + p.job.bld.type : '') : '-', e: +p.energy.toFixed(2), m: +p.mood.toFixed(2), hid: p.hidden, slot: p.slot ? p.slot.s.action : null, home: p.home ? p.home.type : null })); },
+        async finishAll() { for (const b of [...self.world.blds]) if (b.con) { for (const t in b.con.need) b.con.have[t] = b.con.need[t]; b.con.work = b.con.workNeeded; await self.world.finish(b); } },
         cutaway(type, on) { for (const b of self.world.blds) if (b.type === type) { b.pinned = on; b.setCutaway(on); } },
       },
     };

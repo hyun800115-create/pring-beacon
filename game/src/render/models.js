@@ -4,12 +4,14 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 const SRC_FPS = 24;   // Blender 시간줄 기본 fps
 
 export class Library {
   constructor() {
     this.loader = new GLTFLoader();
+    this.loader.setMeshoptDecoder(MeshoptDecoder);   // 플레이 링크용 압축 모델
     this.chars = {};    // key -> { scene, clips:{name:{clip, fps, loop}}, meta }
     this.props = {};    // key -> scene (원본)
     this.blds = {};     // key -> { scene, meta }

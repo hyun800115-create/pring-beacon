@@ -80,7 +80,8 @@
  "fx": [],
  "nodes": [
   "exterior",
-  "floor"
+  "floor",
+  "roof"
  ],
  "tris": 4260
 }

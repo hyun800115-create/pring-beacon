@@ -235,7 +235,7 @@ export class People {
         const an = SLOT_ANIM[s.action] || 'idle';
         p.yaw = w.yaw;
         if (SEATED.has(s.action)) { p.y = (w.y || 0) + 0.4; p.x -= Math.sin(w.yaw) * 0.18; p.z -= Math.cos(w.yaw) * 0.18; }
-        if (s.action === 'sleep') { p.y = (w.y || 0) + 0.52; p.x -= Math.sin(w.yaw) * 0.55; p.z -= Math.cos(w.yaw) * 0.55; p.sleeping = true; }
+        if (s.action === 'sleep') { p.y = (w.y || 0) + 0.05; p.x += Math.sin(w.yaw) * 0.5; p.z += Math.cos(w.yaw) * 0.5; p.sleeping = true; }
         if (SLOT_LINE[s.action] && this.r() < 0.35) this.say(p, SLOT_LINE[s.action]);
         this.wait(p, secs, an, w.yaw);
         this.doit(p, () => { if (s.action !== 'sleep' || this.clock.phase !== PHASE.NIGHT) this.leaveSlot(p); if (after) after(); });

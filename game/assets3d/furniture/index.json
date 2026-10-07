@@ -1,6 +1,6 @@
 {
  "chair": {
-  "tris": 440,
+  "tris": 120,
   "mats": 2,
   "slots": [
    "slot.sit.1"
@@ -12,8 +12,8 @@
   "height": 0.72
  },
  "bed_single": {
-  "tris": 676,
-  "mats": 4,
+  "tris": 516,
+  "mats": 3,
   "slots": [
    "slot.sleep.1"
   ],
@@ -24,8 +24,8 @@
   "height": 0.62
  },
  "hearth": {
-  "tris": 1980,
-  "mats": 20,
+  "tris": 1756,
+  "mats": 15,
   "slots": [
    "slot.warm.1",
    "slot.warm.2"
@@ -35,5 +35,471 @@
    0.93
   ],
   "height": 2.35
+ },
+ "stool": {
+  "tris": 168,
+  "mats": 2,
+  "slots": [
+   "slot.sit.1"
+  ],
+  "size": [
+   0.33,
+   0.34
+  ],
+  "height": 0.3
+ },
+ "bench_in": {
+  "tris": 124,
+  "mats": 2,
+  "slots": [
+   "slot.sit.1",
+   "slot.sit.2"
+  ],
+  "size": [
+   1.2,
+   0.36
+  ],
+  "height": 0.36
+ },
+ "table_round": {
+  "tris": 352,
+  "mats": 1,
+  "slots": [],
+  "size": [
+   0.9,
+   0.9
+  ],
+  "height": 0.5
+ },
+ "table_long": {
+  "tris": 248,
+  "mats": 2,
+  "slots": [],
+  "size": [
+   1.6,
+   0.74
+  ],
+  "height": 0.5
+ },
+ "bed_double": {
+  "tris": 784,
+  "mats": 3,
+  "slots": [
+   "slot.sleep.1",
+   "slot.sleep.2"
+  ],
+  "size": [
+   1.3,
+   1.49
+  ],
+  "height": 0.8
+ },
+ "crib": {
+  "tris": 428,
+  "mats": 4,
+  "slots": [
+   "slot.sleep.1"
+  ],
+  "size": [
+   0.55,
+   0.95
+  ],
+  "height": 0.6
+ },
+ "stove": {
+  "tris": 448,
+  "mats": 5,
+  "slots": [
+   "slot.warm.1"
+  ],
+  "size": [
+   0.6,
+   0.57
+  ],
+  "height": 2.17
+ },
+ "kitchen_counter": {
+  "tris": 708,
+  "mats": 10,
+  "slots": [
+   "slot.cook.1"
+  ],
+  "size": [
+   1.24,
+   0.52
+  ],
+  "height": 0.75
+ },
+ "cupboard": {
+  "tris": 700,
+  "mats": 7,
+  "slots": [],
+  "size": [
+   1.0,
+   0.47
+  ],
+  "height": 1.55
+ },
+ "bookshelf": {
+  "tris": 612,
+  "mats": 6,
+  "slots": [
+   "slot.read.1"
+  ],
+  "size": [
+   0.98,
+   0.36
+  ],
+  "height": 1.46
+ },
+ "desk": {
+  "tris": 536,
+  "mats": 11,
+  "slots": [
+   "slot.desk.1"
+  ],
+  "size": [
+   1.0,
+   0.87
+  ],
+  "height": 0.77
+ },
+ "sofa": {
+  "tris": 772,
+  "mats": 3,
+  "slots": [
+   "slot.sit.1",
+   "slot.sit.2"
+  ],
+  "size": [
+   1.3,
+   0.61
+  ],
+  "height": 0.6
+ },
+ "rug_round": {
+  "tris": 308,
+  "mats": 3,
+  "slots": [],
+  "size": [
+   1.8,
+   1.8
+  ],
+  "height": 0.02
+ },
+ "rug_long": {
+  "tris": 228,
+  "mats": 3,
+  "slots": [],
+  "size": [
+   1.9,
+   1.0
+  ],
+  "height": 0.02
+ },
+ "lamp_floor": {
+  "tris": 220,
+  "mats": 2,
+  "slots": [],
+  "size": [
+   0.38,
+   0.39
+  ],
+  "height": 1.34
+ },
+ "toilet": {
+  "tris": 356,
+  "mats": 3,
+  "slots": [
+   "slot.toilet.1"
+  ],
+  "size": [
+   0.4,
+   0.53
+  ],
+  "height": 0.58
+ },
+ "sink": {
+  "tris": 424,
+  "mats": 4,
+  "slots": [
+   "slot.wash.1"
+  ],
+  "size": [
+   0.53,
+   0.53
+  ],
+  "height": 0.74
+ },
+ "bathtub": {
+  "tris": 880,
+  "mats": 4,
+  "slots": [
+   "slot.wash.1"
+  ],
+  "size": [
+   1.24,
+   0.62
+  ],
+  "height": 0.64
+ },
+ "wardrobe": {
+  "tris": 448,
+  "mats": 6,
+  "slots": [],
+  "size": [
+   1.0,
+   0.53
+  ],
+  "height": 1.82
+ },
+ "plant_pot": {
+  "tris": 448,
+  "mats": 5,
+  "slots": [],
+  "size": [
+   0.43,
+   0.45
+  ],
+  "height": 0.9
+ },
+ "tea_set": {
+  "tris": 476,
+  "mats": 5,
+  "slots": [],
+  "size": [
+   0.44,
+   0.44
+  ],
+  "height": 0.23
+ },
+ "bread_shelf": {
+  "tris": 2556,
+  "mats": 6,
+  "slots": [
+   "slot.shop.1"
+  ],
+  "size": [
+   1.3,
+   0.46
+  ],
+  "height": 1.58
+ },
+ "shop_counter": {
+  "tris": 640,
+  "mats": 10,
+  "slots": [
+   "slot.sell.1",
+   "slot.shop.1"
+  ],
+  "size": [
+   1.7,
+   0.7
+  ],
+  "height": 0.89
+ },
+ "barrel_in": {
+  "tris": 376,
+  "mats": 3,
+  "slots": [],
+  "size": [
+   0.64,
+   0.62
+  ],
+  "height": 0.7
+ },
+ "crate_in": {
+  "tris": 200,
+  "mats": 2,
+  "slots": [],
+  "size": [
+   0.55,
+   0.58
+  ],
+  "height": 0.55
+ },
+ "meeting_table": {
+  "tris": 916,
+  "mats": 6,
+  "slots": [
+   "slot.sit.1",
+   "slot.sit.2",
+   "slot.sit.3",
+   "slot.sit.4",
+   "slot.sit.5",
+   "slot.sit.6"
+  ],
+  "size": [
+   2.0,
+   1.8
+  ],
+  "height": 0.75
+ },
+ "notice_board_in": {
+  "tris": 444,
+  "mats": 9,
+  "slots": [
+   "slot.read.1"
+  ],
+  "size": [
+   1.12,
+   0.14
+  ],
+  "height": 1.41
+ },
+ "armchair": {
+  "tris": 556,
+  "mats": 2,
+  "slots": [
+   "slot.sit.1"
+  ],
+  "size": [
+   0.61,
+   0.56
+  ],
+  "height": 0.62
+ },
+ "workbench": {
+  "tris": 688,
+  "mats": 5,
+  "slots": [
+   "slot.work.1"
+  ],
+  "size": [
+   1.4,
+   0.75
+  ],
+  "height": 0.61
+ },
+ "bread_oven": {
+  "tris": 1752,
+  "mats": 12,
+  "slots": [
+   "slot.bake.1"
+  ],
+  "size": [
+   1.72,
+   1.35
+  ],
+  "height": 2.11
+ },
+ "dough_table": {
+  "tris": 1036,
+  "mats": 6,
+  "slots": [
+   "slot.bake.1"
+  ],
+  "size": [
+   1.3,
+   0.65
+  ],
+  "height": 0.65
+ },
+ "cot": {
+  "tris": 160,
+  "mats": 5,
+  "slots": [
+   "slot.sleep.1"
+  ],
+  "size": [
+   0.74,
+   1.4
+  ],
+  "height": 0.39
+ },
+ "millstone": {
+  "tris": 828,
+  "mats": 8,
+  "slots": [
+   "slot.work.1"
+  ],
+  "size": [
+   1.5,
+   1.74
+  ],
+  "height": 3.33
+ },
+ "saw_bench": {
+  "tris": 1004,
+  "mats": 6,
+  "slots": [
+   "slot.work.1"
+  ],
+  "size": [
+   2.2,
+   0.74
+  ],
+  "height": 1.02
+ },
+ "bar_counter": {
+  "tris": 1008,
+  "mats": 9,
+  "slots": [
+   "slot.sell.1",
+   "slot.shop.1",
+   "slot.shop.2",
+   "slot.shop.3"
+  ],
+  "size": [
+   2.72,
+   0.74
+  ],
+  "height": 0.95
+ },
+ "keg_rack": {
+  "tris": 932,
+  "mats": 5,
+  "slots": [],
+  "size": [
+   1.96,
+   0.91
+  ],
+  "height": 0.84
+ },
+ "counter_shelf": {
+  "tris": 2368,
+  "mats": 14,
+  "slots": [
+   "slot.shop.1"
+  ],
+  "size": [
+   1.48,
+   0.39
+  ],
+  "height": 1.56
+ },
+ "cooking_range": {
+  "tris": 372,
+  "mats": 6,
+  "slots": [
+   "slot.cook.1"
+  ],
+  "size": [
+   0.9,
+   0.59
+  ],
+  "height": 0.86
+ },
+ "hay_bale": {
+  "tris": 132,
+  "mats": 2,
+  "slots": [],
+  "size": [
+   0.7,
+   0.47
+  ],
+  "height": 0.42
+ },
+ "chop_stump": {
+  "tris": 580,
+  "mats": 4,
+  "slots": [
+   "slot.work.1"
+  ],
+  "size": [
+   1.43,
+   1.32
+  ],
+  "height": 0.79
  }
 }

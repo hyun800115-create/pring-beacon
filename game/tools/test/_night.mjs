@@ -1,0 +1,28 @@
+import { start } from './serve.mjs';
+import { launch } from './pw.mjs';
+const srv = await start(0); const b = await launch();
+const page = await (await b.newContext({ viewport: { width: 1280, height: 720 } })).newPage();
+const errs = []; page.on('pageerror', (e) => errs.push(String(e.stack || e))); page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
+await page.goto(srv.url + 'index.html?debug=1');
+await page.waitForFunction(() => window.__SM && window.__SM.api, null, { timeout: 120000 });
+const api = (f, ...a) => page.evaluate(([f2, a2]) => window.__SM.api[f2](...a2), [f, a]);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const st = await api('start');
+await api('settle', st.x + 6, st.z - 6, 0.3);
+await api('finishAll');
+const h = await api('hall');
+for (const [dx, dz, r] of [[-11, 3, 0.5], [-9, -6, -0.4], [-2, 12, 3.14]]) { const sp = await api('findSpot', 'house', h.x + dx, h.z + dz, r); if (sp) await api('build', 'house', sp[0], sp[1], r); }
+await api('finishAll');
+await api('skipTo', 0.74); await api('speed', 3);
+await sleep(14000);
+const hs = await page.evaluate(() => window.__SM.game.world.blds.filter((b) => b.type === 'house').map((b) => ({ x: b.x, z: b.z })));
+await api('cutaway', 'house', true); await api('cutaway', 'hall', true);
+await api('cam', hs[0].x, hs[0].z, 14, 0.7, 1.0);
+await sleep(1500);
+await page.screenshot({ path: '../.cache/shots/night_house.png' });
+await api('cam', h.x, h.z, 20, 0.7, 1.0);
+await sleep(1200);
+await page.screenshot({ path: '../.cache/shots/night_hall.png' });
+console.log(JSON.stringify((await api('people')).map((p) => p.n + ':' + (p.slot || (p.hid ? 'hid' : '-')))));
+console.log('errors', errs.slice(0, 8));
+await b.close(); await srv.close();

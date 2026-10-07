@@ -94,6 +94,19 @@ export class Building {
     }
     this.workSpot = this.toWorld(this.size[0] * 0.3, this.size[1] / 2 + 0.8);
     vis.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.userData.bld = this; } });
+    // 밤에 더 밝아지는 창문·불빛 재질, 굴뚝 연기 자리
+    this.glow = [];
+    this.smokeAt = [];
+    vis.traverse((o) => {
+      if (o.isMesh) {
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        const own = mats.map((m) => { if (m.emissive && m.emissiveIntensity > 0 && (m.emissive.r + m.emissive.g + m.emissive.b) > 0.05) { const c = m.clone(); c.userData.baseGlow = m.emissiveIntensity; this.glow.push(c); return c; } return m; });
+        o.material = Array.isArray(o.material) ? own : own[0];
+      }
+      if (o.name && /^fx_?smoke/i.test(o.name)) { const v = new THREE.Vector3(); o.getWorldPosition(v); this.smokeAt.push(this.group.worldToLocal(v.clone())); }
+    });
+    if (!this.smokeAt.length && this.meta && this.meta.fx) for (const f of this.meta.fx) if (/smoke/.test(f.name || f.id || '')) this.smokeAt.push(new THREE.Vector3(f.pos[0], f.pos[2], -f.pos[1]));
+    this.smokeT = Math.random() * 2;
     this.vis = vis;
     this.group.add(vis);
     if (this.def.light) this.addLamp();
@@ -288,7 +301,17 @@ export class Building {
     }
   }
 
-  update(dt, night) {
+  update(dt, night, busy) {
+    if (this.glow) for (const m of this.glow) m.emissiveIntensity = m.userData.baseGlow * (0.25 + night * 1.6);
+    if (this.smokeAt && this.smokeAt.length && this.state === 'active' && busy) {
+      this.smokeT -= dt;
+      if (this.smokeT <= 0) {
+        this.smokeT = 0.7 + Math.random() * 0.6;
+        const p = this.smokeAt[Math.floor(Math.random() * this.smokeAt.length)];
+        const w = this.toWorld(p.x, p.z);
+        if (this.w.stage.isNear(w.x, w.z)) this.w.smoke(w.x, p.y + 0.2, w.z);
+      }
+    }
     if (this.anim && this.state === 'active') {
       const spin = this.type === 'windmill' ? (this.working ? 1.8 : 0.12) : 0.5;
       if (this.animAxis === 'z') this.anim.rotation.z -= dt * spin; else this.anim.rotation.y += dt * spin;

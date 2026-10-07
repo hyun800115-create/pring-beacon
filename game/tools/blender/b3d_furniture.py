@@ -1156,7 +1156,19 @@ def market_table(w=1.2, d=0.6, seed=0, act='shop'):
         slot(act, 0, -d / 2 - 0.4, 180)
 
 
-def well_model():
+def well_roof():
+    for s in (-1, 1):
+        bx((1.7, 0.75, 0.07), (0, s * 0.33, 1.98), ('roof_r1', 'roof_r2')[s > 0], rot=(-s * 32, 0, 0), bev=0.02,
+           origin='center')
+        K.snow(1.6, 0.6, 0.08, (0, s * 0.31, 2.05), rot=(-s * 32, 0, 0), seed=s + 3)
+    for s in (-1, 1):
+        extr([(-0.62, 0), (0.62, 0), (0, 0.38)], 0.06, loc=(s * 0.68 - 0.03, 0, 1.8), rot=(90, 0, 90),
+             c='wood_m')
+    K.log_(0.06, 1.85, (0, 0, 2.2), (0, 90, 0), 'wood_dd')
+    K.snow(1.75, 0.22, 0.07, (0, 0, 2.22), seed=9)
+
+
+def well_model(roof=False):
     """Stone well with a roof, crank and bucket (exterior)."""
     R = rnd(4)
     n = 12
@@ -1181,16 +1193,8 @@ def well_model():
     cy(0.13, 0.2, (0, 0, 0.75), 'wood_l', segs=12, r_top=0.15, bev=0.01)
     cy(0.155, 0.03, (0, 0, 0.82), 'iron', segs=12, bev=0)
     seg((-0.14, 0, 0.95), (0.14, 0, 0.95), 0.008, 'iron')
-    # roof
-    for s in (-1, 1):
-        bx((1.7, 0.75, 0.07), (0, s * 0.33, 1.98), ('roof_r1', 'roof_r2')[s > 0], rot=(-s * 32, 0, 0), bev=0.02,
-           origin='center')
-        K.snow(1.6, 0.6, 0.08, (0, s * 0.31, 2.05), rot=(-s * 32, 0, 0), seed=s + 3)
-    for s in (-1, 1):
-        extr([(-0.62, 0), (0.62, 0), (0, 0.38)], 0.06, loc=(s * 0.68 - 0.03, 0, 1.8), rot=(90, 0, 90),
-             c='wood_m')
-    K.log_(0.06, 1.85, (0, 0, 2.2), (0, 90, 0), 'wood_dd')
-    K.snow(1.75, 0.22, 0.07, (0, 0, 2.22), seed=9)
+    if roof:
+        well_roof()
     bx((0.5, 0.35, 0.05), (0.75, -0.6, 0.0), 'stone_d', bev=0.02)
     cy(0.13, 0.22, (0.75, -0.62, 0.05), 'wood_m', segs=12, r_top=0.15, bev=0.01)
     cy(0.12, 0.01, (0.75, -0.62, 0.26), 'water', segs=12, bev=0)

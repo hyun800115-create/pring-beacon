@@ -76,6 +76,7 @@ class Shell:
 
     def walls(self, sides='SNEW', style='log', **kw):
         self.style = style
+        K.S.low_cap['walls'] = {'log': 'end', 'stone': 'stone_l'}.get(style, (kw.get('cols') or ('pale',))[0])
         with grp('walls'):
             if style == 'stone':
                 self.top = K.stone_walls(self.Wd, self.Dp, self.H, self.openings, r=self.r, seed=self.seed,
@@ -310,7 +311,7 @@ def b_hall():
             place(F.toilet, sh.against('E', -2.75, 0.4))
             place(F.sink, sh.against('E', -1.25, 0.5))
             put(F.plant_pot, 2.7, -3.05, 0, seed=9, big=False)
-            put(F.rug_round, 3.5, -1.9, 0, r=0.45, c='blue_l', border='white', inner='white')
+            put(F.rug_long, 3.3, -1.95, 90, w=1.0, d=0.6, c='blue', border='cream', stripe='white')
             F.basket(2.7, -0.3, K.FZ, fill='white', seed=2)
         with room('회의실'):
             put(F.rug_long, -1.85, 1.6, 0, w=2.9, d=1.9, c='green', stripe='cream')
@@ -456,7 +457,7 @@ def b_house_3():
             put(F.rug_long, -2.5, 1.05, 0, w=1.5, d=0.7, c='pink', stripe='purple')
         with room('화장실'):
             put(F.bathtub, -0.5, Y1 - 0.34, 0)
-            put(F.toilet, 0.35, 2.35, 270)
+            put(F.toilet, 0.22, 2.35, 270)
             put(F.sink, -0.92, 1.05, 90)
             put(F.rug_round, -0.3, 1.3, 0, r=0.35, c='blue_l', border='white', inner='white')
             put(F.plant_pot, 0.35, 0.6, 0, seed=7, big=False)
@@ -514,7 +515,7 @@ def b_woodcutter():
             F.sack(1.35, 0.55, K.FZ, s=0.6, c='sack', flour=False)
         sh.hang('N', 0.35, 1.0, F.tool_rack, w=1.3, tools=('axe', 'saw', 'hammer', 'shovel', 'axe'))
         sh.hang('W', -0.8, 1.25, F.wall_shelf, w=0.5, items='jars')
-        sh.hang('E', -0.8, 1.35, F.lantern if False else F.clock)
+        sh.hang('E', -0.8, 1.35, F.clock)
         ix0, iy0 = sh.ix0, sh.iy0 + oy
         K.add_room('헛간', sh.ix0, sh.iy0 + oy, sh.ix1, sh.iy1 + oy)
     K.add_room('마당', -2.8, -2.7, 2.8, -0.6)
@@ -701,7 +702,6 @@ def b_farm():
                 F.hay_pile(1.9, 1.5, 0.75, seed=3)
             for i, (x, y, z, r) in enumerate(((-2.2, -1.2, 0, 90), (-2.2, -0.45, 0, 90), (-2.2, -0.8, 0.4, 90),
                                               (-1.55, -1.55, 0, 0))):
-                put(F.hay_bale, x, y, 0, z=K.FZ + z, rot=0) if False else None
                 with xf((x, y, K.FZ + z), r):
                     F.hay_bale()
             put(F.cot, 2.15, 1.15, 0, blanket='blue')
@@ -750,8 +750,6 @@ def b_farm():
         cy(0.4, 0.07, (3.5, 0.4, 0.45), 'wood_m', rot=(90, 0, 80), segs=14, origin='center')
         bx((1.0, 0.4, 0.3), (3.4, 1.6, 0), 'wood_d', bev=0.03)
         bx((0.9, 0.3, 0.02), (3.4, 1.6, 0.28), 'water', bev=0)
-    with grp('walls~'):
-        K.lantern(-1.3, -2.2 + 0.0 - 0.0 - 0.0 + oy - 0.01 - 0.0 - 0.0, 2.1) if False else None
     yard_decor([('barrel', -3.3, 1.7, 0, 1), ('snow', 3.3, 2.9, 0.4, 2), ('bush', -3.3, 3.0, 0.35, 4)])
 
 
@@ -787,6 +785,7 @@ def b_windmill():
     door_a = -90.0
     ops = [(door_a, 0.55, -1, 1.65), (0.0, 0.3, 2.3, 2.9), (180.0, 0.3, 2.3, 2.9), (-90.0, 0.28, 3.1, 3.7),
            (135.0, 0.25, 1.0, 1.5)]
+    K.S.low_cap['walls'] = 'stone_l'
     with grp('walls'):
         top = tower_ring(r0, r1, H, ops, seed=3)
         # door frame
@@ -811,10 +810,11 @@ def b_windmill():
     with grp('floor'):
         cy(r0 - 0.05, K.FZ, (0, 0, 0), 'stone_l', segs=20, bev=0.02)
         R = rnd(4)
-        for i in range(10):
-            a = math.tau * i / 10
-            bx((0.5, 0.45, 0.013), (math.cos(a) * 1.0, math.sin(a) * 1.0, K.FZ - 0.005),
-               R.choice(['stone', 'stone_w']), rot=(0, 0, math.degrees(a)), bev=0)
+        for i in range(-3, 4):
+            for j in range(-3, 4):
+                if math.hypot(i * 0.48, j * 0.48) < r0 - 0.45:
+                    bx((0.45, 0.45, 0.012), (i * 0.48, j * 0.48, K.FZ - 0.006), R.choice(['stone_l', 'stone_w']),
+                       bev=0)
         bx((1.2, 0.6, 0.08), (0, -r0 - 0.3, 0), 'stone_l', bev=0.03)
     # cap roof + axle (static)
     with grp('roof'):
@@ -832,7 +832,6 @@ def b_windmill():
         snow(0.85, 0.85, 0.07, (0, -r1 + 0.1, top + 1.04), seed=3)
         hub_y, hub_z = -r1 - 0.62, top + 0.55
         cy(0.12, 1.0, (0, -r1 - 0.1, hub_z), 'wood_dd', rot=(90, 0, 0), segs=10, origin='center')
-        fx('fx_smoke', 0.0, 0.0, -10.0) if False else None
     K.S.anim_origin['anim_blades'] = (0.0, hub_y, hub_z)
     with grp('anim_blades'):
         with xf((0.0, hub_y, hub_z)):
@@ -889,7 +888,7 @@ def b_bakery():
     sh.door('S', 1.7, w=0.95)
     sh.window('S', -1.2, w=1.4, zb=0.75, h=0.85, flowers=False, shutter=None)
     sh.window('E', -1.0, w=0.6)
-    sh.window('W', 0.6, w=0.6)
+    sh.window('W', 0.2, w=0.6)
     sh.window('N', 0.4, w=0.6, flowers=False)
     sh.window('E', 1.6, w=0.5, flowers=False)
     sh.walls(style='plank', cols=('cream', 'canvas'), trim='wood_d')
@@ -906,7 +905,7 @@ def b_bakery():
             place(F.bread_shelf, sh.against('W', -1.2, 0.4), seed=1)
             put(F.market_table, -1.2, Y0 + 0.4, 180, act=False)
             slot('shop', -1.2, Y0 + 1.1, 0)
-            put(F.round_set, 2.35, -0.9, 0, r=0.34, n=2, start=0, act='tea', tea=True, seat='red')
+            put(F.round_set, 2.4, -0.85, 0, r=0.34, n=2, start=90, act='tea', tea=True, seat='red')
             put(F.plant_pot, X1 - 0.3, Y0 + 0.3, 0, seed=3, big=False)
             put(F.rug_long, 0.3, -1.5, 0, w=1.6, d=0.8, c='red', stripe='cream')
         with room('굽는 곳'):
@@ -915,11 +914,8 @@ def b_bakery():
             for i, (x, y) in enumerate(((2.7, 2.0), (2.75, 1.5), (2.45, 1.75))):
                 F.sack(x, y, K.FZ + (0.32 if i == 2 else 0.0), s=0.7, c='flour' if i % 2 else 'sack', flour=True)
             place(F.cupboard, sh.against('E', 0.35, 0.4), seed=5, dish='cream')
-            with xf((-0.5, 0.35, K.FZ)):
-                F.bread_shelf(w=1.0, d=0.35, act=None, seed=4)
-            slot('bake', -0.5, 0.88, 180)
-    sh.hang('E', -0.2 + 0.0, 1.3, F.wall_shelf, w=0.4, items='jars') if False else None
-    sh.hang('W', -0.25, 1.35, F.wall_shelf, w=0.6, items='jars')
+            place(F.bread_shelf, sh.against('W', 1.3, 0.4), w=1.0, act=None, seed=4)
+    sh.hang('E', -0.45 - 1.0, 1.35, F.wall_shelf, w=0.6, items='jars')
     sh.hang('S', 0.3, 1.6, F.clock)
     sh.hang('N', 2.5, 1.4, F.picture, w=0.4, h=0.3, art=('cream', 'bread', 'yellow'))
     with grp('walls~'):
@@ -967,7 +963,7 @@ def b_tavern():
             put(F.armchair, -2.75, 1.5, 295, c='green', act='warm')
             put(F.rug_round, -3.0, 0.9, 0, r=0.75, c='red_d', inner='mustard', border='cream')
             put(F.plant_pot, 2.1, Y1 - 0.3, 0, seed=4)
-            put(F.bench_in, -1.6, Y1 - 0.22, 180, length=1.3, cushion='red')
+            put(F.bench_in, -1.6, Y1 - 0.22, 0, length=1.3, cushion='red')
         with room('홀'):
             for i, x in enumerate((-0.4, 0.4, 1.2)):
                 slot('shop', x, 0.6, 180)
@@ -988,7 +984,6 @@ def b_tavern():
             put(F.crate_in, 3.7, 1.4, 10, s=0.5)
             put(F.crate_in, 3.7, 1.4, 30, s=0.42, z=K.FZ + 0.5)
             F.sack(2.9, 1.35, K.FZ, s=0.7, c='sack', flour=False)
-    sh.hang('N', -2.6 + 1.0, 1.6, F.picture, w=0.5, h=0.4, art=('navy', 'leaf_l', 'gold')) if False else None
     sh.hang('W', -0.3, 1.5, F.picture, w=0.5, h=0.4, art=('navy', 'leaf_l', 'gold'))
     sh.hang('S', -1.2, 1.7, F.clock)
     sh.hang('E', -0.2, 1.4, F.wall_shelf, w=0.8, items='plates')
@@ -1039,7 +1034,6 @@ def b_shop():
         put(F.plant_pot, X0 + 0.3, Y0 + 0.3, 0, seed=5)
         F.broom(2.6, 0.3)
     sh.hang('S', 0.0, 1.7, F.clock)
-    sh.hang('W', -0.7 - 0.0, 1.85, F.picture, w=0.4, h=0.3) if False else None
     with grp('walls~'):
         K.awning(-1.2, -D / 2 - 0.15, 2.05, 1.8, depth=0.7, drop=0.35, c1='blue', c2='white', n=7)
         K.sign_board(0.25, -D / 2 - 0.13, 2.25, emblem='bag', w=0.55, h=0.4)
@@ -1064,9 +1058,11 @@ def b_well():
                rot=(0, 0, math.degrees(a)), bev=0.025)
     with grp('exterior'):
         F.well_model()
+    with grp('roof'):
+        F.well_roof()
     K.add_room('우물가', -1.3, -1.3, 1.3, 1.3)
     with room('우물가'):
-        slot('wash', 0.75, -1.15, 0 + 0.0 if False else K.face(0.75, -1.15, 0.75, -0.6))
+        slot('wash', 0.75, -1.15, K.face(0.75, -1.15, 0.75, -0.6))
         slot('chat', -1.2, -0.5, K.face(-1.2, -0.5, 0, 0))
         slot('chat', 1.25, 0.6, K.face(1.25, 0.6, 0, 0))
         slot('chat', -0.4, 1.3, K.face(-0.4, 1.3, 0, 0))
