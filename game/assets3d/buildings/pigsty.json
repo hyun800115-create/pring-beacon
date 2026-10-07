@@ -1,0 +1,98 @@
+{
+ "key": "pigsty",
+ "name": "돼지우리",
+ "category": "생산",
+ "size": [
+  9.0,
+  5.2
+ ],
+ "height": 3.18,
+ "rooms": [
+  {
+   "name": "돼지집",
+   "center": [
+    -2.75,
+    0.55
+   ],
+   "size": [
+    2.74,
+    2.34
+   ]
+  },
+  {
+   "name": "진흙 마당",
+   "center": [
+    1.65,
+    0.0
+   ],
+   "size": [
+    5.6,
+    5.0
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.work.1",
+   "action": "work",
+   "room": "돼지집",
+   "pos": [
+    -3.32,
+    1.22,
+    0.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "id": "slot.work.2",
+   "action": "work",
+   "room": "진흙 마당",
+   "pos": [
+    1.4,
+    -2.95,
+    0.0
+   ],
+   "yaw": 180.0
+  }
+ ],
+ "door": {
+  "out": [
+   -3.35,
+   -1.78
+  ],
+  "in": [
+   -3.35,
+   -0.17
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light",
+   "pos": [
+    -4.095,
+    -1.03,
+    1.072
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 20744,
+ "pen": {
+  "center": [
+   1.65,
+   0.0
+  ],
+  "size": [
+   4.9,
+   4.3
+  ]
+ }
+}

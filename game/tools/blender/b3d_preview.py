@@ -218,6 +218,10 @@ def main():
         elif a == '--res':
             res = int(args[i + 1])
             i += 1
+        elif a == '--out':
+            global OUT
+            OUT = os.path.abspath(args[i + 1])
+            i += 1
         elif a == '--angle':
             angle = args[i + 1]
             i += 1

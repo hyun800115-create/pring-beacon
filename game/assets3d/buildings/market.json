@@ -1,0 +1,94 @@
+{
+ "key": "market",
+ "name": "시장 가판대",
+ "category": "상업",
+ "size": [
+  4.2,
+  3.2
+ ],
+ "height": 2.92,
+ "rooms": [
+  {
+   "name": "가판대",
+   "center": [
+    0.0,
+    -0.3
+   ],
+   "size": [
+    3.0,
+    2.8
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.sell.1",
+   "action": "sell",
+   "room": "가판대",
+   "pos": [
+    0.0,
+    0.3,
+    0.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.shop.1",
+   "action": "shop",
+   "room": "가판대",
+   "pos": [
+    -0.6,
+    -1.25,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.shop.2",
+   "action": "shop",
+   "room": "가판대",
+   "pos": [
+    0.6,
+    -1.25,
+    0.0
+   ],
+   "yaw": 180.0
+  }
+ ],
+ "door": {
+  "out": [
+   0.0,
+   -1.55
+  ],
+  "in": [
+   0.0,
+   -1.05
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light_1",
+   "pos": [
+    -1.2,
+    -0.85,
+    1.722
+   ]
+  },
+  {
+   "id": "fx_light_2",
+   "pos": [
+    1.2,
+    -0.85,
+    1.722
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "roof"
+ ],
+ "tris": 7500
+}

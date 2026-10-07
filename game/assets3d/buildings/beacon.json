@@ -1,0 +1,131 @@
+{
+ "key": "beacon",
+ "name": "봄의 봉화대",
+ "category": "공공",
+ "size": [
+  5.6,
+  5.6
+ ],
+ "height": 10.55,
+ "rooms": [
+  {
+   "name": "봉화대 1층",
+   "center": [
+    0.0,
+    0.0
+   ],
+   "size": [
+    2.5,
+    2.5
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.work.1",
+   "action": "work",
+   "room": "봉화대 1층",
+   "pos": [
+    -0.2,
+    0.5,
+    0.0
+   ],
+   "yaw": -114.4
+  },
+  {
+   "id": "slot.chat.1",
+   "action": "chat",
+   "room": "",
+   "pos": [
+    -1.6,
+    -2.6,
+    0.0
+   ],
+   "yaw": 148.4
+  },
+  {
+   "id": "slot.chat.2",
+   "action": "chat",
+   "room": "",
+   "pos": [
+    1.6,
+    -2.6,
+    0.0
+   ],
+   "yaw": -148.4
+  },
+  {
+   "id": "slot.pray.1",
+   "action": "pray",
+   "room": "",
+   "pos": [
+    0.0,
+    -2.75,
+    0.0
+   ],
+   "yaw": 180.0
+  }
+ ],
+ "door": {
+  "out": [
+   0.0,
+   -2.85
+  ],
+  "in": [
+   0.0,
+   -0.95
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light_1",
+   "pos": [
+    0.95,
+    -1.75,
+    2.072
+   ]
+  },
+  {
+   "id": "fx_light_2",
+   "pos": [
+    -0.95,
+    -1.75,
+    2.072
+   ]
+  },
+  {
+   "id": "fx_fire",
+   "pos": [
+    0.0,
+    0.0,
+    9.87
+   ]
+  },
+  {
+   "id": "fx_light_3",
+   "pos": [
+    0.0,
+    0.0,
+    10.17
+   ]
+  },
+  {
+   "id": "fx_smoke",
+   "pos": [
+    0.0,
+    0.0,
+    10.87
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 22732
+}

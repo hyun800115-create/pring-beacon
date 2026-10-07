@@ -128,5 +128,125 @@
    2.6
   ],
   "height": 2.29
+ },
+ {
+  "key": "coop",
+  "name": "닭장",
+  "category": "생산",
+  "size": [
+   8.6,
+   5.2
+  ],
+  "height": 3.43
+ },
+ {
+  "key": "barn",
+  "name": "외양간",
+  "category": "생산",
+  "size": [
+   13.0,
+   8.0
+  ],
+  "height": 4.72
+ },
+ {
+  "key": "sheepfold",
+  "name": "양 우리",
+  "category": "생산",
+  "size": [
+   11.0,
+   6.0
+  ],
+  "height": 3.88
+ },
+ {
+  "key": "pigsty",
+  "name": "돼지우리",
+  "category": "생산",
+  "size": [
+   9.0,
+   5.2
+  ],
+  "height": 3.18
+ },
+ {
+  "key": "orchard",
+  "name": "과수원",
+  "category": "생산",
+  "size": [
+   9.6,
+   8.4
+  ],
+  "height": 3.37
+ },
+ {
+  "key": "apiary",
+  "name": "양봉장",
+  "category": "생산",
+  "size": [
+   8.4,
+   6.4
+  ],
+  "height": 3.38
+ },
+ {
+  "key": "fishing",
+  "name": "낚시터",
+  "category": "생산",
+  "size": [
+   6.4,
+   10.0
+  ],
+  "height": 4.01
+ },
+ {
+  "key": "dairy",
+  "name": "치즈 공방",
+  "category": "생산",
+  "size": [
+   6.6,
+   5.6
+  ],
+  "height": 5.16
+ },
+ {
+  "key": "beacon",
+  "name": "봄의 봉화대",
+  "category": "공공",
+  "size": [
+   5.6,
+   5.6
+  ],
+  "height": 10.55
+ },
+ {
+  "key": "watchtower",
+  "name": "화톳불 망루",
+  "category": "공공",
+  "size": [
+   3.0,
+   3.0
+  ],
+  "height": 4.95
+ },
+ {
+  "key": "market",
+  "name": "시장 가판대",
+  "category": "상업",
+  "size": [
+   4.2,
+   3.2
+  ],
+  "height": 2.92
+ },
+ {
+  "key": "statue",
+  "name": "마을 동상",
+  "category": "공공",
+  "size": [
+   4.2,
+   4.2
+  ],
+  "height": 3.42
  }
 ]

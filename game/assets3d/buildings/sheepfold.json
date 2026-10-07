@@ -1,0 +1,109 @@
+{
+ "key": "sheepfold",
+ "name": "양 우리",
+ "category": "생산",
+ "size": [
+  11.0,
+  6.0
+ ],
+ "height": 3.88,
+ "rooms": [
+  {
+   "name": "털 깎는 곳",
+   "center": [
+    -3.3,
+    0.6
+   ],
+   "size": [
+    3.74,
+    2.94
+   ]
+  },
+  {
+   "name": "우리 마당",
+   "center": [
+    2.0,
+    0.0
+   ],
+   "size": [
+    6.8,
+    5.8
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.work.1",
+   "action": "work",
+   "room": "털 깎는 곳",
+   "pos": [
+    -3.0,
+    0.25,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.work.2",
+   "action": "work",
+   "room": "털 깎는 곳",
+   "pos": [
+    -2.38,
+    1.57,
+    0.0
+   ],
+   "yaw": 90.0
+  },
+  {
+   "id": "slot.work.3",
+   "action": "work",
+   "room": "우리 마당",
+   "pos": [
+    3.4,
+    1.8,
+    0.0
+   ],
+   "yaw": 180.0
+  }
+ ],
+ "door": {
+  "out": [
+   -4.2,
+   -2.03
+  ],
+  "in": [
+   -4.2,
+   -0.42
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light",
+   "pos": [
+    -4.995,
+    -1.28,
+    1.222
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 18376,
+ "pen": {
+  "center": [
+   2.0,
+   0.0
+  ],
+  "size": [
+   6.1,
+   5.1
+  ]
+ }
+}

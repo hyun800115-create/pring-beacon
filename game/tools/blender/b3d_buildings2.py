@@ -156,7 +156,7 @@ def hatch(sh, side, off, w=0.5, h=0.55, ramp=0.0):
     """Animal opening in an outer wall (no door empty)."""
     with grp('walls'):
         sh.openings.append(K.door(side, off, sh.Wd, sh.Dp, w=w, h=h, depth=2 * sh.r + 0.06, lantern_side=0,
-                                  open_in=False, leaf='wood_l'))
+                                  open_in=True, leaf='wood_l'))
     if ramp:
         x, y, rot = sh.wall_xy(side, off)
         with grp('exterior'), xf((x, y), rot):
@@ -318,7 +318,7 @@ def b_coop():
     with xf((ox, oy)):
         sh = Shell(2.6, 2.3, H=1.95, seed=201, roof=('roof_r1', 'roof_r2'), shutter=None, curtain=None, over=0.35,
                    ridge=1.95 + 1.25)
-        sh.door('S', -0.45, w=0.85, h=1.5, lantern_side=1)
+        sh.door('S', -0.45, w=0.85, h=1.5, lantern_side=-1)
         sh.window('W', 0.2, w=0.5, h=0.45, zb=1.0, flowers=False)
         hatch(sh, 'E', -0.45, w=0.42, h=0.5, ramp=0.6)
         sh.walls(style='plank', cols=('plank', 'plank2'), trim='white')
@@ -492,7 +492,7 @@ def b_sheepfold():
             F.sack(sh.ix0 + 0.35, sh.iy0 + 0.4, K.FZ, s=0.7, c='canvas', flour=False)
             with xf((sh.ix1 - 0.4, sh.iy0 + 0.5, K.FZ), 90):
                 F.hay_bale()
-            slot('work', sh.ix1 - 0.95, sh.iy1 - 0.5, 270)     # wool bundling
+            slot('work', sh.ix1 - 0.95, sh.iy1 - 0.5, 90)      # wool bundling
         sh.hang('N', -1.0, 1.0, F.tool_rack, w=0.8, tools=('scythe', 'rake'))
         K.add_room('털 깎는 곳', sh.ix0 + ox, sh.iy0 + oy, sh.ix1 + ox, sh.iy1 + oy)
     with grp('walls~'), xf((ox, oy)):
@@ -530,7 +530,7 @@ def b_pigsty():
             put(F.barrel_in, sh.ix0 + 0.3, sh.iy1 - 0.3, 0, r=0.2, h=0.5)
             F.sack(sh.ix0 + 0.3, sh.iy1 - 0.85, K.FZ, s=0.6, c='sack', flour=False)
             bucket(sh.ix0 + 0.35, sh.iy0 + 0.35, K.FZ, fill='bread')
-            slot('work', sh.ix0 + 0.8, sh.iy1 - 0.5, 270 - 180)
+            slot('work', sh.ix0 + 0.8, sh.iy1 - 0.5, 270)
             F.broom(sh.ix1 - 0.2, sh.iy0 + 0.25, lean=-10)
         K.add_room('돼지집', sh.ix0 + ox, sh.iy0 + oy, sh.ix1 + ox, sh.iy1 + oy)
     with grp('walls~'), xf((ox, oy)):
@@ -575,7 +575,7 @@ def b_orchard():
             for i in range(3):
                 F.basket(sh.ix0 + 0.3, sh.iy1 - 0.3 - i * 0.38, K.FZ, fill='red', seed=i, r=0.14)
             put(F.workbench, -0.15, sh.iy0 + 0.35, 180, w=0.9, d=0.45, vise=False, items=False, act=None)
-            slot('work', -0.15, sh.iy0 + 0.85, 180 + 180 - 180)
+            slot('work', -0.15, sh.iy0 + 0.85, 0)
             with xf((sh.ix0 + 0.15, sh.iy0 + 0.6, K.FZ), 0):
                 for s in (-1, 1):
                     seg((0, s * 0.2, 0), (0.1, s * 0.2, 1.5), 0.025, 'wood_l')
@@ -649,8 +649,7 @@ def b_apiary():
                 seg((0.18, 0, 0.78), (0.18, 0, 0.88), 0.02, 'wood_d')
                 seg((0, -0.3, 0.12), (0, -0.4, 0.1), 0.02, 'iron')
             bucket(0.35, -0.05, K.FZ, fill='orange')
-            slot('work', 0.35, -0.3, 0)                         # 꿀 짜는 자리 (looks at the drum? -> face)
-            K.S.slots[-1]['yaw'] = (K.face(0.35 + ox, -0.3 + oy, 0.35 + ox, 0.45 + oy)) % 360
+            slot('work', 0.35, -0.3, 180)                       # 꿀 짜는 자리
             with xf((sh.ix0 + 0.25, 0.3, K.FZ), 270):
                 bx((1.2, 0.35, 0.05), (0, 0, 0.45), 'wood_l', bev=0.01)
                 bx((1.2, 0.35, 0.05), (0, 0, 0.95), 'wood_l', bev=0.01)
@@ -660,8 +659,7 @@ def b_apiary():
                     for i in range(5):
                         cy(0.06, 0.13, (-0.45 + i * 0.22, 0, z), 'orange', segs=8, bev=0)
                         cy(0.065, 0.02, (-0.45 + i * 0.22, 0, z + 0.13), 'canvas', segs=8, bev=0)
-            slot('work', sh.ix0 + 0.75, 0.3, 270 - 180 + 180)
-            K.S.slots[-1]['yaw'] = K.face(sh.ix0 + 0.75 + ox, 0.3 + oy, sh.ix0 + ox, 0.3 + oy) % 360
+            slot('work', sh.ix0 + 0.75, 0.3, 270)
             with xf((sh.ix1 - 0.35, sh.iy1 - 0.35, K.FZ)):
                 F.crate_in(0.45, fill='orange', seed=3)
             # smoker + spare frames
@@ -851,7 +849,7 @@ def b_dairy():
             cy(0.17, 0.55, (0, 0, 0), 'wood_l', r_top=0.13, segs=12, bev=0.01)
             cy(0.18, 0.04, (0, 0, 0.12), 'iron', segs=12, bev=0)
             seg((0, 0, 0.55), (0, 0, 0.9), 0.015, 'wood_d')
-        slot('work', sh.ix1 - 0.85, -0.3, 270)
+        slot('work', sh.ix1 - 0.85, -0.3, 90)
         # small sales counter by the door
         put(F.round_set, -0.9, -0.95, 0, r=0.38, n=2, start=90, seat='blue', seed=4, cloth='cream')
         put(F.cupboard, sh.ix0 + 0.25, -0.5, 90, w=0.85, seed=3)
@@ -1027,7 +1025,7 @@ def b_beacon():
             K.flower_pot(sx * 1.0, -2.3, 0.0, seed=sx + 3, fc='pink' if sx < 0 else 'yellow', s=1.3)
     slot('chat', -1.6, -2.6, K.face(-1.6, -2.6, 0, 0))
     slot('chat', 1.6, -2.6, K.face(1.6, -2.6, 0, 0))
-    slot('pray', 0.0, -2.75, 180 + 180)
+    slot('pray', 0.0, -2.75, 180)
     K.set_door((0.0, -2.85), (0.0, -0.95))
 
 
@@ -1225,7 +1223,7 @@ def b_statue():
                                                                                             'white']),
                    segs=8, rings=4)
         for sx in (-1, 1):
-            put(F.bench_in, sx * 1.75, 0.25, 90 * sx + 0, length=1.1, cushion=None, n=2, z=0.0)
+            put(F.bench_in, sx * 1.75, 0.25, -90 * sx, length=1.1, cushion=None, n=2, z=0.0)
     K.add_room('광장', -2.1, -2.1, 2.1, 2.1)
     with room('광장'):
         slot('chat', -0.8, -1.55, K.face(-0.8, -1.55, 0, 0))

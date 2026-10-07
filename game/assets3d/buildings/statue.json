@@ -1,0 +1,128 @@
+{
+ "key": "statue",
+ "name": "마을 동상",
+ "category": "공공",
+ "size": [
+  4.2,
+  4.2
+ ],
+ "height": 3.42,
+ "rooms": [
+  {
+   "name": "광장",
+   "center": [
+    0.0,
+    0.0
+   ],
+   "size": [
+    4.2,
+    4.2
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.sit.1",
+   "action": "sit",
+   "room": "광장",
+   "pos": [
+    -1.43,
+    -0.025,
+    0.0
+   ],
+   "yaw": 90.0
+  },
+  {
+   "id": "slot.sit.2",
+   "action": "sit",
+   "room": "광장",
+   "pos": [
+    -1.43,
+    0.525,
+    0.0
+   ],
+   "yaw": 90.0
+  },
+  {
+   "id": "slot.sit.3",
+   "action": "sit",
+   "room": "광장",
+   "pos": [
+    1.43,
+    0.525,
+    0.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "id": "slot.sit.4",
+   "action": "sit",
+   "room": "광장",
+   "pos": [
+    1.43,
+    -0.025,
+    0.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "id": "slot.chat.1",
+   "action": "chat",
+   "room": "광장",
+   "pos": [
+    -0.8,
+    -1.55,
+    0.0
+   ],
+   "yaw": 152.7
+  },
+  {
+   "id": "slot.chat.2",
+   "action": "chat",
+   "room": "광장",
+   "pos": [
+    0.85,
+    -1.5,
+    0.0
+   ],
+   "yaw": -150.5
+  },
+  {
+   "id": "slot.pray.1",
+   "action": "pray",
+   "room": "광장",
+   "pos": [
+    0.0,
+    -1.7,
+    0.0
+   ],
+   "yaw": 180.0
+  }
+ ],
+ "door": {
+  "out": [
+   0.0,
+   -2.2
+  ],
+  "in": [
+   0.0,
+   -1.6
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light",
+   "pos": [
+    -0.43,
+    -0.06,
+    3.27
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor"
+ ],
+ "tris": 5104
+}

@@ -1,0 +1,137 @@
+{
+ "key": "dairy",
+ "name": "치즈 공방",
+ "category": "생산",
+ "size": [
+  6.6,
+  5.6
+ ],
+ "height": 5.16,
+ "rooms": [
+  {
+   "name": "공방",
+   "center": [
+    0.0,
+    0.0
+   ],
+   "size": [
+    5.34,
+    4.04
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.cook.1",
+   "action": "cook",
+   "room": "공방",
+   "pos": [
+    -1.85,
+    0.25,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.work.1",
+   "action": "work",
+   "room": "공방",
+   "pos": [
+    0.9,
+    1.17,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.work.2",
+   "action": "work",
+   "room": "공방",
+   "pos": [
+    0.6,
+    -1.0,
+    0.12
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.work.3",
+   "action": "work",
+   "room": "공방",
+   "pos": [
+    1.82,
+    -0.3,
+    0.0
+   ],
+   "yaw": 90.0
+  },
+  {
+   "id": "slot.eat.1",
+   "action": "eat",
+   "room": "공방",
+   "pos": [
+    -0.9,
+    -0.52,
+    0.12
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.eat.2",
+   "action": "eat",
+   "room": "공방",
+   "pos": [
+    -0.9,
+    -1.38,
+    0.12
+   ],
+   "yaw": 180.0
+  }
+ ],
+ "door": {
+  "out": [
+   1.5,
+   -3.18
+  ],
+  "in": [
+   1.5,
+   -1.57
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light",
+   "pos": [
+    2.295,
+    -2.43,
+    1.172
+   ]
+  },
+  {
+   "id": "fx_smoke",
+   "pos": [
+    -1.9,
+    1.35,
+    5.206
+   ]
+  },
+  {
+   "id": "fx_fire",
+   "pos": [
+    -1.85,
+    0.7,
+    0.27
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 39984
+}

@@ -1,0 +1,109 @@
+{
+ "key": "coop",
+ "name": "닭장",
+ "category": "생산",
+ "size": [
+  8.6,
+  5.2
+ ],
+ "height": 3.43,
+ "rooms": [
+  {
+   "name": "닭집",
+   "center": [
+    -2.75,
+    0.5
+   ],
+   "size": [
+    2.34,
+    2.04
+   ]
+  },
+  {
+   "name": "마당",
+   "center": [
+    1.4,
+    0.0
+   ],
+   "size": [
+    5.5,
+    4.9
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "slot.work.1",
+   "action": "work",
+   "room": "닭집",
+   "pos": [
+    -2.6,
+    0.67,
+    0.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "id": "slot.work.2",
+   "action": "work",
+   "room": "닭집",
+   "pos": [
+    -1.88,
+    0.33,
+    0.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "id": "slot.work.3",
+   "action": "work",
+   "room": "마당",
+   "pos": [
+    2.6,
+    0.95,
+    0.0
+   ],
+   "yaw": 180.0
+  }
+ ],
+ "door": {
+  "out": [
+   -3.2,
+   -1.68
+  ],
+  "in": [
+   -3.2,
+   -0.07
+  ]
+ },
+ "levels": 1,
+ "fx": [
+  {
+   "id": "fx_light",
+   "pos": [
+    -3.945,
+    -0.93,
+    1.122
+   ]
+  }
+ ],
+ "nodes": [
+  "exterior",
+  "floor",
+  "interior",
+  "roof",
+  "walls",
+  "walls_low"
+ ],
+ "tris": 15488,
+ "pen": {
+  "center": [
+   1.4,
+   0.0
+  ],
+  "size": [
+   4.8,
+   4.2
+  ]
+ }
+}
