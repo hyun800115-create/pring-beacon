@@ -183,6 +183,7 @@ export class People {
   // ================================================================ 생각하기
   think(p, phase) {
     if (p.event) { this.wait(p, 0.5, p.eventAnim || 'idle'); return; }
+    if (p.ctrl && p.ctrl(p, phase) !== false) return;   // 다른 기능(방문 등)이 잠시 이 사람을 맡을 때
     if (p.ai) { this.aiThink(p, phase); return; }
     if (p.slot && !(phase === PHASE.NIGHT && p.slot.s.action === 'sleep')) this.leaveSlot(p);
     if (phase === PHASE.NIGHT) { this.offDuty(p); this.goSleep(p); return; }

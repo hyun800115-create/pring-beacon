@@ -60,6 +60,7 @@ export class Hud {
     snd.title = '소리 켜기/끄기';
     snd.onclick = () => { g.audio.setOn(!g.audio.on); snd.textContent = g.audio.on ? '🔊' : '🔇'; };
     this.rightEl.appendChild(snd);
+    this.sndBtn = snd;
     top.append(this.clockEl, this.stockEl, this.rightEl);
     r.appendChild(top);
 
@@ -321,6 +322,22 @@ export class Hud {
       m.querySelector('[data-x]').onclick = () => { m.style.display = 'none'; };
     };
     show(null);
+  }
+
+  /** 다른 기능이 위쪽 오른쪽에 버튼을 더한다 (소리 버튼 앞) */
+  addSysButton(label, title, onClick) {
+    const b = el('button', 'sysb', label);
+    b.title = title; b.onclick = onClick;
+    this.rightEl.insertBefore(b, this.sndBtn);
+    return b;
+  }
+  /** 가운데 팝업: html 을 넣고 bind(팝업 요소) 로 버튼을 연결. 닫기 함수를 돌려준다 */
+  modal(html, bind) {
+    const m = this.modalEl;
+    m.innerHTML = html; m.style.display = '';
+    const close = () => { m.style.display = 'none'; };
+    if (bind) bind(m, close);
+    return close;
   }
 
   offer(o) {

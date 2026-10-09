@@ -14,6 +14,9 @@ import { makeWindmillModel, makeWell } from './game/buildings.js';
 import { Economy } from './game/economy.js';
 import { Territory, Rival } from './game/rival.js';
 import { Herds, decorate, updateOrchards, Lake } from './game/ranch.js';
+import { SaveSystem } from './game/save.js';
+import { Seasons } from './game/seasons.js';
+import { Diplomacy } from './game/diplomacy.js';
 
 const loadTxt = (t) => { const e = document.getElementById('sm-loading-txt'); if (e) e.textContent = t; };
 
@@ -54,7 +57,10 @@ class Game {
     this.territory = new Territory(this);
     this.rival = new Rival(this);
     this.herds = new Herds(this);
-    this.clock.on((ev) => { if (ev === 'morning') this.econ.morning(); });
+    this.saver = new SaveSystem(this);
+    this.seasons = new Seasons(this);
+    this.diplo = new Diplomacy(this);
+    this.clock.on((ev) => { if (ev === 'morning') { this.econ.morning(); this.diplo.morning(); } });
     for (const ev of ['bld', 'built', 'removed']) this.world.on(ev, () => { this.territory.dirty = true; });
     this.speed = 1;
     this.mode = 'view';
@@ -66,13 +72,15 @@ class Game {
     this.world.on('removed', (b) => this.people.buildingGone(b));
 
     if (this.perf) await this.setupPerf();
-    else await this.setupStart();
+    else if (!(await this.saver.offerContinue())) await this.setupStart();
+    await this.seasons.init();
     this.setupInput();
     this.makeThumbs();
     const ld = document.getElementById('sm-loading');
     if (ld) { ld.classList.add('hide'); setTimeout(() => ld.remove(), 400); }
     this.last = performance.now(); this.fps = 60;
     this.installHooks();
+    for (const m of [this.saver, this.seasons, this.diplo]) m.api(window.__SM.api);
     this.loop();
   }
 
@@ -396,16 +404,18 @@ class Game {
       w.regrow(h); w.growTrees(h);
       this.herds.update(h);
       updateOrchards(w, h, 1 + this.econ.buff('grow'));
-      if (!this.perf) this.rival.update(h);
+      if (!this.perf) { this.rival.update(h); this.diplo.update(h); }
       if (this.perf) this.perfTick();
       this.people.update(h, st.rig);
     }
     w.updateFx(Math.min(real, 0.06));
     this.econ.update(real);
+    this.seasons.update(real, dt);
+    this.saver.update(real);
     this.territory.update(real);
     if (w.lake) w.lake.update(real);
     for (const b of w.blds) if (b.flames) for (const f of b.flames) { f.p += real * 6; f.m.scale.set(1, f.s * (0.8 + 0.3 * Math.sin(f.p)), 1); f.m.material.opacity = 0.6 + 0.3 * Math.sin(f.p * 1.3); }
-    st.setTime(this.clock.frac, this.clock.season.tint);
+    st.setTime(this.clock.frac, this.seasons.groundTint != null ? this.seasons.groundTint : this.clock.season.tint);
     this.updateHover();
     this.bub.update(real);
     this.hud.tick(real);
