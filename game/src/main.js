@@ -174,10 +174,12 @@ class Game {
   setMode(m) {
     this.mode = m;
     this.roadPts = null;
+    this.ghostTapped = false; this.aim = this.aimRest = null;
     if (this.ghost) { this.stage.scene.remove(this.ghost); this.ghost = null; }
     if (this.roadPrev) { this.stage.scene.remove(this.roadPrev); this.roadPrev = null; }
     const type = m === 'settle' ? 'hall' : m.startsWith('build:') ? m.slice(6) : m.startsWith('deco:') ? m.slice(5) : m.startsWith('move:') ? this.moving && this.moving.type : null;
     if (m.startsWith('move:') && this.moving) this.placeRot = this.moving.rot;
+    if (m !== 'view') this.hud.closeCard();   // 놓기·길·없애기 상태에서는 정보 카드를 닫는다 (안내 띠를 가리지 않게)
     if (type) this.makeGhost(type);
     this.hud.refresh();
   }
@@ -206,19 +208,41 @@ class Game {
     g.userData = { foot, type };
     g.visible = false;
     const want = type === 'hall' && this.mode === 'settle' ? 'settle' : this.mode;
-    if (this.mode === want && (this.mode === 'settle' || this.mode.endsWith(type) || this.mode.startsWith('move:'))) { this.ghost = g; this.stage.scene.add(g); }
+    if (this.mode === want && (this.mode === 'settle' || this.mode.endsWith(type) || this.mode.startsWith('move:'))) {
+      this.ghost = g; this.stage.scene.add(g);
+      // 손가락 화면에는 '마우스 올리기'가 없으니 미리 보기를 바로 보여 준다 (옮기기는 지금 자리, 나머지는 화면 가운데)
+      if (this.touchy()) {
+        if (this.mode.startsWith('move:') && this.moving) this.setGhostAt(this.moving.x, this.moving.z);
+        else this.updateGhost(innerWidth / 2, innerHeight * 0.45);
+      }
+    }
   }
 
-  rotatePlacing(d) { this.placeRot += d; this.updateGhost(); }
+  // 손가락 화면인가: 마지막 누르기가 손가락이면 참, 아직 안 눌렀으면 화면 종류로 판단
+  touchy() {
+    if (this.lastPtr) return this.lastPtr !== 'mouse';
+    try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; }
+  }
+
+  // 돌리기: 미리 보기가 보이면 그 자리에서 돈다 (화면을 움직인 뒤에도 엉뚱한 곳으로 튀지 않게)
+  rotatePlacing(d) {
+    this.placeRot += d;
+    const g = this.ghost;
+    if (g && g.visible) this.setGhostAt(g.position.x, g.position.z); else this.updateGhost();
+  }
 
   updateGhost(sx, sy) {
     const g = this.ghost; if (!g) return;
     if (sx != null) this.ghostScreen = { x: sx, y: sy };
     if (!this.ghostScreen) return;
     const p = this.stage.groundAt(this.ghostScreen.x, this.ghostScreen.y);
-    if (!p) return;
+    if (p) this.setGhostAt(p.x, p.z);
+  }
+
+  setGhostAt(x, z) {
+    const g = this.ghost; if (!g) return;
     const type = g.userData.type;
-    const snapX = Math.round(p.x * 2) / 2, snapZ = Math.round(p.z * 2) / 2;
+    const snapX = Math.round(x * 2) / 2, snapZ = Math.round(z * 2) / 2;
     g.position.set(snapX, 0, snapZ); g.rotation.y = this.placeRot; g.visible = true;
     const area = this.mode === 'settle' ? { x: this.world.wagon.x, z: this.world.wagon.z, r: 22 } : null;
     if (this.moving && this.mode.startsWith('move:')) this.moving.dead = true;
@@ -231,7 +255,30 @@ class Game {
   // ---------------------------------------------------------------- 입력
   setupInput() {
     const st = this.stage;
-    st.on('hover', (x, y) => { this.hoverAt = { x, y }; if (this.ghost) this.updateGhost(x, y); });
+    window.addEventListener('pointerdown', (e) => {
+      const t = e.pointerType || '';
+      if (t && t !== this.lastPtr) { this.lastPtr = t; if (this.ghost) this.hud.refresh(); }
+    }, true);
+    st.on('hover', (x, y, e) => {
+      // 손가락에는 '올리기'가 없다: 단추를 누르다 살짝 움직인 손가락이 미리 보기를 단추 밑으로 끌고 가지 않게
+      if (e && e.pointerType && e.pointerType !== 'mouse') return;
+      const g = this.ghost;
+      if (e && e.target !== st.canvas) {
+        // 마우스가 메뉴(돌리기 단추 등) 위로 올라갔다: 땅을 가리키는 게 아니니, 미리 보기는 마지막으로 멈춰 겨눈 자리로 돌려 둔다
+        if (this.hoverAt && g && g.visible && this.aimRest) this.setGhostAt(this.aimRest.x, this.aimRest.z);
+        this.hoverAt = null; return;
+      }
+      this.hoverAt = { x, y };
+      if (!g) return;
+      const px = g.position.x, pz = g.position.z, was = g.visible;
+      this.updateGhost(x, y);
+      // 겨눈 자리 기억: 마우스가 8px 안에 0.15초 넘게 머물렀던 곳
+      const a = this.aim, now = performance.now();
+      if (!a || Math.hypot(x - a.sx, y - a.sy) > 8) {
+        if (a && was && now - a.t > 150) this.aimRest = { x: px, z: pz };
+        this.aim = { sx: x, sy: y, t: now };
+      }
+    });
     st.on('tap', (x, y) => this.tap(x, y));
     st.on('dragStart', (x, y) => {
       if (this.mode !== 'road') return false;
@@ -277,41 +324,58 @@ class Game {
   fail(msg) { this.audio.play('error', 0.5); this.hud.toast(msg, true); }
 
   async tap(sx, sy) {
-    const st = this.stage, w = this.world, m = this.mode;
+    const st = this.stage;
     if (this.ghost) {
-      this.updateGhost(sx, sy);
-      const r = this.ghost.userData.ok, at = this.ghost.userData.at;
-      if (!r || !r.ok) { this.fail(r ? r.why : '여기에는 지을 수 없어요'); return; }
-      const type = this.ghost.userData.type;
-      if (m === 'settle') {
-        this.setMode('view');
-        const hall = await w.place('hall', at.x, at.z, this.placeRot, { free: true });
-        this.people.settle(hall);
-        this.audio.play('build', 0.9);
-        this.people.news('🔨 모두 함께 마을회관을 짓기 시작했어요!', 'info');
-        return;
-      }
-      if (m.startsWith('move:')) {
-        const b = this.moving; this.moving = null;
-        b.moveTo(at.x, at.z, this.placeRot);
-        this.territory.dirty = true;
-        this.audio.play('build', 0.7, at.x, at.z);
-        this.hud.toast(`${b.name}을(를) 옮겼어요`);
-        this.setMode('view');
-        return;
-      }
-      if (m.startsWith('deco:')) {
-        await w.place(type, at.x, at.z, this.placeRot);
-        this.econ.decos[type] = Math.max(0, (this.econ.decos[type] || 0) - 1);
-        if (!this.econ.decos[type]) this.setMode('view');
-        this.hud.fillTools();
-        return;
-      }
-      await w.place(type, at.x, at.z, this.placeRot);
-      this.audio.play('build', 0.7, at.x, at.z);
-      this.hud.toast(`${BUILDINGS[type].name} 공사 자리를 정했어요. 길을 이어 주면 더 빨리 날라요!`);
+      if (this.touchy()) {   // 손가락: 누르면 미리 보기만 옮기고, 내가 옮겨 둔 자리를 한 번 더 누르거나 ✔ 를 누르면 짓는다
+        const g = this.ghost, p = st.groundAt(sx, sy);
+        // 처음 저절로 보인 미리 보기(화면 가운데·지금 자리)는 첫 누르기로 짓지 않는다: 첫 누르기는 언제나 자리 고르기
+        if (!(this.ghostTapped && g.visible && p && Math.hypot(p.x - g.position.x, p.z - g.position.z) < 1.2)) { this.updateGhost(sx, sy); this.ghostTapped = true; return; }
+      } else this.updateGhost(sx, sy);
+      return this.confirmPlace();
+    }
+    return this.tapView(sx, sy);
+  }
+
+  // 미리 보기 자리에 짓기·놓기·옮기기 (손가락 화면의 ✔ 단추도 이것을 부른다)
+  async confirmPlace() {
+    const w = this.world, m = this.mode, gh = this.ghost;
+    if (!gh) return;
+    if (!gh.visible) { this.fail('먼저 지을 곳을 눌러 주세요'); return; }
+    this.setGhostAt(gh.position.x, gh.position.z);   // 그사이 바뀐 것이 있을 수 있어 한 번 더 검사
+    const r = gh.userData.ok, at = gh.userData.at;
+    if (!r || !r.ok) { this.fail(r ? r.why : '여기에는 지을 수 없어요'); return; }
+    const type = gh.userData.type;
+    if (m === 'settle') {
+      this.setMode('view');
+      const hall = await w.place('hall', at.x, at.z, this.placeRot, { free: true });
+      this.people.settle(hall);
+      this.audio.play('build', 0.9);
+      this.people.news('🔨 모두 함께 마을회관을 짓기 시작했어요!', 'info');
       return;
     }
+    if (m.startsWith('move:')) {
+      const b = this.moving; this.moving = null;
+      b.moveTo(at.x, at.z, this.placeRot);
+      this.territory.dirty = true;
+      this.audio.play('build', 0.7, at.x, at.z);
+      this.hud.toast(`${b.name}을(를) 옮겼어요`);
+      this.setMode('view');
+      return;
+    }
+    if (m.startsWith('deco:')) {
+      await w.place(type, at.x, at.z, this.placeRot);
+      this.econ.decos[type] = Math.max(0, (this.econ.decos[type] || 0) - 1);
+      if (!this.econ.decos[type]) this.setMode('view');
+      this.hud.fillTools(); this.hud.refresh();
+      return;
+    }
+    await w.place(type, at.x, at.z, this.placeRot);
+    this.audio.play('build', 0.7, at.x, at.z);
+    this.hud.toast(`${BUILDINGS[type].name} 공사 자리를 정했어요. 길을 이어 주면 더 빨리 날라요!`);
+  }
+
+  async tapView(sx, sy) {
+    const st = this.stage, w = this.world, m = this.mode;
     const gp = st.groundAt(sx, sy);
     if (m === 'remove') {
       const b = this.pickBuilding(sx, sy);
@@ -352,13 +416,14 @@ class Game {
   /** 카드 버튼 */
   act(a, sel) {
     const w = this.world;
+    if (sel && sel.ai && (a === 'upgrade' || a === 'move' || a === 'remove')) return;   // 이웃 마을 건물은 손대지 않는다
     if (a === 'follow') { this.follow = this.follow === sel ? null : sel; if (this.follow) this.stage.goal.dist = Math.min(this.stage.goal.dist, 18); }
     if (a === 'inside') { sel.pinned = !sel.pinned; sel.setCutaway(sel.pinned); }
-    if (a === 'upgrade') { if (w.upgrade(sel)) { this.hud.toast(`${sel.def.levels[sel.level + 1].name}로 업그레이드를 시작해요`); this.audio.play('build', 0.6, sel.x, sel.z); } }
+    if (a === 'upgrade') { if (w.upgrade(sel)) { this.hud.toast(`${sel.def.levels[sel.level + 1].name}(으)로 업그레이드를 시작해요`); this.audio.play('build', 0.6, sel.x, sel.z); } }
     if (a === 'remove') { if (sel.def) { w.remove(sel); this.hud.closeCard(); } }
     if (a === 'roadrm') { w.roads.removeEdge(sel); this.hud.closeCard(); }
     if (a === 'roadup') this.upgradeRoad(sel);
-    if (a === 'move') { this.moving = sel; this.hud.closeCard(); this.setMode('move:' + sel.id); this.hud.toast('새 자리를 눌러 주세요 (Q·E 로 돌리기)'); }
+    if (a === 'move') { this.moving = sel; this.hud.closeCard(); this.setMode('move:' + sel.id); }
     this.hud.cardEl.__h = null;
   }
 
@@ -369,21 +434,13 @@ class Game {
     const nr = ROADS[next], n = Math.max(1, Math.ceil(e.len / nr.per));
     for (const [k, v] of Object.entries(nr.cost)) if ((w.stock[k] || 0) < v * n) { this.fail(`${ITEMS[k].name}이(가) ${v * n}개 필요해요 (창고 ${Math.floor(w.stock[k] || 0)}개)`); return; }
     const pp = this.people;
-    const p = pp.list.filter((q) => !q.dead && q.stage === 'adult' && !q.job && !q.event && !q.hidden).sort((a, b) => Math.hypot(a.x - e.pts[0].x, a.z - e.pts[0].z) - Math.hypot(b.x - e.pts[0].x, b.z - e.pts[0].z))[0];
+    const p = pp.list.filter((q) => !q.dead && !q.ai && !q.leaving && q.stage === 'adult' && !q.job && !q.event && !q.hidden).sort((a, b) => Math.hypot(a.x - e.pts[0].x, a.z - e.pts[0].z) - Math.hypot(b.x - e.pts[0].x, b.z - e.pts[0].z))[0];
     if (!p) { this.fail('쉬고 있는 주민이 없어요. 조금 뒤에 다시 해 주세요'); return; }
     for (const [k, v] of Object.entries(nr.cost)) w.stock[k] -= v * n;
+    // 길 공사 일감: 어디까지 깔았는지(k)를 길에 적어 둔다. 저녁·아침·마을 행사로 손을 놓아도 다음에 (다른 사람이라도) 이어서 깐다 (people.doRoad)
     e.busy = true;
-    pp.clearQ(p); if (p.slot) pp.leaveSlot(p);
-    p.job = { kind: 'road', x: e.pts[0].x, z: e.pts[0].z };
-    pp.walkTo(p, e.pts[0].x, e.pts[0].z);
-    pp.doit(p, () => pp.setLook(p, 'miner'));
-    for (let k = 0; k < e.pts.length; k += 3) {
-      const pt = e.pts[k];
-      pp.walkTo(p, pt.x + 0.6, pt.z, 0.7);
-      pp.wait(p, 0.9, 'work', Math.atan2(-0.6, 0));
-      pp.doit(p, () => { w.chips(pt.x, 0.2, pt.z, 0x9aa3ad, 3); this.audio.play('mine', 0.25, pt.x, pt.z); });
-    }
-    pp.doit(p, () => { w.roads.setType(e, next); e.busy = false; pp.setLook(p, p.look); p.job = null; pp.say(p, 'brave'); this.people.news(`🛤️ ${nr.name}이(가) 깔렸어요`, 'info'); });
+    e.up = { next, k: 0, cost: Object.fromEntries(Object.entries(nr.cost).map(([k, v]) => [k, v * n])), p: null };
+    pp.giveJob(p, { kind: 'road', edge: e, x: e.pts[0].x, z: e.pts[0].z });
     this.hud.toast(`${p.name}이(가) ${nr.name}을(를) 깔러 가요`);
   }
 

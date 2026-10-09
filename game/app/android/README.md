@@ -82,8 +82,7 @@ PLAYWRIGHT_BROWSERS_PATH=../.cache/pw-browsers node tools/test/android_test.mjs 
   - `package.json`, `capacitor.config.json` — 앱 껍데기(Capacitor 7) 설정. 앱 이름 `봄날의 행진`, 앱 아이디 `kr.springmarch.game` (바꾸면 다른 앱이 되어 저장이 이어지지 않음)
   - `www/` — 휴대폰 안에 들어가는 게임 묶음. 빌드할 때마다 새로 만듦 (git 에 안 올림)
   - `android/` — 안드로이드 프로젝트. `MainActivity.java`(전체 화면·화면 안 꺼짐·뒤로 가기·저장 신호), 아이콘, 가로 고정 등은 **빌드 스크립트가 매번 다시 써 넣으므로** 고칠 때는 `tools/build/build_android.mjs` 를 고친다.
-- **휴대폰 앱 전용 보정** (`build_android.mjs` 안 `APP_CSS`·`TOUCH_PLACE`, `www/index.html` 에만 들어감, 본판 `game/src` 는 안 건드림):
-  자원 줄을 위쪽 둘째 줄로(모든 물건이 보이게), 휴대폰 가로에서도 건물 값 보이기, 분류 탭이 '주/택'처럼 꺾이지 않게,
-  손가락 짓기를 "미리 보기 → ✔ 짓기" 두 단계로. 본판(hud.css·main.js)이 같은 것을 고치면 이 두 덩어리는 지운다.
-  보정 없이 본판 그대로 만들려면 `--no-app-fix`.
+- **휴대폰 화면 배치·손가락 짓기**는 이제 본판(`game/src/ui/hud.css`, `hud.js`, `main.js`)이 직접 맡는다 (웹 플레이 링크·PC 판도 같음):
+  자원 줄은 위쪽 둘째 줄로(모든 물건이 보이게), 휴대폰 가로에서도 건물 값 보이기, 분류 탭 한 줄,
+  손가락 짓기는 "미리 보기 → 땅을 누르면 옮기기 → ✔ 짓기(또는 같은 자리 한 번 더)".
 - 게임 쪽 신호: 앱이 뒤로 가면 `window` 에 `sm-app-pause`, 돌아오면 `sm-app-resume` 이벤트가 온다. `www/index.html` 안 도우미가 소리를 멈추고 `game.saver.autoSave('hide')` 를 부른다.

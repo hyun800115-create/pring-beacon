@@ -4,7 +4,7 @@
 // 1) APK 검사: 패키지 이름·앱 이름·SDK 버전·가로 화면·서명, APK 안에 게임 파일이 다 들어 있는지
 // 2) www(휴대폰 안 게임 묶음)를 작은 서버로 열어 휴대폰 화면(844x390, 터치, 배율 3)으로 실제 플레이:
 //    켜지는지, 정착·건설, 한 손가락 끌기(이동)·두 손가락 벌리기(확대), 저장소(localStorage) 유지, .glb 받기, 스크린샷,
-//    휴대폰 배치(자원 14가지 모두 보임·분류 탭 한 줄·건물 값 보임), 손가락 짓기(미리 보기 → 땅 누르기는 옮기기만 → ⟲ → ✔ 짓기)
+//    휴대폰 배치(자원 14가지 모두 보임·분류 탭 한 줄·건물 값 보임·카드가 열리면 도구 막대 접기), 손가락 짓기(미리 보기 → 땅 누르기는 옮기기만 → ⟲ → ✔ 짓기)
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
@@ -223,6 +223,16 @@ async function webTest() {
     await touch('touchStart', [[422, 195]]); await sleep(60); await touch('touchEnd', []);
     await sleep(1500);
     await page.screenshot({ path: path.join(OUT, 'a3_touch.png') });
+    // 정보 카드: 휴대폰 화면에서는 카드가 열린 동안 아래 도구 막대가 접히고(카드 단추가 잘리거나 탭을 잘못 누르지 않게), ✕ 로 닫으면 돌아온다
+    const shown = (s) => page.evaluate((q) => { const e = document.querySelector(q); return !!e && getComputedStyle(e).display !== 'none'; }, s);
+    if (!(await shown('#hud .card'))) await page.evaluate(() => { const g = window.__SM.game; g.hud.showBuilding(g.world.blds.find((b) => !b.ai && b.type === 'house' && b.state === 'active') || g.world.hall); });
+    await sleep(400);
+    const cardInfo = await page.$$eval('#hud .card button', (els) => els.map((e) => { const r = e.getBoundingClientRect(); const t = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return { t: e.textContent.trim().slice(0, 10), ok: r.bottom <= innerHeight && !!t && (t === e || e.contains(t)) }; }));
+    ok(!(await shown('#hud .dock')) && cardInfo.length > 0 && cardInfo.every((c) => c.ok), `카드가 열리면 도구 막대가 접히고 카드 단추가 모두 눌림 (${cardInfo.map((c) => c.t + (c.ok ? '' : '✗')).join(', ')})`);
+    await page.screenshot({ path: path.join(OUT, 'a3c_card.png') });
+    const cx = await page.$eval('#hud .card .x', (e) => { const r = e.getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; });
+    await page.touchscreen.tap(cx[0], cx[1]); await sleep(400);
+    ok(!(await shown('#hud .card')) && (await shown('#hud .dock')), '카드를 ✕ 로 닫으면 도구 막대가 다시 보임');
 
     // 아래 메뉴 버튼 터치 (건축 메뉴 열기 시도)
     const btns = await page.$$eval('#hud button, #hud .btn, #hud [data-tool]', (els) => els.filter((e) => e.offsetParent).slice(0, 40).map((e) => { const r = e.getBoundingClientRect(); return { t: (e.textContent || '').trim().slice(0, 12), x: r.x + r.width / 2, y: r.y + r.height / 2, w: r.width, h: r.height }; }));

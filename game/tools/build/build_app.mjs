@@ -50,22 +50,8 @@ await build({
 const code = fs.readFileSync(path.join(OUT, 'game.js'), 'utf8');
 
 // ---------------------------------------------------------------- 2. 화면 꾸밈(CSS) + 완전한 HTML 문서
-let css = fs.readFileSync(path.join(ROOT, 'src', 'ui', 'hud.css'), 'utf8').replace(/url\((['"]?)\.\.\/\.\.\/assets\//g, 'url($1assets/');
-// PC 앱 창은 가로 1024까지 줄어든다(노트북 화면 배율 150~175% 도 가로 1100~1280 쯤).
-// hud.css 의 '좁은 화면 배치'는 가로 960 이하에서만 켜져서, 그보다 조금 넓은 창에서는
-// 위쪽 막대 오른쪽(소리·서리골 버튼)이 화면 밖으로 밀리고 창고 칸이 세로로 찌그러진다.
-// → 앱에 넣는 hud.css 에서만 그 기준을 1279 로 올린다 (원본 hud.css 는 그대로, 웹·휴대폰 판은 영향 없음).
-const APP_NARROW = 1279;
-let narrowHits = 0;
-css = css.replace(/@media\s*\(\s*max-width:\s*(\d+)px\s*\)/g, (m, n) => {
-  if (+n < 800 || +n >= APP_NARROW) return m;   // 휴대폰 전용 기준이나 이미 넓은 기준은 그대로
-  narrowHits++;
-  return `@media (max-width: ${APP_NARROW}px)`;
-});
-if (!narrowHits) say(`주의: hud.css 에서 좁은 화면 기준(max-width)을 찾지 못했어요 — 좁은 창 모양을 app_test 로 꼭 확인하세요`);
-// 아래 분류 칸(주택·생산…)이 화면 가운데 절반 폭에 갇혀 글자가 두 줄로 꺾이지 않게
-css += '\n/* ===== PC 앱 추가 (tools/build/build_app.mjs 가 붙임) ===== */\n'
-  + '.dock { width: max-content; }\n.cat { white-space: nowrap; }\n';
+const css = fs.readFileSync(path.join(ROOT, 'src', 'ui', 'hud.css'), 'utf8').replace(/url\((['"]?)\.\.\/\.\.\/assets\//g, 'url($1assets/');
+// (좁은 창 배치·분류 칸 한 줄은 본판 hud.css 가 직접 맡는다 — 가로 1279 이하면 작은 배치)
 fs.writeFileSync(path.join(OUT, 'hud.css'), css);
 let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 html = html.replace(/<script type="importmap">[\s\S]*?<\/script>\s*/, '');                     // three 는 game.js 안에 들어 있다

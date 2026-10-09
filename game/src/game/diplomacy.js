@@ -1245,10 +1245,12 @@ export class Diplomacy {
       else if (iv.answer !== false && !this.fest && c.phase === PHASE.DAY && f >= iv.startAt && f < 0.55) this.startFestival();
     }
     if (this.pending.length && c.phase === PHASE.DAY && f > 0.04 && f < 0.5) {
-      const pc = this.pending[0];
-      // 우리 짐만 가는 행렬(선물)은 들고 갈 주민이 생길 때까지 조금 기다려요 (낮 0.4 가 지나면 그냥 전해요)
-      const wait = pc.ours && !(pc.loads && pc.loads.length) && f < 0.4 && !this.freeOurs(1, { jobs: true }).length;
-      if (!wait) { this.pending.shift(); this.startCaravan(pc.loads, pc.ours, pc.why); }
+      // 우리 짐만 가는 행렬(선물)은 들고 갈 주민이 생길 때까지 기다려요 (오늘 안 되면 내일 아침에). 뒤에 선 교환 행렬은 먼저 떠나요
+      const giftOnly = (pc) => pc.ours && !(pc.loads && pc.loads.length);
+      const free = this.freeOurs(1, { jobs: true }).length > 0;
+      const k = this.pending.findIndex((pc) => !giftOnly(pc) || free);
+      if (k >= 0) { const [pc] = this.pending.splice(k, 1); this.startCaravan(pc.loads, pc.ours, pc.why); }
+      else if (f > 0.4 && this.waitNewsDay !== c.day) { this.waitNewsDay = c.day; this.news('🎁 선물을 들고 갈 주민이 모두 바빠서 기다리고 있어요', 'info'); }
     }
   }
   morning() {

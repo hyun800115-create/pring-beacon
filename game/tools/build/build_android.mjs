@@ -4,7 +4,6 @@
 //   node tools/build/build_android.mjs --web-only   www(휴대폰에 들어갈 게임 묶음)만 만들기
 //   node tools/build/build_android.mjs --setup      자바(JDK 21)·안드로이드 도구가 없으면 .cache 에 내려받아 설치 (새 PC 용)
 //   옵션: --no-release  서명한 출시용 APK 건너뛰기,  --clean  www 를 지우고 처음부터 (모델 압축도 다시)
-//         --no-app-fix  휴대폰 앱 전용 보정(자원 줄·건물 값·분류 탭·손가락 짓기 미리 보기)을 빼고 본판 그대로
 //
 // 설치물은 모두 저장소 안 .cache 에만 둔다 (컴퓨터 설정은 건드리지 않음):
 //   .cache/jdk (자바), .cache/android-sdk (안드로이드 도구), .cache/gradle (빌드 도구 창고),
@@ -135,11 +134,9 @@ async function buildWeb() {
   let html = fs.readFileSync(path.join(GAME, 'index.html'), 'utf8');
   const must = (re, to, what) => { if (!re.test(html)) throw new Error('index.html 에서 ' + what + ' 을(를) 못 찾았어요'); html = html.replace(re, to); };
   must(/<script type="importmap">[\s\S]*?<\/script>\s*/, '', '가져오기 지도');
-  // hud.css 다음에 휴대폰 앱 전용 보정(APP_CSS)을 붙인다 (--no-app-fix 면 본판 그대로)
-  const fix = args.has('--no-app-fix') ? '' : `\n<style id="sm-app-fix">\n${APP_CSS}\n</style>`;
-  must(/<link rel="stylesheet" href="src\/ui\/hud\.css">/, () => `<style>\n${css}\n</style>${fix}`, 'hud.css 연결');
-  const helper = APP_HELPER + (args.has('--no-app-fix') ? '' : '\n' + TOUCH_PLACE);
-  must(/<script type="module" src="src\/main\.js"><\/script>/, () => `<script>\n${helper}\n</script>\n<script type="module" src="game.js"></script>`, 'main.js 연결');
+  // (휴대폰 화면 배치·손가락 짓기는 본판 hud.css·main.js 가 직접 맡는다)
+  must(/<link rel="stylesheet" href="src\/ui\/hud\.css">/, () => `<style>\n${css}\n</style>`, 'hud.css 연결');
+  must(/<script type="module" src="src\/main\.js"><\/script>/, () => `<script>\n${APP_HELPER}\n</script>\n<script type="module" src="game.js"></script>`, 'main.js 연결');
   if (!/viewport-fit=cover/.test(html)) html = html.replace(/<meta name="viewport" content="([^"]*)">/, '<meta name="viewport" content="$1, viewport-fit=cover">');
   if (!/^<!doctype html>/i.test(html.trim())) html = '<!doctype html>\n' + html;
   fs.writeFileSync(put('index.html'), html);
@@ -209,121 +206,6 @@ const APP_HELPER = `(function () {
   window.addEventListener('sm-app-pause', pause);
   window.addEventListener('sm-app-resume', resume);
   document.addEventListener('visibilitychange', function () { if (document.hidden) pause(); else resume(); });
-})();`;
-
-// ------------------------------------------------------------------ 휴대폰 앱 전용 보정 (본판 game/src 는 건드리지 않는다)
-// 본판(hud.css·main.js)이 같은 문제를 고치면 이 두 덩어리(APP_CSS, TOUCH_PLACE)는 지워도 된다.
-// 빼고 만들어 보려면: node tools/build/build_android.mjs --web-only --no-app-fix
-const APP_CSS = `/* ===== 휴대폰 앱 전용 보정 (build_android.mjs 가 넣음) ===== */
-/* 가운데 상자: left:50% + translateX(-50%) 는 너비가 화면 절반에 갇혀 분류 탭 글자가 '주/택' 처럼 꺾인다
-   → 양옆을 0 으로 두고 자동 여백으로 가운데 맞춤 (너비는 내용만큼, 화면 전체까지 쓸 수 있음) */
-#hud .dock, #hud .placebar, #hud .prompt, #hud .toast { left: 0; right: 0; margin-left: auto; margin-right: auto; width: fit-content; transform: none; }
-#hud .cat { white-space: nowrap; }
-#hud .placebar .pn { font-size: 12px; color: #4a5a78; white-space: nowrap; }
-#hud .placebar .pn:empty { display: none; }
-@media (max-width: 960px), (max-height: 480px) {
-  /* 자원 줄: 휴대폰에서는 위쪽 줄 바로 아래에 따로 한 줄 (모든 물건이 보이게, 넘치면 두 줄) */
-  #hud .top { justify-content: space-between; }
-  #hud .stock { position: absolute; top: 100%; left: 0; right: 0; margin: 4px auto 0; width: fit-content; max-width: 100%;
-    flex: none; flex-wrap: wrap; overflow: visible; justify-content: center; gap: 2px 3px; padding: 3px 6px; }
-  #hud .stock .chip { gap: 1px; padding: 0 3px 0 0; font-size: 11px; }
-  #hud .stock .chip span:first-child { font-size: 15px !important; }
-  #hud .news, #hud .card { top: calc(80px + env(safe-area-inset-top, 0px)); }
-  /* 소식은 새 것이 위 — 아래 메뉴와 겹치지 않게 오래된 것부터 잘림 */
-  #hud .news { max-height: calc(100vh - 210px); overflow: hidden; }
-  #hud .card { max-height: calc(100vh - 190px); }
-  #hud .prompt { top: calc(80px + env(safe-area-inset-top, 0px)); }
-}
-@media (max-height: 480px) {
-  /* 건물 값: 휴대폰 가로에서도 단추에 보이게 (단추 너비는 글자에 맞춤) */
-  #hud .tool { width: auto; min-width: 58px; height: auto; min-height: 62px; padding: 2px 5px; }
-  #hud .tool .co { display: block; font-size: 9.5px; line-height: 1.15; }
-  #hud .placebar { bottom: calc(124px + env(safe-area-inset-bottom, 0px)); }
-}`;
-
-// 손가락으로 짓기: 터치 화면에는 '마우스 올리기'가 없어서 본판은 첫 누르기에 바로 지어 버린다 (자리·빨강/초록·정문 화살표를 못 봄).
-// 앱에서는: 짓기 상태가 되면 화면 가운데에 미리 보기 → 땅을 누르면 미리 보기만 옮김 → "✔ 짓기" 또는 같은 자리를 한 번 더 누르면 지음.
-// 마우스로 누를 때는 본판 그대로.
-const TOUCH_PLACE = `(function () {
-  var lastPtr = '';
-  window.addEventListener('pointerdown', function (e) { lastPtr = e.pointerType || ''; }, true);
-  function coarse() { try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } }
-  function touchy() { return lastPtr ? lastPtr !== 'mouse' : coarse(); }
-  function game() { try { return window.__SM && window.__SM.game; } catch (e) { return null; } }
-  function shownGhost(g) { var gh = g.ghost; return gh && gh.visible ? gh : null; }
-  // 미리 보기 자리에 짓기 (본판의 누르기 처리를 미리 보기 자리 화면 위치로 부른다)
-  function placeNow(g, orig) {
-    var gh = shownGhost(g);
-    if (!gh) { if (g.hud && g.hud.toast) g.hud.toast('먼저 지을 곳을 눌러 주세요', true); return Promise.resolve(); }
-    var s = g.stage.toScreen(gh.position.x, 0, gh.position.z);
-    return orig.call(g, s.x, s.y);
-  }
-  function sameSpot(g, gh, sx, sy) {
-    var p = g.stage.groundAt(sx, sy);
-    return !!p && Math.hypot(p.x - gh.position.x, p.z - gh.position.z) < 1.2;
-  }
-  function touchUi(g, ok) {
-    var on = touchy() || coarse();
-    ok.style.display = on ? '' : 'none';
-    if (!on) return;
-    var m = g.mode || '', pe = g.hud.promptEl, pn = g.hud.placeBar.querySelector('.pn');
-    ok.textContent = m.indexOf('move:') === 0 ? '✔ 옮기기' : m.indexOf('deco:') === 0 ? '✔ 놓기' : '✔ 짓기';
-    if (pe) {
-      if (m === 'settle') pe.textContent = '🛷 마차가 도착했어요! 마을회관 자리를 누르고 ✔ 짓기를 눌러 주세요';
-      else if (m.indexOf('build:') === 0) pe.textContent = pe.textContent.replace('놓을 곳을 눌러 주세요', '놓을 곳을 누르고 ✔ 짓기');
-    }
-    if (pn) {   // 짓는 값 (휴대폰에서는 단추가 작아 놓치기 쉬움)
-      var co = null;
-      (g.hud.toolBtns || []).forEach(function (b) { if (b.dataset.m === m) co = b.querySelector('.co'); });
-      pn.textContent = co ? co.textContent : '';
-    }
-  }
-  var seen = null;
-  function autoGhost(g) {   // 짓기 상태가 되면 화면 가운데에 미리 보기를 바로 보여 준다 (손가락 화면만)
-    var gh = g.ghost;
-    if (!gh || gh === seen) return;
-    if (!(touchy() || coarse())) return;
-    seen = gh;
-    if (!gh.visible) g.updateGhost(innerWidth / 2, innerHeight * 0.45);
-  }
-  function setup() {
-    var g = game();
-    if (!g || !g.hud || !g.stage) return false;
-    if (g.__smTouchPlace) return true;
-    if (typeof g.tap !== 'function' || typeof g.updateGhost !== 'function' || typeof g.rotatePlacing !== 'function' || typeof g.stage.toScreen !== 'function' ||
-        typeof g.stage.groundAt !== 'function' || !g.hud.placeBar || typeof g.hud.refresh !== 'function') return true;   // 본판 구조가 바뀌면 손대지 않음
-    g.__smTouchPlace = true;
-    var orig = g.tap, origRot = g.rotatePlacing, origRefresh = g.hud.refresh;
-    g.tap = function (sx, sy) {
-      if (!this.ghost || !touchy()) return orig.apply(this, arguments);
-      var gh = shownGhost(this);
-      if (gh && sameSpot(this, gh, sx, sy)) return placeNow(this, orig);   // 보이는 자리를 한 번 더 → 짓기
-      this.updateGhost(sx, sy);   // 미리 보기만 옮김
-      return Promise.resolve();
-    };
-    // 돌리기: 미리 보기가 지금 있는 자리에서 돈다 (화면을 움직인 뒤에도 엉뚱한 곳으로 튀지 않게)
-    g.rotatePlacing = function () {
-      var gh = shownGhost(this);
-      if (gh) { var s = this.stage.toScreen(gh.position.x, 0, gh.position.z); this.ghostScreen = { x: s.x, y: s.y }; }
-      return origRot.apply(this, arguments);
-    };
-    var pb = g.hud.placeBar, ok = document.createElement('button');
-    ok.setAttribute('data-a', 'ok'); ok.className = 'go'; ok.textContent = '✔ 짓기';
-    ok.onclick = function () { placeNow(g, orig); };
-    pb.insertBefore(ok, pb.querySelector('[data-a=x]'));
-    g.hud.refresh = function () { var r = origRefresh.apply(this, arguments); try { touchUi(g, ok); } catch (e) {} return r; };
-    // 집 옮기기 알림의 키보드 이야기(Q·E)를 손가락 방식으로
-    var origToast = g.hud.toast;
-    if (typeof origToast === 'function') g.hud.toast = function (msg) {
-      var a = Array.prototype.slice.call(arguments);
-      if (typeof msg === 'string' && (touchy() || coarse())) a[0] = msg.replace(/\\s*\\(Q·E 로 돌리기\\)/, ' → ✔ 옮기기');
-      return origToast.apply(this, a);
-    };
-    touchUi(g, ok);
-    setInterval(function () { try { autoGhost(g); } catch (e) {} }, 120);
-    return true;
-  }
-  var iv = setInterval(function () { var done = true; try { done = setup(); } catch (e) {} if (done) clearInterval(iv); }, 250);
 })();`;
 
 // ------------------------------------------------------------------ 3) 안드로이드 프로젝트 정리

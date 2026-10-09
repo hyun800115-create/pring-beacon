@@ -71,7 +71,7 @@ PLAYWRIGHT_BROWSERS_PATH=.cache/pw-browsers npx playwright install chromium
 - 시험 결과(2026-10-07): 주인공 캐릭터 렌더 10장 약 1초, 서리마을 원본 실행 스크린샷 오류 0건.
 - 정확한 사용법·옵션은 `docs/handoff/03~05` 참고.
 
-## 새 게임 「봄날의 행진」 현재 상태 (2026-10-07, 3D 전환 중)
+## 새 게임 「봄날의 행진」 현재 상태 (2026-10-10, 3D 판 + 저장·계절·외교·PC·안드로이드)
 - 결정 사항: `docs/기획_결정.md` (질문 13개 + 마을 생활 + 1판 피드백: 3D·360° 회전, 깃발 없는 직접 운반, 자유 길·배치, 분류 메뉴, 건설 현장, 실내 생활).
 - **3D 계약서**: `docs/CONTRACT3D.md` (건물 GLB 노드 이름 roof/walls/walls_low/iwalls/iwalls_low/floor/interior/exterior/anim_*/fx_*, slot.<동작>.<번호>, 가구 목록).
 - 2D 시제품은 보관만: `game/index2d.html` + `game/src2d/` (Phaser).
@@ -89,4 +89,10 @@ PLAYWRIGHT_BROWSERS_PATH=.cache/pw-browsers npx playwright install chromium
   - 주의: Blender 에서 위치 읽기 전에 `bpy.context.view_layer.update()`, 합친 뒤 면 방향 다시 계산. 계산 무늬 재질은 굽지 않으면 하얗게 나옴.
 - 시험: `cd game && PLAYWRIGHT_BROWSERS_PATH=../.cache/pw-browsers node tools/test/g3d.mjs ../.cache/shots/g3d --play 120` (`--gpu` = 이 PC 그래픽카드, `--perf` = 주민 300명). 모델 보기: `viewer.html?k=npc_aunt&c=idle,walk&p=tree_pine_a`.
 - 3D 플레이 링크: `node tools/build/build_play3d.mjs` → `.cache/dist3d` 를 아티팩트로 (GLB 는 서버가 안 받아서 `.glb.wasm` 이름으로) https://claude.ai/artifact/5XuyygwQ1ZtQPPnm3DXM9C
+  - 파일이 255개를 넘으면 한 번에 못 올린다 → 같은 주소로 바뀐/새 파일만 올린다(빠진 파일은 그대로 남음).
+- 기능 모듈 (2026-10-10, 계약서 `docs/CONTRACT_FEATURES.md`): `src/game/save.js`(저장·이어하기, 아침·💾·창 닫을 때 자동 저장), `seasons.js`(계절 나무·땅·지붕 눈, `b3d_seasons.py` → `assets3d/props/season_*.glb`), `diplomacy.js`(서리골 우호도·교환·선물·마실·축제), `src/core/josa.js`(이(가)·을(를) 조사 자동 고르기 — 뉴스·알림 글은 `이(가)` 식으로 써도 됨).
+- 화면: 자원 줄은 위쪽 줄 아래 따로 한 줄, 좁은 화면 기준 가로 1279/세로 480. 손가락 화면은 "미리 보기 → 땅 누르면 옮기기 → ✔ 짓기"(`Game.touchy()`, `confirmPlace()`), 마우스는 누르면 바로 짓기.
+- PC 설치판: `node tools/build/build_app.mjs` (Electron, `game/app/pc`) → `.cache/release/봄날의행진-설치-0.1.0.exe`, `봄날의행진-바로실행-0.1.0.exe`. 시험 `tools/test/app_test.mjs` (창 숨김 `SM_HIDDEN=1`).
+- 안드로이드: `node tools/build/build_android.mjs` (Capacitor 7, `game/app/android`, 자바·SDK 는 `.cache/jdk`·`.cache/android-sdk`) → `.cache/release/android/봄날의행진-0.1.0-release.apk`(서명판)·`-debug.apk`. 서명 열쇠 `.cache/android-keystore` — **따로 백업, git 금지**. 시험 `tools/test/android_test.mjs`. 이 PC 는 가상화가 꺼져 있어 에뮬레이터 없음 → 진짜 폰 확인 필요.
+- **시험 창 금지**: 대표님 PC 화면에 창을 띄우지 않는다. 브라우저 시험은 `pw.mjs` 의 `launchGpu()`(창 없이 진짜 그래픽카드 60fps), 하위 프로그램은 `windowsHide: true`.
 - 2D 판 플레이 링크(보관): https://claude.ai/artifact/8eXSM5tB3aDGm83kWFPWVF

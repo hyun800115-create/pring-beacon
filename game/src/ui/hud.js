@@ -1,6 +1,7 @@
 // 화면 위 메뉴 (HTML): 시간·속도, 창고, 소식, 할 일, 분류별 건축 메뉴, 카메라 버튼, 정보 카드, 이주민 팝업, 알림.
 
 import { BUILDINGS, BUILD_MENU, CATEGORIES, ITEMS, ITEM_ORDER, NUM, ROADS, ROAD_ORDER, CARDS, CARD_COST, DECOS } from '../game/defs.js';
+import { josa } from '../core/josa.js';
 
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -68,14 +69,14 @@ export class Hud {
     this.goalEl = el('div', 'goal panel'); this.goalEl.style.bottom = 'calc(150px + env(safe-area-inset-bottom, 0px))'; r.appendChild(this.goalEl);
 
     // 아래: 분류 탭 + 도구
-    this.dock = el('div', 'dock pe');
+    this.dock = el('div', 'dock');
     this.catBar = el('div', 'cats');
     this.catBtns = CATEGORIES.map((c) => {
-      const b = el('button', 'cat', `${c.icon} ${c.name}`);
+      const b = el('button', 'cat pe', `${c.icon} ${c.name}`);
       b.onclick = () => { this.cat = c.key; this.fillTools(); this.refresh(); };
       this.catBar.appendChild(b); b.dataset.k = c.key; return b;
     });
-    this.bar = el('div', 'bar panel');
+    this.bar = el('div', 'bar panel pe');
     this.dock.append(this.catBar, this.bar);
     r.appendChild(this.dock);
     this.fillTools();
@@ -93,7 +94,9 @@ export class Hud {
 
     // 건물 놓을 때 돌리기
     this.placeBar = el('div', 'placebar panel pe');
-    this.placeBar.innerHTML = '<button data-a="l">⟲ 돌리기</button><span class="pn"></span><button data-a="r">돌리기 ⟳</button><button data-a="x">취소</button>';
+    this.placeBar.innerHTML = '<button data-a="l">⟲ 돌리기</button><span class="pn"></span><button data-a="r">돌리기 ⟳</button><button data-a="ok" class="go">✔ 짓기</button><button data-a="x">취소</button>';
+    this.okBtn = this.placeBar.querySelector('[data-a=ok]');
+    this.okBtn.onclick = () => g.confirmPlace();
     this.placeBar.querySelector('[data-a=l]').onclick = () => g.rotatePlacing(Math.PI / 8);
     this.placeBar.querySelector('[data-a=r]').onclick = () => g.rotatePlacing(-Math.PI / 8);
     this.placeBar.querySelector('[data-a=x]').onclick = () => g.setMode('view');
@@ -134,17 +137,34 @@ export class Hud {
     this.speedBtns.forEach((b, v) => b.classList.toggle('on', g.speed === v));
     for (const b of this.toolBtns) b.classList.toggle('on', b.dataset.m === g.mode);
     for (const b of this.catBtns) b.classList.toggle('on', b.dataset.k === this.cat);
+    // 손가락 화면: 땅을 누르면 미리 보기가 옮겨지고 ✔ 로 짓는다 (마우스는 누르면 바로 짓기)
+    const m = g.mode, touch = !!(g.touchy && g.touchy());
     const prompts = {
-      settle: '🛷 마차가 도착했어요! 주변에 마을회관을 세울 곳을 눌러 주세요 (Q·E 또는 ⟲⟳ 로 방향 돌리기)',
+      settle: touch ? '🛷 마차가 도착했어요! 마을회관 자리를 누르고 ✔ 짓기를 눌러 주세요' : '🛷 마차가 도착했어요! 주변에 마을회관을 세울 곳을 눌러 주세요 (Q·E 또는 ⟲⟳ 로 방향 돌리기)',
       road: '🛤️ 땅을 누른 채 끌면 그린 대로 길이 생겨요. 다른 길이나 건물 문 앞에 이어 주세요',
       remove: '🧹 없앨 길이나 건물을 눌러 주세요',
     };
-    let p = prompts[g.mode] || '';
-    if (g.mode.startsWith('build:')) p = `🏗️ ${BUILDINGS[g.mode.slice(6)].name}을(를) 놓을 곳을 눌러 주세요 · 노란 화살표가 정문이에요`;
-    this.promptEl.textContent = p;
+    let p = prompts[m] || '', cost = '', ok = '✔ 짓기';
+    if (m.startsWith('build:')) {
+      const d = BUILDINGS[m.slice(6)];
+      p = `🏗️ ${d.name}을(를) 놓을 곳을 ${touch ? '누르고 ✔ 짓기' : '눌러 주세요'} · 노란 화살표가 정문이에요`;
+      cost = costText(d.cost);
+    }
+    if (m.startsWith('deco:')) {
+      const k = m.slice(5);
+      p = `🌷 ${DECOS[k] ? DECOS[k].name : '장식'}을(를) 놓을 곳을 ${touch ? '누르고 ✔ 놓기' : '눌러 주세요'}`;
+      cost = `${(g.econ && g.econ.decos[k]) || 0}개 있음`; ok = '✔ 놓기';
+    }
+    if (m.startsWith('move:')) { p = `↔ ${g.moving ? g.moving.name : '건물'}을(를) 옮길 곳을 ${touch ? '누르고 ✔ 옮기기' : '눌러 주세요 (Q·E 로 돌리기)'}`; ok = '✔ 옮기기'; }
+    this.promptEl.textContent = josa(p);
     this.promptEl.style.display = p ? '' : 'none';
-    const placing = g.mode === 'settle' || g.mode.startsWith('build:');
+    this.root.classList.toggle('prompting', !!p);   // 좁은 화면: 안내 띠가 있는 동안은 같은 줄의 소식을 숨긴다
+    const placing = m === 'settle' || m.startsWith('build:') || m.startsWith('deco:') || m.startsWith('move:');
     this.placeBar.style.display = placing ? '' : 'none';
+    this.placeBar.querySelector('.pn').textContent = cost;
+    this.okBtn.textContent = ok;
+    this.okBtn.style.display = touch ? '' : 'none';
+    this.root.classList.toggle('placing', placing);
     this.dock.style.display = g.mode === 'settle' ? 'none' : '';
   }
 
@@ -157,8 +177,8 @@ export class Hud {
     for (const t of ITEM_ORDER) { const v = Math.max(0, Math.floor(w.stock[t] || 0)); this.chips[t].lastChild.textContent = v; this.chips[t].style.display = v > 0 || ['log', 'plank', 'stone', 'bread', 'fish'].includes(t) ? '' : 'none'; }
     this.coinEl.textContent = `🪙 ${g.econ.coins}`;
     this.merchBtn.style.display = g.econ.merchant ? '' : 'none';
-    const alive = ppl.list.filter((p) => !p.dead);
-    const homes = w.blds.filter((b) => b.def.kind === 'house' && b.state === 'active');
+    const alive = ppl.list.filter((p) => !p.dead && !p.ai);   // 우리 마을 사람만 (이웃 서리골 주민은 빼고)
+    const homes = w.blds.filter((b) => b.def.kind === 'house' && b.state === 'active' && !b.ai);
     const cap = homes.reduce((a, b) => a + b.def.levels[b.level].cap, 0);
     const idle = alive.filter((p) => p.stage === 'adult' && !p.job).length;
     let txt = `👥 ${alive.length}명<span class="ex"> · 🏠 ${cap}칸 · 🙋 쉬는 사람 ${idle}</span>`;
@@ -170,6 +190,21 @@ export class Hud {
     this.updateGoals();
     if (this.cardFn) this.cardFn();
     for (const d of [...this.newsEl.children]) if (performance.now() - d.__t > 12000) { d.style.opacity = 0; setTimeout(() => d.remove(), 700); d.__t = Infinity; }
+    this.fitLayout();
+  }
+
+  /** 자원 줄이 두 줄로 늘면 소식·카드·안내 띠를 그 아래로 내리고, 소식은 '할 일' 판에 가리지 않을 만큼만 보인다 */
+  fitLayout() {
+    const sb = Math.ceil(this.stockEl.getBoundingClientRect().bottom + 6);
+    if (sb !== this.stockB) { this.stockB = sb; this.root.style.setProperty('--below-stock', sb + 'px'); }
+    this.fitNews();
+  }
+  fitNews() {
+    const n = this.newsEl;
+    if (n.children.length < 2 || !n.offsetParent) return;
+    const gr = this.goalEl.getBoundingClientRect(), nr = n.getBoundingClientRect();
+    const lim = Math.min(gr.height ? gr.top - 6 : Infinity, nr.bottom + 0.5);   // 할 일 판 위, (좁은 화면) 소식 칸 높이 안
+    while (n.children.length > 1 && n.lastChild.getBoundingClientRect().bottom > lim) n.lastChild.remove();
   }
 
   updateGoals() {
@@ -194,23 +229,26 @@ export class Hud {
 
   news(text, kind) {
     const d = el('div', kind || 'info');
-    d.textContent = text; d.__t = performance.now();
+    d.textContent = josa(text); d.__t = performance.now();
     this.newsEl.prepend(d);
     while (this.newsEl.children.length > 5) this.newsEl.lastChild.remove();
+    this.fitNews();
   }
   toast(msg, err) {
     const t = this.toastEl;
-    t.textContent = msg; t.className = 'toast' + (err ? ' err' : '');
+    t.textContent = josa(msg); t.className = 'toast' + (err ? ' err' : '');
     t.style.opacity = 1;
     clearTimeout(this.toastT);
     this.toastT = setTimeout(() => { t.style.opacity = 0; }, 2600);
   }
 
   // ---------------------------------------------------------------- 정보 카드
-  closeCard() { this.cardEl.style.display = 'none'; this.cardFn = null; if (this.onClose) this.onClose(); this.onClose = null; }
+  closeCard() { this.cardEl.style.display = 'none'; this.root.classList.remove('carded'); this.cardFn = null; if (this.onClose) this.onClose(); this.onClose = null; }
   card(fn) {
     this.cardFn = () => { const h = fn(); if (h == null) { this.closeCard(); return; } if (this.cardEl.__h !== h) { this.cardEl.innerHTML = h; this.cardEl.__h = h; this.bindCard(); } };
-    this.cardEl.style.display = ''; this.cardEl.__h = null; this.cardFn();
+    this.cardEl.style.display = ''; this.cardEl.__h = null; this.cardEl.scrollTop = 0;
+    this.root.classList.add('carded');   // 휴대폰 가로 화면: 카드가 열린 동안은 아래 도구 막대를 접어 카드를 끝까지 보여 준다
+    this.cardFn();
   }
   bindCard() {
     const x = this.cardEl.querySelector('.x'); if (x) x.onclick = () => this.closeCard();
@@ -258,11 +296,11 @@ export class Hud {
       }
       let btns = '';
       if (b.hasInterior && b.state === 'active') btns += `<button data-act="inside">${b.pinned ? '🏠 지붕 덮기' : '🔍 실내 보기'}</button>`;
-      if (def.kind === 'house' && b.state === 'active' && !b.con && def.levels[b.level + 1]) {
+      if (def.kind === 'house' && b.state === 'active' && !b.con && !b.ai && def.levels[b.level + 1]) {   // 이웃 마을(서리골) 집은 고치거나 옮길 수 없다
         const nx = def.levels[b.level + 1];
-        btns += `<button data-act="upgrade">⬆ ${esc(nx.name)}로 (${esc(costText(nx.cost))})</button>`;
+        btns += `<button data-act="upgrade">⬆ ${esc(josa(nx.name + '(으)로'))} (${esc(costText(nx.cost))})</button>`;
       }
-      if ((def.kind === 'house' || def.deco) && b.state === 'active' && !b.con) btns += `<button class="gray" data-act="move">↔ 옮기기</button>`;
+      if ((def.kind === 'house' || def.deco) && b.state === 'active' && !b.con && !b.ai) btns += `<button class="gray" data-act="move">↔ 옮기기</button>`;
       if (def.kind === 'beacon') rows.push(['봉화', b.state === 'active' ? '🔥 타오르는 중 · 봄이 왔어요' : '공사가 끝나면 봉화가 켜져요']);
       if (def.kind === 'ranch') { rows.push(['동물', `${(b.animals || []).length}마리, 거둘 것 ${(b.animals || []).filter((a) => a.ready).length}`]); if (def.feed) rows.push(['먹이', `${ITEMS[def.feed].name} ${Math.ceil(b.inputs)}개`]); }
       if (def.kind === 'orchard') rows.push([def.hives ? '벌통' : '나무', `${(b.trees || []).length}개, 다 익은 것 ${(b.trees || []).filter((t) => t.ready).length}`]);
@@ -283,7 +321,7 @@ export class Hud {
       if (next && !e.busy) {
         const nr = ROADS[next], n = Math.max(1, Math.ceil(e.len / nr.per));
         const cost = Object.fromEntries(Object.entries(nr.cost).map(([k, v]) => [k, v * n]));
-        btns += `<button data-act="roadup">⬆ ${esc(nr.name)}로 (${esc(costText(cost))})</button>`;
+        btns += `<button data-act="roadup">⬆ ${esc(josa(nr.name + '(으)로'))} (${esc(costText(cost))})</button>`;
       }
       btns += '<button class="red" data-act="roadrm">길 없애기</button>';
       return `<button class="x">✕</button><h3>🛤️ ${esc(r.name)}</h3><div class="sub">길이 ${e.len.toFixed(0)}m · 걷는 속도 ×${r.speed}${e.busy ? ' · 공사 중' : ''}</div>` +

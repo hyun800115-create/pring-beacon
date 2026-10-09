@@ -4,7 +4,8 @@
 
 import * as THREE from 'three';
 import { PHASE } from './clock.js';
-import { NUM, LOOKS, NAMES, TRAITS, LINES, BUILDINGS, FOODS } from './defs.js';
+import { NUM, LOOKS, NAMES, TRAITS, LINES, BUILDINGS, FOODS, ROADS } from './defs.js';
+import { josa } from '../core/josa.js';
 
 const KID_ADULT_AGE = 2, ELDER_DEATH_AGE = 79;
 const BUILDER_LOOK = 'lumberjack';
@@ -26,7 +27,7 @@ export class People {
     clock.on((ev) => this.onClock(ev));
   }
 
-  news(text, kind = 'info') { this.log.unshift({ text, kind, day: this.clock.day }); this.w.emit('news', text, kind); }
+  news(text, kind = 'info') { text = josa(text); this.log.unshift({ text, kind, day: this.clock.day }); this.w.emit('news', text, kind); }
 
   // ================================================================ 주민 만들기
   makePerson(o) {
@@ -404,13 +405,19 @@ export class People {
     for (const b of w.blds) {
       if (b.dead || b.ai) continue;
       if (b.con) {
-        if (b.free && b.type !== 'hall') continue;   // 이주민 집은 자기들이 짓는다
+        if (b.free && b.type !== 'hall' && b.con.kind === 'build') {   // 이주민 집은 자기들이 짓는다 (업그레이드는 마을 일꾼이)
+          // 행사(결혼식 등)로 손을 놓은 가족에게 다시 맡긴다. 가족이 아무도 없으면(떠남·이사) 마을 일꾼이 짓는다
+          const fam = this.list.filter((p) => !p.dead && !p.ai && p.home === b && p.stage === 'adult');
+          if (fam.length) { for (const p of fam) if (!p.job && !p.event && !p.hidden && !p.leaving) this.giveJob(p, { kind: 'builder', bld: b, x: b.x, z: b.z }); continue; }
+        }
         const max = b.type === 'hall' ? 99 : 1;
         const any = !Object.keys(b.con.need).length || Object.values(b.con.have).some((v) => v > 0);
         if (b.builders.length < max) jobs.push({ kind: 'builder', bld: b, x: b.x, z: b.z, pri: any ? 3 : 0.6 });
       } else if (b.state === 'active' && !b.worker && ['gather', 'farm', 'process', 'ranch', 'orchard', 'fishing'].includes(b.def.kind)) jobs.push({ kind: 'worker', bld: b, x: b.x, z: b.z, pri: 2 });
     }
     for (const t of w.tasks) if (!t.carrier) jobs.push({ kind: 'haul', task: t, x: t.from.x, z: t.from.z, pri: 2.4 });
+    // 깔다 만 길 (행사·밤으로 손을 놓은 길 공사는 쉬는 사람이 이어서)
+    for (const e of w.roads.edges.values()) if (e.up && !e.up.p) { const pt = e.pts[Math.min(e.up.k, e.pts.length - 1)]; jobs.push({ kind: 'road', edge: e, x: pt.x, z: pt.z, pri: 1.5 }); }
     jobs.sort((a, b) => b.pri - a.pri);
     for (const j of jobs) {
       let best = null, bd = Infinity;
@@ -432,6 +439,7 @@ export class People {
     if (j.kind === 'builder') j.bld.builders.push(p);
     if (j.kind === 'worker') j.bld.worker = p;
     if (j.kind === 'haul') j.task.carrier = p;
+    if (j.kind === 'road') j.edge.up.p = p;
     this.clearQ(p);
     const tr = TRAITS[p.trait] || {};
     if ((tr.grumble && this.r() < tr.grumble) || p.mood < 0.35) this.emote(p, 'grumble', 'angry', 1.0);
@@ -443,6 +451,7 @@ export class People {
     const j = p.job; if (!j) return;
     if (j.kind === 'builder') { const k = j.bld.builders.indexOf(p); if (k >= 0) j.bld.builders.splice(k, 1); }
     if (j.kind === 'worker' && j.bld.worker === p) j.bld.worker = null;
+    if (j.kind === 'road' && j.edge.up && j.edge.up.p === p) j.edge.up.p = null;   // 길은 깔다 만 자리부터 다른 사람이 이어서
     if (j.kind === 'haul') {
       if (j.task.carrier === p) j.task.carrier = null;
       if (j.taken && !j.done) for (const o of [j.task, ...(j.extra || [])]) { this.w.deliver(o.type, this.w.hall); const k = this.w.tasks.indexOf(o); if (k >= 0) this.w.tasks.splice(k, 1); }
@@ -465,7 +474,8 @@ export class People {
   doJob(p) {
     const j = p.job;
     if (j.kind === 'haul') return this.doHaul(p);
-    if (j.bld.dead) { this.loseJob(p); return; }
+    if (j.kind === 'road') return this.doRoad(p);
+    if (!j.bld || j.bld.dead) { this.loseJob(p); return; }
     if (j.kind === 'builder') return this.doBuilder(p);
     const k = j.bld.def.kind;
     if (k === 'gather') return this.doGather(p);
@@ -554,7 +564,7 @@ export class People {
       if (!ok) {
         waitT += dt; p.jobIdle = (p.jobIdle || 0) + dt;
         if (waitT > 7) { waitT = 0; this.say(p, 'wait'); }
-        if (p.jobIdle > 25 && b.type !== 'hall' && !b.free) { p.jobIdle = 0; p.y = 0; this.setLook(p, p.look); this.loseJob(p); return true; }
+        if (p.jobIdle > 25 && b.type !== 'hall' && !(b.free && b.con && b.con.kind === 'build')) { p.jobIdle = 0; p.y = 0; this.setLook(p, p.look); this.loseJob(p); return true; }
         return 'idle';
       }
       p.jobIdle = 0;
@@ -568,6 +578,41 @@ export class People {
       if (!b.con) { p.y = 0; this.setLook(p, p.look); this.say(p, p.trait === 'brave' ? 'brave' : 'happy'); this.loseJob(p); return true; }
       return 'work';
     }, 'work');
+  }
+
+  // ---------------------------------------------------------------- 길 깔기 (흙길 → 자갈길 → 돌길, main.upgradeRoad 가 맡긴다)
+  //  길의 e.up = { next: 바뀔 종류, k: 다음에 두드릴 점 번호, cost: 쓴 재료, p: 깔고 있는 사람 }
+  //  저녁이 되거나 행사로 손을 놓으면 멈췄다가, 다음 낮에 깔다 만 자리부터 이어서 깐다
+  doRoad(p) {
+    const w = this.w, e = p.job.edge, u = e.up;
+    if (!u || !w.roads.edges.has(e.id)) {   // 그사이 길이 없어졌다 (지움·다른 길과 만나 나뉨): 쓴 재료를 창고로 되돌린다
+      if (u && !u.done) { u.done = true; for (const [k, v] of Object.entries(u.cost)) w.stock[k] = (w.stock[k] || 0) + v; w.emit('stock'); }
+      this.loseJob(p); return;
+    }
+    const pts = e.pts, k0 = Math.min(u.k, pts.length - 1);
+    const stop = () => !w.roads.edges.has(e.id) || e.up !== u;
+    this.walkTo(p, pts[k0].x + 0.6, pts[k0].z);
+    this.doit(p, () => { if (this.clock.phase !== PHASE.DAY) this.clearQ(p); else this.setLook(p, 'miner'); });   // 도착해 보니 저녁이면 내일
+    for (let k = u.k; k < pts.length; k += 3) {
+      const pt = pts[k];
+      // 길 위를 따라 바로 옆 점으로 (walkTo 는 줄을 만들 때의 자리에서 길을 찾아서, 길 끝 쪽에서는 처음 자리로 되돌아갔다 오곤 했다)
+      this.walkDirect(p, pt.x + 0.6, pt.z, 0.7);
+      this.wait(p, 0.9, 'work', Math.atan2(-0.6, 0));
+      this.doit(p, () => {
+        if (stop()) { this.clearQ(p); return; }   // 다음 생각(doRoad 처음)에서 정리
+        u.k = k + 3;
+        w.chips(pt.x, 0.2, pt.z, 0x9aa3ad, 3);
+        if (w.audio) w.audio.play('mine', 0.25, pt.x, pt.z);
+        if (this.clock.phase !== PHASE.DAY) { this.setLook(p, p.look); this.clearQ(p); }   // 저녁이면 손을 놓고 내일 이어서
+      });
+    }
+    this.doit(p, () => {
+      if (stop()) { this.clearQ(p); return; }
+      u.done = true; e.up = null; e.busy = false;
+      w.roads.setType(e, u.next);
+      this.setLook(p, p.look); p.job = null; this.say(p, 'brave');
+      this.news(`🛤️ ${ROADS[u.next].name}이(가) 깔렸어요`, 'info');
+    });
   }
 
   // ---------------------------------------------------------------- 나무꾼·채석장
@@ -1029,7 +1074,7 @@ export class People {
     let job = '쉬는 중';
     if (p.stage === 'kid') job = '아이 (노는 중)';
     else if (p.stage === 'elder') job = '어르신 (쉬는 중)';
-    else if (j) job = j.kind === 'haul' ? `짐 나르기 (${j.task.type ? ({ log: '통나무', plank: '판자', stone: '돌', wheat: '밀', flour: '밀가루', bread: '빵', fish: '생선' })[j.task.type] : ''})` : j.kind === 'builder' ? `공사 (${j.bld.name})` : `${j.bld.name} 일꾼`;
+    else if (j) job = j.kind === 'haul' ? `짐 나르기 (${j.task.type ? ({ log: '통나무', plank: '판자', stone: '돌', wheat: '밀', flour: '밀가루', bread: '빵', fish: '생선' })[j.task.type] : ''})` : j.kind === 'builder' ? `공사 (${j.bld.name})` : j.kind === 'road' ? `길 깔기 (${ROADS[(j.edge.up && j.edge.up.next) || j.edge.type].name})` : j.bld ? `${j.bld.name} 일꾼` : '일하는 중';
     if (p.sleeping) job += ' · 자는 중';
     else if (p.slot) job += ` · ${({ sit: '앉아 쉬는 중', eat: '먹는 중', tea: '차 마시는 중', read: '책 읽는 중', desk: '책상에서 일하는 중', cook: '요리하는 중', bake: '빵 굽는 중', toilet: '화장실', wash: '씻는 중', warm: '불 쬐는 중' })[p.slot.s.action] || '쉬는 중'}`;
     const mood = p.mood > 0.75 ? '😊 아주 좋음' : p.mood > 0.55 ? '🙂 좋음' : p.mood > 0.35 ? '😐 보통' : '😣 나쁨';

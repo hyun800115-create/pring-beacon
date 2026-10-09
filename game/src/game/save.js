@@ -319,6 +319,7 @@ export class SaveSystem {
       if (b.trees) d.tr = b.trees.map((t) => [r1(t.t), t.ready ? 1 : 0]);
       if (b.pinned) d.pin = 1;
       if (b.fire) d.lit = 1;
+      if (b.worker && !b.worker.dead) d.wr = b.worker.id;   // 일하던 사람 (불러온 뒤 바로 일터로)
       return d;
     });
 
@@ -479,12 +480,13 @@ export class SaveSystem {
     R.changed();
 
     // 건물
-    const byId = new Map(), lit = [];
+    const byId = new Map(), lit = [], wrOf = new Map();
     for (const bd of arr(d.blds)) {
       const b = await this.partAsync('건물', () => this.restoreBuilding(bd));
       if (!b) continue;
       byId.set(bd.i, b);
       if (bd.lit) lit.push(b);
+      if (fin(bd.wr)) wrOf.set(b, bd.wr);
     }
     w.hall = byId.get(d.hall) || w.blds.find((b) => b.def.kind === 'hq' && !b.ai) || null;
     const hallUp = !!(w.hall && w.hall.state === 'active');
@@ -594,6 +596,12 @@ export class SaveSystem {
     for (const b of w.blds) {
       if (!b.con || b.con.kind !== 'build' || b.ai || !b.free || b === w.hall) continue;
       for (const p of pp.list) if (p.home === b && p.stage === 'adult' && !p.ai && !p.job) { p.job = { kind: 'builder', bld: b, x: b.x, z: b.z }; b.builders.push(p); }
+    }
+    // 일터마다 일하던 사람을 다시 붙인다 (안 그러면 나르기가 먼저 나눠져서 한동안 일터가 빈다)
+    for (const [b, id] of wrOf) {
+      const p = pp.list.find((q) => q.id === id);
+      if (!p || p.dead || p.ai || p.stage !== 'adult' || p.job || b.dead || b.state !== 'active' || b.worker) continue;
+      p.job = { kind: 'worker', bld: b, x: b.x, z: b.z }; b.worker = p;
     }
 
     // 이주민 제안이 떠 있었으면 다시 보여 준다
