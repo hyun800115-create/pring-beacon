@@ -29,7 +29,9 @@ const body = html.slice(html.indexOf('<body>') + 6, html.indexOf('</body>')).rep
 fs.writeFileSync(path.join(OUT, 'index.html'), `${title}\n<style>\n${css}\n</style>\n<script>window.__SM_GLB = '.glb.wasm';</script>\n${body.trim()}\n`);
 
 const copy = (rel) => { const s = path.join(ROOT, rel); if (fs.existsSync(s)) fs.cpSync(s, path.join(OUT, rel), { recursive: true }); };
+// 땅 그림: 길 3종 + 계절 4종 (겨울 눈밭·봄·여름 풀밭·가을)
 for (const f of ['assets/ground/ground_snow.png', 'assets/ground/ground_dirt.png', 'assets/ground/ground_rock.png', 'assets/ground/ground_plaza.png',
+  'assets/ground/ground_grass_spring.png', 'assets/ground/ground_grass_summer.png', 'assets/ground/ground_autumn.png',
   'assets/emotes/emotes.png', 'assets/emotes/emotes.json', 'assets/characters/portrait_player.png']) copy(f);
 for (const f of fs.readdirSync(path.join(ROOT, 'assets', 'audio'))) if (f.endsWith('.mp3') || f.endsWith('.ogg')) copy('assets/audio/' + f);
 

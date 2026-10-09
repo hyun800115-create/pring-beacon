@@ -1,0 +1,170 @@
+{
+ "season_decid_a_summer": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 182,
+  "tris": 1138
+ },
+ "season_decid_a_winter": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 251,
+  "tris": 892
+ },
+ "season_decid_a_spring": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 360,
+  "tris": 1332
+ },
+ "season_decid_a_autumn": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 197,
+  "tris": 1332
+ },
+ "season_decid_b_spring": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 267,
+  "tris": 1336
+ },
+ "season_decid_b_summer": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 190,
+  "tris": 1138
+ },
+ "season_decid_b_autumn": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 197,
+  "tris": 1336
+ },
+ "season_decid_b_winter": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 235,
+  "tris": 892
+ },
+ "season_pine_a": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 67,
+  "tris": 504
+ },
+ "season_pine_b": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 71,
+  "tris": 528
+ },
+ "season_pine_c": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 512,
+  "kb": 64,
+  "tris": 504
+ },
+ "season_bush_spring": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 80,
+  "tris": 710
+ },
+ "season_bush_summer": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 65,
+  "tris": 556
+ },
+ "season_bush_autumn": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 71,
+  "tris": 632
+ },
+ "season_flowers_a": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 55,
+  "tris": 566
+ },
+ "season_flowers_b": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 53,
+  "tris": 566
+ },
+ "season_grass": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 34,
+  "tris": 264
+ },
+ "season_grass_dry": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 33,
+  "tris": 244
+ },
+ "season_leaves": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 75,
+  "tris": 680
+ },
+ "season_stump": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 77,
+  "tris": 492
+ },
+ "season_rock_a": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 118,
+  "tris": 972
+ },
+ "season_rock_b": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 115,
+  "tris": 972
+ },
+ "season_rock_a_snow": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 118,
+  "tris": 972
+ },
+ "season_rock_b_snow": {
+  "kind": "prop",
+  "mats": 1,
+  "tex": 256,
+  "kb": 117,
+  "tris": 972
+ }
+}

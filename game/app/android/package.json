@@ -1,0 +1,18 @@
+{
+  "name": "spring-march-android",
+  "productName": "봄날의 행진",
+  "version": "0.1.0",
+  "description": "봄날의 행진 — 안드로이드 앱 (Capacitor 껍데기). 게임 본체는 game/src, 이 폴더는 휴대폰 설치판만 담당",
+  "private": true,
+  "scripts": {
+    "build": "node ../../tools/build/build_android.mjs",
+    "web": "node ../../tools/build/build_android.mjs --web-only"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.6.9",
+    "@capacitor/core": "7.6.9"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "7.6.9"
+  }
+}

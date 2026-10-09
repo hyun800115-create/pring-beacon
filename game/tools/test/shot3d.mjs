@@ -5,7 +5,7 @@ import { chromium } from 'playwright';
 const [pg, out, wait] = process.argv.slice(2);
 const gpu = process.argv.includes('--gpu');
 const srv = await start(0);
-const b = gpu ? await chromium.launch({ headless: false, args: ['--ignore-gpu-blocklist'] }) : await launch();
+const b = gpu ? await chromium.launch({ headless: true, args: ['--ignore-gpu-blocklist', '--use-angle=d3d11', '--enable-gpu'] }) : await launch();
 const page = await (await b.newContext({ viewport: { width: 1280, height: 720 } })).newPage();
 const errs = [];
 page.on('pageerror', (e) => errs.push(String(e.stack || e))); page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });

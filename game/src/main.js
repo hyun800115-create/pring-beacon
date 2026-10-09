@@ -136,7 +136,9 @@ class Game {
     for (let k = 0; k < 14; k++) { const m = new THREE.Mesh(new THREE.ConeGeometry(0.35, 1.4, 6), mat); m.position.set(fx + (Math.random() - 0.5) * 1.2, top + Math.random(), fz + (Math.random() - 0.5) * 1.2); b.group.add(m); flames.push({ m, s: 0.6 + Math.random(), p: Math.random() * 6 }); }
     b.flames = flames;
     if (ai) {
-      this.people.news(`🔥 이웃 마을 서리골이 먼저 봄의 봉화를 밝혔어요! 우리도 서둘러요`, 'warn');
+      // 우리가 이미 밝혔으면 '먼저'가 아니다 (그때는 외교 쪽이 '서리골도 밝혔어요' 소식을 낸다)
+      const oursLit = this.world.blds.some((x) => x.type === 'beacon' && !x.ai && x.fire);
+      if (!oursLit) this.people.news(`🔥 이웃 마을 서리골이 먼저 봄의 봉화를 밝혔어요! 우리도 서둘러요`, 'warn');
       return;
     }
     this.won = !this.rival.lit;
@@ -194,7 +196,8 @@ class Game {
     if (real) model = real.scene;
     else {
       model = new THREE.Group();
-      const fb = def.levels ? def.levels[0].fallback : def.fallback;
+      let fb = def.levels ? def.levels[0].fallback : def.fallback;
+      if (def.deco) { await this.lib.loadProp(type); if (this.lib.props[type]) fb = [[type, 0, 0, 0, 1]]; }   // 장식은 놓인 뒤와 같은 진짜 장식 모델로 (buildings.js 와 같게)
       if (Array.isArray(fb)) for (const [k, lx, lz, deg, sc] of fb) { await this.lib.loadProp(k); const o = this.lib.prop(k); o.position.set(lx, 0, lz); o.rotation.y = (deg || 0) * Math.PI / 180; o.scale.setScalar(sc || 1); model.add(o); }
       else { const box = new THREE.Mesh(new THREE.BoxGeometry(w * 0.8, def.height * 0.8, d * 0.8), new THREE.MeshStandardMaterial({ color: 0xeadfca })); box.position.y = def.height * 0.4; model.add(box); }
     }

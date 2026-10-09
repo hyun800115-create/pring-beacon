@@ -9,7 +9,7 @@ const OUT = args[0]; fs.mkdirSync(OUT, { recursive: true });
 const has = (k) => args.includes(k); const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
 const [vw, vh] = opt('--vp', '1280x720').split('x').map(Number);
 const srv = await start(0);
-const b = has('--gpu') ? await chromium.launch({ headless: false, args: ['--ignore-gpu-blocklist'] }) : await launch();
+const b = has('--gpu') ? await chromium.launch({ headless: true, args: ['--ignore-gpu-blocklist', '--use-angle=d3d11', '--enable-gpu'] }) : await launch();
 const page = await (await b.newContext({ viewport: { width: vw, height: vh } })).newPage();
 const errs = [];
 page.on('pageerror', (e) => errs.push('pageerror: ' + (e.stack || e)));

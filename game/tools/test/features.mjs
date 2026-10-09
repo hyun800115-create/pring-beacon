@@ -8,7 +8,7 @@ import { chromium } from 'playwright';
 const OUT = process.argv[2]; fs.mkdirSync(OUT, { recursive: true });
 const gpu = process.argv.includes('--gpu');
 const srv = await start(0);
-const b = gpu ? await chromium.launch({ headless: false, args: ['--ignore-gpu-blocklist'] }) : await launch();
+const b = gpu ? await chromium.launch({ headless: true, args: ['--ignore-gpu-blocklist', '--use-angle=d3d11', '--enable-gpu'] }) : await launch();
 const page = await (await b.newContext({ viewport: { width: 1280, height: 720 } })).newPage();
 const errs = [];
 page.on('pageerror', (e) => errs.push('pageerror: ' + (e.stack || e)));

@@ -1,0 +1,82 @@
+{
+  "name": "spring-march",
+  "productName": "봄날의 행진",
+  "version": "0.1.0",
+  "description": "봄날의 행진 — 겨울 마을을 일구어 봄을 부르는 아기자기한 마을 짓기 게임",
+  "author": "봄날의 행진 만든 사람들",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis portable --x64"
+  },
+  "devDependencies": {
+    "electron": "44.5.1",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "com.springmarch.game",
+    "productName": "봄날의 행진",
+    "copyright": "봄날의 행진",
+    "directories": {
+      "output": "../../../.cache/release",
+      "buildResources": "../../../.cache/app-pc/build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../../../.cache/app-pc/www",
+        "to": "www",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "asar": true,
+    "electronLanguages": [
+      "ko",
+      "en-US"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "../../../.cache/app-pc/build/icon.ico",
+      "executableName": "SpringMarch",
+      "legalTrademarks": "봄날의 행진"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "봄날의 행진",
+      "uninstallDisplayName": "봄날의 행진",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "language": "1042",
+      "installerLanguages": [
+        "ko_KR"
+      ],
+      "artifactName": "봄날의행진-설치-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "봄날의행진-바로실행-${version}.${ext}"
+    }
+  }
+}

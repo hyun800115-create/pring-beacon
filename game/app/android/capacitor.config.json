@@ -1,0 +1,12 @@
+{
+  "appId": "kr.springmarch.game",
+  "appName": "봄날의 행진",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false,
+    "adjustMarginsForEdgeToEdge": "force"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

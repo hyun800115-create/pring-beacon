@@ -96,3 +96,10 @@ export async function walkTo(page, target, opts = {}) {
   }
   return true;
 }
+
+// 창을 띄우지 않고 진짜 그래픽카드(D3D11)를 쓰는 크롬 — 대표님 화면을 가리지 않는다. (headless:false 금지)
+export const GPU_ARGS = ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'];
+export async function launchGpu(extra = {}) {
+  const { chromium } = loadPlaywright();
+  return chromium.launch(Object.assign({ headless: true, args: GPU_ARGS }, extra));
+}

@@ -2,7 +2,7 @@
 import { start } from './serve.mjs';
 import { chromium } from 'playwright';
 const srv = await start(0);
-const b = await chromium.launch({ headless: false, args: ['--ignore-gpu-blocklist'] });
+const b = await chromium.launch({ headless: true, args: ['--ignore-gpu-blocklist', '--use-angle=d3d11', '--enable-gpu'] });
 const ctx = await b.newContext({ viewport: { width: 844, height: 390 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
 const page = await ctx.newPage();
 const cdp = await ctx.newCDPSession(page);

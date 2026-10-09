@@ -26,6 +26,6 @@
 
 ## 공통
 - 모든 글(화면 글자·뉴스·말풍선)은 쉬운 한국어. 코드 주석도 한국어.
-- 시험: `cd /c/시라이스/game && PLAYWRIGHT_BROWSERS_PATH=/c/시라이스/.cache/pw-browsers node tools/test/<자기 시험>.mjs` — `tools/test/features.mjs`, `g3d.mjs` 를 본보기로. `--gpu` 처럼 진짜 그래픽카드 창을 쓰면 빠르다(`chromium.launch({ headless: false, args: ['--ignore-gpu-blocklist'] })`).
+- 시험: `cd /c/시라이스/game && PLAYWRIGHT_BROWSERS_PATH=/c/시라이스/.cache/pw-browsers node tools/test/<자기 시험>.mjs` — `tools/test/features.mjs`, `g3d.mjs` 를 본보기로. **화면에 창을 띄우지 않는다** — `tools/test/pw.mjs` 의 `launchGpu()` (창 없이 진짜 그래픽카드, 초당 60장)를 쓴다. `headless: false` 금지. Electron 앱 시험은 `SM_HIDDEN=1`, 명령 실행은 `windowsHide: true`.
 - 게임 상태는 `window.__SM.game` (Game 객체), 시험 함수는 `window.__SM.api`.
 - git 명령은 쓰지 않는다 (정리는 총괄이 한다).

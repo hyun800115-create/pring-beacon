@@ -77,8 +77,9 @@ export class People {
     if (!force && now - p.lastSay < 7) return;
     p.lastSay = now;
     const em = emote || { tired: 'emote_sweat', grumble: 'emote_anger', happy: 'emote_heart', brave: 'emote_thumbs', chat: 'emote_laugh', love: 'emote_love', hungry: 'emote_bread', cold: 'emote_cold', sad: 'emote_tear', party: 'emote_music', wait: 'emote_dots', build: 'emote_sparkle', home: 'emote_star', eat: 'emote_bread', read: 'emote_idea', cook: 'emote_sparkle', tea: 'emote_heart', zzz: 'emote_zzz' }[kind];
-    const lines = LINES[kind];
-    const text = lines && (force || this.r() < 0.75) ? pick(lines, this.r) : '';
+    let lines = LINES[kind];
+    if (lines && this.clock.seasonIndex !== 0) lines = lines.filter((l) => !l.includes('눈이'));   // 눈 이야기는 겨울에만
+    const text = lines && lines.length && (force || this.r() < 0.75) ? pick(lines, this.r) : '';
     if (!p.hidden) this.bub.show(p, text, em);
   }
   emote(p, kind, an, secs = 1.2) { this.say(p, kind); if (an) p.q.unshift({ t: 'wait', s: secs, anim: an }); }
